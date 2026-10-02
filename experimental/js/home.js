@@ -308,7 +308,8 @@ function init() {
     camera.position.set(camX + mouse.sx * 0.35, mouse.sy * 0.2, -current * GAP + VIEW);
     camera.lookAt(camX * 0.6, 0, camera.position.z - VIEW);
 
-    setActive(THREE.MathUtils.clamp(Math.round(current), 0, N - 1));
+    // switch once the current plane has started fading out
+    setActive(THREE.MathUtils.clamp(Math.floor(current + 0.8), 0, N - 1));
 
     // hover detection
     raycaster.setFromCamera(pointer, camera);
