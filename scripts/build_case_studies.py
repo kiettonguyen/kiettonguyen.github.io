@@ -1,11 +1,11 @@
-"""Builds the project case-study pages for both sites from the content below.
+"""Builds the project case-study pages from the content below.
 
     python3 scripts/build_case_studies.py
 
-Writes work/<slug>/index.html (plain site, at the root) and experimental/work/<slug>/index.html.
+Writes work/<slug>/index.html.
 Edit project text here (not in the generated pages), then re-run.
 """
-import html, os, re
+import html, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 e = html.escape
@@ -177,29 +177,29 @@ def media(kind, file, alt, cls=""):
 def render_block(b, a):
     t = b[0]
     if t == "h":
-        return f'<h2 class="cs-h reveal">{e(b[1])}</h2>'
+        return f'<h2 class="cs-h">{e(b[1])}</h2>'
     if t == "p":
-        return f'<p class="reveal">{e(b[1])}</p>'
+        return f'<p>{e(b[1])}</p>'
     if t == "ul":
-        return '<ul class="cs-list reveal">' + "".join(f"<li>{e(x)}</li>" for x in b[1]) + "</ul>"
+        return '<ul class="cs-list">' + "".join(f"<li>{e(x)}</li>" for x in b[1]) + "</ul>"
     if t in ("img", "video"):
         size = b[3] if len(b) > 3 else "wide"
         f = a + b[1]
-        return f'<figure class="cs-media {size} reveal">{media(t, f, b[2])}</figure>'
+        return f'<figure class="cs-media {size}">{media(t, f, b[2])}</figure>'
     if t == "gallery":
         items = "".join(f'<figure class="cs-media">{media(k, a + f, alt)}</figure>' for k, f, alt in b[1])
-        return f'<div class="cs-gallery n{len(b[1])} reveal">{items}</div>'
+        return f'<div class="cs-gallery n{len(b[1])}">{items}</div>'
     if t == "yt":
-        return (f'<figure class="cs-media wide yt reveal"><iframe src="https://www.youtube-nocookie.com/embed/{b[1]}" '
+        return (f'<figure class="cs-media wide yt"><iframe src="https://www.youtube-nocookie.com/embed/{b[1]}" '
                 f'title="{e(b[2])}" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>'
                 f'<figcaption>{e(b[2])}</figcaption></figure>')
     if t == "link":
-        return f'<p class="reveal"><a class="cs-link" href="{b[1]}" target="_blank" rel="noopener">{e(b[2])} ↗</a></p>'
+        return f'<p><a class="cs-link" href="{b[1]}" target="_blank" rel="noopener">{e(b[2])} ↗</a></p>'
     if t == "cards":
-        return '<div class="cs-cards reveal">' + "".join(
+        return '<div class="cs-cards">' + "".join(
             f'<div class="cs-card"><h3>{e(h)}</h3><p>{e(p)}</p></div>' for h, p in b[1]) + "</div>"
     if t == "specs":
-        return '<dl class="cs-specs reveal">' + "".join(f"<dt>{e(k)}</dt><dd>{e(v)}</dd>" for k, v in b[1]) + "</dl>"
+        return '<dl class="cs-specs">' + "".join(f"<dt>{e(k)}</dt><dd>{e(v)}</dd>" for k, v in b[1]) + "</dl>"
     if t == "split":
         left = render_block(b[1] + ("small",), a)
         right = "".join(render_block(x, a) for x in b[2])
@@ -207,11 +207,10 @@ def render_block(b, a):
     raise ValueError(t)
 
 
-def page(i, p, site):
-    # the plain site lives at the repo root, the experimental one in experimental/
-    up = "../../../" if site == "experimental" else "../../"
+def page(i, p):
+    up = "../../"
     a = f"{up}assets/{p['slug']}/"
-    css, js = ("../../css/style.css", "../../js/main.js") if site == "experimental" else ("../../style.css", "../../script.js")
+    css, js = "../../style.css", "../../script.js"
     nxt = P[(i + 1) % len(P)]
     tags = "".join(f"<li>{e(t)}</li>" for t in p["tags"])
     sub = f' <em>({e(p["subtitle"])})</em>' if p.get("subtitle") else ""
@@ -230,7 +229,6 @@ def page(i, p, site):
   <link rel="stylesheet" href="{css}">
 </head>
 <body class="case-study">
-  <div class="progress" aria-hidden="true"></div>
   <header class="toolbar">
     <a href="../../" class="logo"><span class="dot"></span>Kiet Nguyen</a>
     <nav>
@@ -244,7 +242,7 @@ def page(i, p, site):
     <section class="cs-hero">
       <a class="back" href="../../#work">← All work</a>
       <p class="cs-year">{p['year']}</p>
-      <h1 class="split-words">{e(p['title'])}{sub}</h1>
+      <h1>{e(p['title'])}{sub}</h1>
       <ul class="tags">{tags}</ul>
       <p class="cs-lead">{e(p['lead'])}</p>
     </section>
@@ -272,16 +270,9 @@ def page(i, p, site):
 
 
 
-for site in ("experimental", "plain"):
-    for i, p in enumerate(P):
-        out = page(i, p, site)
-        if site == "plain":
-            # the plain site has no scroll animations or progress bar
-            out = out.replace("  <div class=\"progress\" aria-hidden=\"true\"></div>\n", "")
-            out = re.sub(r' class="(?:split-words|reveal)"', "", out)
-            out = out.replace(" reveal", "")
-        d = os.path.join(ROOT, "experimental" if site == "experimental" else "", "work", p["slug"])
-        os.makedirs(d, exist_ok=True)
-        with open(os.path.join(d, "index.html"), "w") as f:
-            f.write(out)
-print("built", len(P), "case studies for each site")
+for i, p in enumerate(P):
+    d = os.path.join(ROOT, "work", p["slug"])
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "index.html"), "w") as f:
+        f.write(page(i, p))
+print("built", len(P), "case studies")
