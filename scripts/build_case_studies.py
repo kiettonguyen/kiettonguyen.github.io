@@ -223,13 +223,14 @@ def page(i, p, site):
   <meta name="description" content="{e(p['lead'])}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Caveat:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../shared/board.css">
   <link rel="stylesheet" href="{css}">
 </head>
 <body class="case-study">
   <div class="progress" aria-hidden="true"></div>
-  <header class="site-header">
-    <a href="../../" class="logo">Kiet Nguyen</a>
+  <header class="toolbar">
+    <a href="../../" class="logo"><span class="dot"></span>Kiet Nguyen</a>
     <nav>
       <a href="../../#work">Work</a>
       <a href="../../#about">About</a>

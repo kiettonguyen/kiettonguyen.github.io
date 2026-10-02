@@ -1,7 +1,9 @@
-// Interactive 3D scroll gallery for the home page (three.js).
-// Projects are read from the .project-list links in index.html; each becomes a
-// floating plane (video or image texture). Scrolling through #work flies the
-// camera past them; planes bend with scroll speed and ripple under the cursor.
+// Whiteboard-style 3D project board for the home page (three.js).
+// Project cards (read from .project-list in index.html) are pinned to a dotted board.
+// Scrolling through #work pans the camera from card to card like a whiteboard app,
+// easing out slightly mid-pan. The CSS dot grid on <body> is moved in sync with the
+// camera so the board feels continuous. Only the focused card plays its video, and
+// the only pointer effect is a card lifting off the board on hover.
 import * as THREE from "three";
 
 const root = document.documentElement;
@@ -23,6 +25,7 @@ function init() {
   const projects = links.map((a) => ({
     href: a.getAttribute("href"),
     cover: a.dataset.cover,
+    note: a.dataset.note,
     title: a.querySelector(".name").textContent,
     kind: a.querySelector(".kind").textContent,
     year: a.querySelector(".yr").textContent,
@@ -30,211 +33,258 @@ function init() {
   const N = projects.length;
 
   const work = document.getElementById("work");
-  const stage = work.querySelector(".work-stage");
-  const hudI = stage.querySelector(".hud-i");
-  const hudTitle = stage.querySelector(".hud-title a");
-  const hudMeta = stage.querySelector(".hud-meta");
-  const hudCta = stage.querySelector(".hud-cta");
-  const hudBar = stage.querySelector(".hud-progress span");
+  const hud = work.querySelector(".hud");
+  const hudI = hud.querySelector(".hud-i");
+  const hudTitle = hud.querySelector(".hud-title a");
+  const hudMeta = hud.querySelector(".hud-meta");
+  const hudCta = hud.querySelector(".hud-cta");
+  const minimap = work.querySelector(".minimap");
   const cursorLabel = document.querySelector(".cursor-label");
-  stage.querySelector(".hud-n").textContent = String(N).padStart(2, "0");
-  // one screen of scrolling per project
-  work.style.height = `${N * 100}vh`;
+  hud.querySelector(".hud-n").textContent = String(N).padStart(2, "0");
+  work.style.height = `${N * 100}vh`; // one screen of scrolling per project
 
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.LinearSRGBColorSpace; // textures pass straight through
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  const FOV = 40;
+  const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
+  const DIST = 9; // resting camera distance from the board
+  const DOT = 24; // css dot spacing (px) at resting distance
+  const pxPerUnit = (d) => innerHeight / (2 * d * Math.tan(THREE.MathUtils.degToRad(FOV / 2)));
 
-  const GAP = 7; // distance between planes along z
-  const VIEW = 4.2; // how far in front of a plane the camera rests
-
-  // ---------- Planes ----------
-  const vertex = /* glsl */ `
-    uniform float uTime, uVel, uHover;
-    uniform vec2 uMouse;
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      vec3 p = position;
-      // bend like paper with scroll velocity
-      p.z -= sin(uv.y * 3.14159) * uVel * 0.6;
-      p.y += sin(uv.x * 3.14159) * uVel * 0.08;
-      // idle drift
-      p.z += sin(uv.x * 4.0 + uTime * 0.8) * 0.02;
-      // ripple from the cursor
-      float d = distance(uv, uMouse);
-      p.z += sin(d * 22.0 - uTime * 6.0) * 0.035 * uHover * (1.0 - smoothstep(0.0, 0.7, d));
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
-    }
-  `;
-  const fragment = /* glsl */ `
-    uniform sampler2D uTex;
-    uniform float uVel, uActive, uOpacity, uHover, uReady;
-    uniform vec2 uSize;
-    varying vec2 vUv;
+  // ---------- Shaders ----------
+  const sdf = /* glsl */ `
     float roundedBox(vec2 p, vec2 b, float r) {
       vec2 q = abs(p) - b + r;
       return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
     }
+  `;
+  const vert = /* glsl */ `
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+  `;
+  // white card or sticky note paper, optionally textured
+  const paperFrag = /* glsl */ `
+    uniform vec2 uSize;
+    uniform float uRadius;
+    uniform sampler2D uTex;
+    uniform float uHasTex;
+    varying vec2 vUv;
+    ${sdf}
     void main() {
-      // zoom slightly on hover
-      vec2 uv = (vUv - 0.5) * (1.0 - 0.05 * uHover) + 0.5;
-      // RGB split with scroll speed
-      float s = clamp(uVel, -1.0, 1.0) * 0.015;
-      vec3 col = vec3(
-        texture2D(uTex, uv + vec2(0.0, s)).r,
-        texture2D(uTex, uv).g,
-        texture2D(uTex, uv - vec2(0.0, s)).b
-      );
-      col = mix(vec3(0.87, 0.85, 0.81), col, uReady);
-      // inactive planes are desaturated
-      float g = dot(col, vec3(0.299, 0.587, 0.114));
-      col = mix(vec3(g), col, 0.25 + 0.75 * uActive);
-      // rounded corners
+      float d = roundedBox((vUv - 0.5) * uSize, uSize * 0.5, uRadius);
+      float a = 1.0 - smoothstep(-0.006, 0.006, d);
+      vec4 col = mix(vec4(1.0), texture2D(uTex, vUv), uHasTex);
+      gl_FragColor = vec4(col.rgb, a);
+    }
+  `;
+  // the project image inset in the card
+  const imageFrag = /* glsl */ `
+    uniform sampler2D uTex;
+    uniform vec2 uSize;
+    uniform float uReady;
+    varying vec2 vUv;
+    ${sdf}
+    void main() {
       float d = roundedBox((vUv - 0.5) * uSize, uSize * 0.5, 0.06);
-      float a = 1.0 - smoothstep(-0.004, 0.004, d);
-      gl_FragColor = vec4(col, a * uOpacity);
+      float a = 1.0 - smoothstep(-0.006, 0.006, d);
+      vec3 col = mix(vec3(0.93, 0.92, 0.89), texture2D(uTex, vUv).rgb, uReady);
+      gl_FragColor = vec4(col, a);
+    }
+  `;
+  // soft drop shadow on the board
+  const shadowFrag = /* glsl */ `
+    uniform vec2 uSize, uPlane;
+    uniform float uBlur, uStrength;
+    varying vec2 vUv;
+    ${sdf}
+    void main() {
+      float d = roundedBox((vUv - 0.5) * uPlane, uSize * 0.5, 0.1);
+      float a = 1.0 - smoothstep(-uBlur * 0.4, uBlur, d);
+      gl_FragColor = vec4(0.09, 0.09, 0.1, a * a * uStrength);
     }
   `;
 
-  const geometry = new THREE.PlaneGeometry(1, 1, 48, 48);
+  const quad = new THREE.PlaneGeometry(1, 1);
   const blank = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1);
   blank.needsUpdate = true;
+  const mat = (frag, uniforms) =>
+    new THREE.ShaderMaterial({ vertexShader: vert, fragmentShader: frag, uniforms, transparent: true, depthWrite: false });
 
-  const planes = projects.map((p, i) => {
-    const material = new THREE.ShaderMaterial({
-      vertexShader: vertex,
-      fragmentShader: fragment,
-      transparent: true,
-      depthWrite: false,
-      uniforms: {
-        uTex: { value: blank },
-        uTime: { value: 0 },
-        uVel: { value: 0 },
-        uHover: { value: 0 },
-        uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-        uActive: { value: 0 },
-        uOpacity: { value: 0 },
-        uReady: { value: 0 },
-        uSize: { value: new THREE.Vector2(1, 1) },
-      },
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.userData = { index: i, aspect: 16 / 10, hover: 0 };
-    scene.add(mesh);
+  // A pinned item = shadow + paper (+ optional image), grouped so it can lift off the board
+  function pinned() {
+    const group = new THREE.Group();
+    const shadow = new THREE.Mesh(quad, mat(shadowFrag, {
+      uSize: { value: new THREE.Vector2(1, 1) },
+      uPlane: { value: new THREE.Vector2(1, 1) },
+      uBlur: { value: 0.25 },
+      uStrength: { value: 0.22 },
+    }));
+    const paper = new THREE.Mesh(quad, mat(paperFrag, {
+      uSize: { value: new THREE.Vector2(1, 1) },
+      uRadius: { value: 0.12 },
+      uTex: { value: blank },
+      uHasTex: { value: 0 },
+    }));
+    shadow.renderOrder = 0;
+    paper.renderOrder = 1;
+    group.add(shadow, paper);
+    scene.add(group);
+    return { group, shadow, paper, lift: 0 };
+  }
 
-    const plane = { mesh, material, video: null };
+  function sizePinned(item, w, h) {
+    item.paper.scale.set(w, h, 1);
+    item.paper.material.uniforms.uSize.value.set(w, h);
+    const pad = 1.4;
+    item.shadow.scale.set(w + pad, h + pad, 1);
+    item.shadow.material.uniforms.uSize.value.set(w, h);
+    item.shadow.material.uniforms.uPlane.value.set(w + pad, h + pad);
+  }
+
+  // ---------- Project cards ----------
+  const PAD = 0.14; // white border around the image
+  const cards = projects.map((p, i) => {
+    const item = pinned();
+    const image = new THREE.Mesh(quad, mat(imageFrag, {
+      uTex: { value: blank },
+      uSize: { value: new THREE.Vector2(1, 1) },
+      uReady: { value: 0 },
+    }));
+    image.renderOrder = 2;
+    image.position.z = 0.002;
+    item.group.add(image);
+    item.paper.userData.index = i;
+    Object.assign(item, { image, aspect: 16 / 10, video: null, tilt: [-1.6, 1.2, -0.8, 1.4, -1.1][i % 5] });
+
     const ready = (tex, w, h) => {
       tex.minFilter = THREE.LinearFilter;
       tex.generateMipmaps = false;
-      material.uniforms.uTex.value = tex;
-      mesh.userData.aspect = w / h;
+      image.material.uniforms.uTex.value = tex;
+      item.aspect = w / h;
       layout();
-      // fade in once loaded
       const t0 = performance.now();
       const fade = (t) => {
-        material.uniforms.uReady.value = Math.min(1, (t - t0) / 600);
-        if (material.uniforms.uReady.value < 1) requestAnimationFrame(fade);
+        image.material.uniforms.uReady.value = Math.min(1, (t - t0) / 500);
+        if (image.material.uniforms.uReady.value < 1) requestAnimationFrame(fade);
       };
       requestAnimationFrame(fade);
     };
-
     if (p.cover.endsWith(".mp4")) {
       const v = document.createElement("video");
-      Object.assign(v, { src: p.cover, muted: true, loop: true, playsInline: true, preload: "auto", crossOrigin: "anonymous" });
+      Object.assign(v, { src: p.cover, muted: true, loop: true, playsInline: true, preload: "auto" });
       v.addEventListener("loadeddata", () => ready(new THREE.VideoTexture(v), v.videoWidth, v.videoHeight), { once: true });
       v.load();
-      plane.video = v;
+      item.video = v;
     } else {
       new THREE.TextureLoader().load(p.cover, (tex) => ready(tex, tex.image.width, tex.image.height));
     }
-    return plane;
+    return item;
   });
 
-  // ---------- Particles ----------
-  const COUNT = 900;
-  const pos = new Float32Array(COUNT * 3);
-  const depth = N * GAP + 20;
-  for (let i = 0; i < COUNT; i++) {
-    pos[i * 3] = (Math.random() - 0.5) * 16;
-    pos[i * 3 + 1] = (Math.random() - 0.5) * 10;
-    pos[i * 3 + 2] = 12 - Math.random() * depth;
-  }
-  const dustGeo = new THREE.BufferGeometry();
-  dustGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  const dust = new THREE.Points(
-    dustGeo,
-    new THREE.PointsMaterial({ color: 0x141414, size: 0.022, transparent: true, opacity: 0.45, depthWrite: false })
-  );
-  scene.add(dust);
-
-  // A few accent-coloured specks
-  const accentGeo = new THREE.BufferGeometry();
-  accentGeo.setAttribute("position", new THREE.BufferAttribute(pos.slice(0, 60 * 3), 3));
-  const accent = new THREE.Points(
-    accentGeo,
-    new THREE.PointsMaterial({ color: 0xe4572e, size: 0.06, transparent: true, opacity: 0.9, depthWrite: false })
-  );
-  scene.add(accent);
+  // ---------- Sticky notes (data-note) ----------
+  const notes = [];
+  document.fonts.load("700 64px Caveat").finally(() => {
+    projects.forEach((p, i) => {
+      if (!p.note) return;
+      const c = document.createElement("canvas");
+      c.width = c.height = 512;
+      const g = c.getContext("2d");
+      g.fillStyle = i % 2 ? "#ffd3d8" : "#ffe68a";
+      g.fillRect(0, 0, 512, 512);
+      g.fillStyle = "#17171a";
+      g.font = "700 92px Caveat, cursive";
+      g.textAlign = "center";
+      g.textBaseline = "middle";
+      // wrap to two lines at most
+      const words = p.note.split(" ");
+      const lines = [];
+      let line = "";
+      words.forEach((w) => {
+        const test = line ? `${line} ${w}` : w;
+        if (g.measureText(test).width > 420 && line) { lines.push(line); line = w; } else line = test;
+      });
+      lines.push(line);
+      lines.forEach((l, k) => g.fillText(l, 256, 256 + (k - (lines.length - 1) / 2) * 100));
+      const item = pinned();
+      item.paper.material.uniforms.uTex.value = new THREE.CanvasTexture(c);
+      item.paper.material.uniforms.uHasTex.value = 1;
+      item.paper.material.uniforms.uRadius.value = 0.02;
+      item.card = i;
+      item.shadow.renderOrder = 3; // notes sit on top of the cards
+      item.paper.renderOrder = 4;
+      notes.push(item);
+    });
+    layout();
+  });
 
   // ---------- Layout ----------
   let mobile = false;
+  let viewW = 1, viewH = 1;
+  const stops = []; // camera target for each card, plus the hero position at index -1
+
   function layout() {
     const w = innerWidth, h = innerHeight;
     mobile = w < 760;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    viewH = 2 * DIST * Math.tan(THREE.MathUtils.degToRad(FOV / 2));
+    viewW = viewH * camera.aspect;
 
-    // visible height/width of the view frustum at the resting distance
-    const viewH = 2 * VIEW * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    const viewW = viewH * camera.aspect;
-    planes.forEach(({ mesh, material }, i) => {
-      const a = mesh.userData.aspect;
-      let pw = mobile ? viewW * 0.86 : Math.min(viewW * 0.52, 4.2);
-      let ph = pw / a;
-      const maxH = viewH * (mobile ? 0.42 : 0.62);
-      if (ph > maxH) { ph = maxH; pw = ph * a; }
-      mesh.scale.set(pw, ph, 1);
-      material.uniforms.uSize.value.set(pw, ph);
+    const stepY = viewH * 0.95;
+    cards.forEach((c, i) => {
+      let cw = mobile ? viewW * 0.86 : Math.min(viewW * 0.44, 5.2);
+      let ch = (cw - PAD * 2) / c.aspect + PAD * 2;
+      const maxH = viewH * (mobile ? 0.46 : 0.58);
+      if (ch > maxH) { ch = maxH; cw = (ch - PAD * 2) * c.aspect + PAD * 2; }
+      sizePinned(c, cw, ch);
+      c.image.scale.set(cw - PAD * 2, ch - PAD * 2, 1);
+      c.image.material.uniforms.uSize.value.set(cw - PAD * 2, ch - PAD * 2);
+      c.w = cw;
+      c.h = ch;
       const side = i % 2 === 0 ? 1 : -1;
-      mesh.userData.x = mobile ? 0 : side * viewW * 0.17;
-      mesh.userData.y = mobile ? viewH * 0.12 : 0.15;
-      mesh.position.set(mesh.userData.x, mesh.userData.y, -i * GAP);
-      mesh.rotation.y = mobile ? 0 : -side * 0.12;
+      c.group.position.set(side * (mobile ? viewW * 0.08 : viewW * 0.2), -i * stepY, 0);
+      c.group.rotation.z = THREE.MathUtils.degToRad(c.tilt);
+      // keep the card clear of the HUD: right of centre on desktop, upper half on mobile
+      stops[i] = mobile
+        ? new THREE.Vector2(c.group.position.x * 0.5, c.group.position.y - viewH * 0.14)
+        : new THREE.Vector2(c.group.position.x - viewW * 0.12, c.group.position.y - viewH * 0.04);
+    });
+    stops[-1] = new THREE.Vector2(stops[0].x - viewW * 0.1, stops[0].y + viewH * 1.05);
+
+    notes.forEach((n) => {
+      const c = cards[n.card];
+      const s = mobile ? 0.9 : 1.25;
+      sizePinned(n, s, s);
+      // tucked over the card's top corner: outside it on desktop, inside the right corner on mobile
+      const side = mobile || n.card % 2 === 0 ? 1 : -1;
+      const dx = mobile ? c.w / 2 - s * 0.45 : c.w / 2 + s * 0.05;
+      n.group.position.set(c.group.position.x + side * dx, c.group.position.y + c.h / 2 - s * 0.2, 0.06);
+      n.group.rotation.z = THREE.MathUtils.degToRad(side * 6);
     });
   }
   addEventListener("resize", layout);
   layout();
 
   // ---------- Scroll ----------
-  // ease each segment so the camera lingers on every project
-  const linger = (t) => {
+  // ease each segment so the camera rests on every card
+  const rest = (t) => {
     const i = Math.floor(t);
-    return i + THREE.MathUtils.smoothstep(t - i, 0.2, 0.8);
+    return i + THREE.MathUtils.smoothstep(t - i, 0.25, 0.75);
   };
-
-  let target = 0; // continuous project position, 0..N-1, plus negative values during the hero
-  let current = -1.2;
-  let lastCurrent = current;
-  let velocity = 0;
+  let target = -1;
+  let current = -1;
   let visible = true;
+  const trackLen = () => work.offsetHeight - innerHeight;
 
   function readScroll() {
     const top = work.offsetTop;
-    const len = work.offsetHeight - innerHeight;
     const y = scrollY;
-    if (y < top) {
-      target = -1.2 * (1 - y / top); // hero: camera starts further back
-    } else {
-      target = linger(Math.min(1, (y - top) / len) * (N - 1));
-    }
-    hudBar.style.transform = `scaleX(${Math.max(0, Math.min(1, (y - top) / len))})`;
-    // fade the canvas once the gallery has scrolled past
-    const end = top + work.offsetHeight - innerHeight;
-    const fade = 1 - Math.max(0, Math.min(1, (y - end) / (innerHeight * 0.6)));
+    target = y < top ? -1 + rest(y / top) : rest(Math.min(1, (y - top) / trackLen()) * (N - 1));
+    const end = top + trackLen();
+    const fade = 1 - THREE.MathUtils.clamp((y - end) / (innerHeight * 0.5), 0, 1);
     canvas.style.opacity = fade;
     visible = fade > 0;
   }
@@ -242,110 +292,114 @@ function init() {
   addEventListener("resize", readScroll);
   readScroll();
 
-  // ---------- HUD ----------
+  // ---------- HUD + minimap ----------
+  const dots = projects.map((p, i) => {
+    const b = document.createElement("button");
+    b.setAttribute("aria-label", p.title);
+    b.addEventListener("click", () =>
+      scrollTo({ top: work.offsetTop + (trackLen() * i) / (N - 1), behavior: "smooth" })
+    );
+    minimap.append(b);
+    return b;
+  });
+
   let active = -1;
+  let swapTimer = 0;
   function setActive(i) {
     if (i === active) return;
+    const first = active === -1;
     active = i;
-    const p = projects[i];
-    hudI.textContent = String(i + 1).padStart(2, "0");
-    hudTitle.textContent = p.title;
-    hudTitle.href = hudCta.href = p.href;
-    hudMeta.textContent = `${p.kind} — ${p.year}`;
-    hudTitle.classList.remove("swap");
-    void hudTitle.offsetWidth; // restart animation
-    hudTitle.classList.add("swap");
-    stage.classList.toggle("flip", i % 2 === 1);
+    dots.forEach((d, k) => d.classList.toggle("on", k === i));
+    const apply = () => {
+      const p = projects[i];
+      hudI.textContent = String(i + 1).padStart(2, "0");
+      hudTitle.textContent = p.title;
+      hudTitle.href = hudCta.href = p.href;
+      hudMeta.textContent = `${p.kind} — ${p.year}`;
+      hud.classList.remove("changing");
+    };
+    clearTimeout(swapTimer);
+    if (first) apply();
+    else { hud.classList.add("changing"); swapTimer = setTimeout(apply, 200); }
+    // only the focused card plays
+    cards.forEach((c, k) => {
+      if (!c.video) return;
+      if (k === i) c.video.play().catch(() => {});
+      else c.video.pause();
+    });
   }
 
   // ---------- Pointer ----------
   const pointer = new THREE.Vector2(-10, -10);
   const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
   const raycaster = new THREE.Raycaster();
-  let hovered = null;
-  let labelX = 0, labelY = 0;
+  let hovered = -1;
 
   addEventListener("pointermove", (e) => {
     pointer.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
     mouse.x = pointer.x;
     mouse.y = pointer.y;
-    labelX = e.clientX;
-    labelY = e.clientY;
+    cursorLabel.style.translate = `${e.clientX}px ${e.clientY}px`;
   });
-
-  const overGallery = (target) =>
-    visible && !target.closest("a, button, .hud") && scrollY < work.offsetTop + work.offsetHeight - innerHeight * 0.5;
-
   addEventListener("click", (e) => {
-    if (hovered && overGallery(e.target)) location.href = projects[hovered.userData.index].href;
+    if (hovered >= 0 && visible && !e.target.closest("a, button, .card, .sticky")) location.href = projects[hovered].href;
   });
 
   // ---------- Loop ----------
-  const clock = new THREE.Clock();
+  const body = document.body;
   function frame() {
     requestAnimationFrame(frame);
     if (!visible) {
-      planes.forEach((p) => p.video && !p.video.paused && p.video.pause());
+      if (active >= 0 && cards[active].video) cards[active].video.pause();
       return;
     }
-    const t = clock.getElapsedTime();
 
-    current += (target - current) * 0.075;
-    const delta = current - lastCurrent;
-    lastCurrent = current;
-    velocity += (THREE.MathUtils.clamp(delta * 12, -1, 1) - velocity) * 0.12;
+    current += (target - current) * 0.08;
 
-    // camera follows the path between planes
-    const i0 = THREE.MathUtils.clamp(Math.floor(current), 0, N - 1);
+    // pan between stops, easing out a little mid-pan
+    const i0 = THREE.MathUtils.clamp(Math.floor(current), -1, N - 1);
     const i1 = Math.min(N - 1, i0 + 1);
     const f = THREE.MathUtils.clamp(current - i0, 0, 1);
-    const ease = f * f * (3 - 2 * f);
-    const fx = planes[i0].mesh.userData.x, nx = planes[i1].mesh.userData.x;
-    const camX = THREE.MathUtils.lerp(fx, nx, ease) * 0.55;
+    const e = f * f * (3 - 2 * f);
+    const camX = THREE.MathUtils.lerp(stops[i0].x, stops[i1].x, e);
+    const camY = THREE.MathUtils.lerp(stops[i0].y, stops[i1].y, e);
+    const dist = DIST + Math.sin(f * Math.PI) * 1.8;
 
-    mouse.sx += (mouse.x - mouse.sx) * 0.05;
-    mouse.sy += (mouse.y - mouse.sy) * 0.05;
-    camera.position.set(camX + mouse.sx * 0.35, mouse.sy * 0.2, -current * GAP + VIEW);
-    camera.lookAt(camX * 0.6, 0, camera.position.z - VIEW);
+    mouse.sx += (mouse.x - mouse.sx) * 0.04;
+    mouse.sy += (mouse.y - mouse.sy) * 0.04;
+    const px = camX + mouse.sx * 0.12;
+    const py = camY + mouse.sy * 0.08;
+    camera.position.set(px, py, dist);
+    camera.lookAt(px, py, 0);
 
-    // switch once the current plane has started fading out
-    setActive(THREE.MathUtils.clamp(Math.floor(current + 0.8), 0, N - 1));
+    // move the css dot grid with the camera so the board is one continuous surface
+    const ppu = pxPerUnit(dist);
+    const spacing = (DOT / pxPerUnit(DIST)) * ppu;
+    body.style.backgroundSize = `${spacing}px ${spacing}px`;
+    body.style.backgroundPosition = `${innerWidth / 2 - px * ppu}px ${innerHeight / 2 + py * ppu}px`;
 
-    // hover detection
+    if (current > -0.5) setActive(THREE.MathUtils.clamp(Math.floor(current + 0.5), 0, N - 1));
+
+    // hover: only within the gallery and on desktop
+    const inGallery = !mobile && scrollY > work.offsetTop - innerHeight * 0.3;
     raycaster.setFromCamera(pointer, camera);
-    const hits = raycaster.intersectObjects(planes.map((p) => p.mesh));
-    const hit = hits.find((h) => h.object.material.uniforms.uOpacity.value > 0.5);
-    const inGallery = scrollY > work.offsetTop - innerHeight * 0.5 && !mobile;
-    hovered = hit && inGallery ? hit.object : null;
-    document.body.classList.toggle("hovering-plane", !!hovered);
-    cursorLabel.classList.toggle("on", !!hovered);
-    cursorLabel.style.translate = `${labelX}px ${labelY}px`;
+    const hit = inGallery ? raycaster.intersectObjects(cards.map((c) => c.paper))[0] : null;
+    hovered = hit ? hit.object.userData.index : -1;
+    body.classList.toggle("hovering-card", hovered >= 0);
+    cursorLabel.classList.toggle("on", hovered >= 0);
 
-    planes.forEach(({ mesh, material, video }, i) => {
-      const u = material.uniforms;
-      const dz = camera.position.z - mesh.position.z; // distance in front of the camera
-      // fade in from the distance, fade out as the camera passes through
-      const near = THREE.MathUtils.smoothstep(dz, 1.8, 3.4);
-      const far = 1 - THREE.MathUtils.smoothstep(dz, GAP * 1.6, GAP * 2.6);
-      u.uOpacity.value = near * far;
-      u.uTime.value = t;
-      u.uVel.value = velocity;
-      u.uActive.value += ((i === active ? 1 : 0) - u.uActive.value) * 0.08;
-      const h = hovered === mesh ? 1 : 0;
-      u.uHover.value += (h - u.uHover.value) * 0.08;
-      if (hovered === mesh && hit) u.uMouse.value.lerp(hit.uv, 0.2);
-      mesh.position.y = mesh.userData.y + Math.sin(t * 0.6 + i) * 0.04;
+    const settle = (item, lift) => {
+      item.lift += (lift - item.lift) * 0.12;
+      item.group.position.z = item.lift;
+      // shadow spreads and softens as the item rises
+      const u = item.shadow.material.uniforms;
+      u.uBlur.value = 0.22 + item.lift * 1.2;
+      u.uStrength.value = 0.2 - item.lift * 0.15;
+      item.shadow.position.set(item.lift * 0.2, -0.06 - item.lift * 0.6, -item.lift + 0.001);
+    };
+    cards.forEach((c, i) => settle(c, i === hovered ? 0.4 : i === active ? 0.1 : 0));
+    notes.forEach((n) => settle(n, 0.06));
 
-      // only decode videos that are on screen
-      if (video) {
-        const show = u.uOpacity.value > 0.05;
-        if (show && video.paused) video.play().catch(() => {});
-        else if (!show && !video.paused) video.pause();
-      }
-    });
-
-    dust.rotation.z = t * 0.01;
-    accent.rotation.z = -t * 0.015;
     renderer.render(scene, camera);
   }
   frame();

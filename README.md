@@ -16,10 +16,12 @@ https://kiettonguyen.github.io/ is a small page linking to both.
 assets/                 shared images & videos (used by both versions)
   <project>/            NN.png/jpg, NN.mp4 (+ NN-poster.jpg) converted from the original GIFs, NN.gif originals
   about/                personal photos
+  doodles/              hand-drawn SVGs (underline, arrow, sparkle, tape)
+shared/board.css        whiteboard theme shared by both versions (dotted board, cards, sticky notes, case studies)
 experimental/
   index.html            home page (project list drives the 3D gallery)
   css/style.css
-  js/home.js            three.js scene (loaded from jsDelivr, no install needed)
+  js/home.js            three.js whiteboard scene (loaded from jsDelivr, no install needed)
   js/main.js            scroll reveals, lightbox, video autoplay, list hover preview
   work/<project>/       case-study pages (generated)
 plain/
@@ -33,8 +35,9 @@ scripts/build_case_studies.py   case-study content + generator for both versions
 - **Case-study text / images:** edit the content in `scripts/build_case_studies.py`, then run
   `python3 scripts/build_case_studies.py` — this rewrites `experimental/work/` and `plain/work/`.
 - **Home pages:** edit `experimental/index.html` / `plain/index.html` directly. In the experimental version,
-  each `.project-list` link's `data-cover` (image or `.mp4`) becomes a plane in the 3D gallery.
-- **Colours / fonts:** top of each stylesheet under `:root`.
+  each `.project-list` link's `data-cover` (image or `.mp4`) becomes a card on the 3D board, and an
+  optional `data-note` adds a sticky note beside it.
+- **Colours / fonts:** `:root` at the top of `shared/board.css` (fonts: Bricolage Grotesque, Inter, Caveat).
 
 Preview locally: `python3 -m http.server` in this folder, then open http://localhost:8000.
 Push to `main` and GitHub Pages redeploys in a minute or two.

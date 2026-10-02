@@ -7,7 +7,8 @@
   <meta name="description" content="Kiet Nguyen is a designer based in Melbourne, AU — curious about how the world learns, and making it better.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Caveat:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/board.css">
   <link rel="stylesheet" href="css/style.css">
   <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" } }
@@ -15,10 +16,10 @@
 </head>
 <body class="home">
   <canvas id="gl" aria-hidden="true"></canvas>
-  <div class="cursor-label" aria-hidden="true">View</div>
+  <div class="cursor-label" aria-hidden="true">Open ↗</div>
 
-  <header class="site-header">
-    <a href="#" class="logo">Kiet Nguyen</a>
+  <header class="toolbar">
+    <a href="./" class="logo"><span class="dot"></span>Kiet Nguyen</a>
     <nav>
       <a href="#work">Work</a>
       <a href="#about">About</a>
@@ -28,43 +29,45 @@
 
   <main>
     <section class="hero">
-      <h1>
+      <h1 class="raised">
         <span class="line"><span>Hello, I'm Kiet.</span></span>
-        <span class="line"><span>A designer based</span></span>
-        <span class="line"><span>in Melbourne, AU.</span></span>
+        <span class="line"><span>A designer based in</span></span>
+        <span class="line"><span><span class="doodled">Melbourne<img class="doodle underline" src="../assets/doodles/underline.svg" alt=""></span>, AU.</span></span>
       </h1>
-      <p class="hero-sub">I'm curious about how the world learns — and making it better.</p>
-      <p class="scroll-cue">Scroll to explore <span>↓</span></p>
+      <div class="sticky yellow hero-note">
+        I'm curious about how the world <strong>learns</strong> — and making it better.
+      </div>
+      <p class="hand-note">scroll to pan the board <img src="../assets/doodles/arrow.svg" alt=""></p>
     </section>
 
-    <!-- 3D scroll gallery: height is set in js/home.js from the number of projects -->
+    <!-- 3D board: height is set in js/home.js from the number of projects -->
     <section id="work" class="work-3d">
       <div class="work-stage">
-        <p class="stage-label">Selected Work</p>
-        <div class="hud">
+        <div class="hud card">
           <p class="hud-count"><span class="hud-i">01</span> / <span class="hud-n">05</span></p>
           <h2 class="hud-title"><a href="#"></a></h2>
           <p class="hud-meta"></p>
           <a class="hud-cta" href="#">View case study →</a>
         </div>
-        <div class="hud-progress"><span></span></div>
+        <div class="minimap card" aria-label="Jump to project"></div>
       </div>
     </section>
 
-    <!-- Project index: source of truth for the 3D gallery and the fallback when WebGL is unavailable -->
+    <!-- Project index: source of truth for the 3D board and the fallback when WebGL is unavailable.
+         data-note adds a sticky note next to the card on the board. -->
     <section class="index" id="index">
-      <h2 class="section-title">All Projects</h2>
-      <ol class="project-list">
+      <h2 class="section-title">All projects</h2>
+      <ol class="project-list card">
         <li><a href="work/indigenous-inclusion/" data-cover="../assets/indigenous-inclusion/02.mp4" data-poster="../assets/indigenous-inclusion/02-poster.jpg">
           <span class="idx">01</span><span class="name">Indigenous Inclusion Storyline</span><span class="kind">e-Learning · Illustration</span><span class="yr">2023</span>
         </a></li>
-        <li><a href="work/motivational-interviewing/" data-cover="../assets/motivational-interviewing/01.mp4" data-poster="../assets/motivational-interviewing/01-poster.jpg">
+        <li><a href="work/motivational-interviewing/" data-cover="../assets/motivational-interviewing/01.mp4" data-poster="../assets/motivational-interviewing/01-poster.jpg" data-note="built in Rise + Vyond">
           <span class="idx">02</span><span class="name">Motivational Interviewing e-Learning</span><span class="kind">e-Learning · Articulate Rise</span><span class="yr">2023</span>
         </a></li>
         <li><a href="work/mamaskangaroo/" data-cover="../assets/mamaskangaroo/06.mp4" data-poster="../assets/mamaskangaroo/06-poster.jpg">
           <span class="idx">03</span><span class="name">Mamas Kangaroo</span><span class="kind">E-commerce · Branding</span><span class="yr">2021</span>
         </a></li>
-        <li><a href="work/melbourne-hack-2021/" data-cover="../assets/melbourne-hack-2021/03.png" data-poster="../assets/melbourne-hack-2021/03.png">
+        <li><a href="work/melbourne-hack-2021/" data-cover="../assets/melbourne-hack-2021/03.png" data-poster="../assets/melbourne-hack-2021/03.png" data-note="1st place!">
           <span class="idx">04</span><span class="name">Melbourne Hack 2021</span><span class="kind">Hackathon · Product Design</span><span class="yr">2021</span>
         </a></li>
         <li><a href="work/living-museum-of-the-west/" data-cover="../assets/living-museum-of-the-west/01.mp4" data-poster="../assets/living-museum-of-the-west/01-poster.jpg">
@@ -75,36 +78,34 @@
     </section>
 
     <section id="about" class="about">
-      <h2 class="section-title">About</h2>
-      <div class="about-grid">
-        <div class="about-body reveal">
-          <p class="about-lead">I'm a designer based in Melbourne, curious about how the world learns — and making it better.</p>
-          <p>My work spans e-Learning, branding, and UX/UI — from story-driven learning modules built with Articulate and Vyond, to e-commerce identities and award-winning hackathon products.</p>
-          <ul class="skills">
-            <li>e-Learning</li>
-            <li>Branding &amp; Identity</li>
-            <li>UX/UI Design</li>
-            <li>Illustration &amp; Motion</li>
-            <li>Adobe Creative Suite</li>
-            <li>Figma</li>
-            <li>Articulate</li>
-            <li>Vyond</li>
-          </ul>
-        </div>
-        <div class="photos reveal">
-          <img src="../assets/about/01.jpg" alt="Golden retriever napping on an outdoor couch" loading="lazy" data-zoom>
-          <img src="../assets/about/03.jpg" alt="Pencil sketch of a kitten" loading="lazy" data-zoom>
-          <img src="../assets/about/02.jpg" alt="Friends walking down a narrow street lined with shops" loading="lazy" data-zoom>
-          <img src="../assets/about/04.jpg" alt="Hillside town with sun rays over green mountains" loading="lazy" data-zoom>
-        </div>
+      <div class="card about-card reveal">
+        <span class="frame-label">About</span>
+        <p class="about-lead raised">I'm a designer based in Melbourne, curious about how the world learns — and making it better.</p>
+        <p>My work spans e-Learning, branding, and UX/UI — from story-driven learning modules built with Articulate and Vyond, to e-commerce identities and award-winning hackathon products.</p>
+        <ul class="skills">
+          <li>e-Learning</li>
+          <li>Branding &amp; Identity</li>
+          <li>UX/UI Design</li>
+          <li>Illustration &amp; Motion</li>
+          <li>Adobe Creative Suite</li>
+          <li>Figma</li>
+          <li>Articulate</li>
+          <li>Vyond</li>
+        </ul>
+      </div>
+      <div class="polaroids reveal">
+        <figure><img src="../assets/about/01.jpg" alt="Golden retriever napping on an outdoor couch" loading="lazy" data-zoom></figure>
+        <figure><img src="../assets/about/03.jpg" alt="Pencil sketch of a kitten" loading="lazy" data-zoom></figure>
+        <figure><img src="../assets/about/02.jpg" alt="Friends walking down a narrow street lined with shops" loading="lazy" data-zoom></figure>
+        <figure><img src="../assets/about/04.jpg" alt="Hillside town with sun rays over green mountains" loading="lazy" data-zoom></figure>
       </div>
     </section>
 
     <section id="contact" class="contact">
-      <h2 class="section-title">Let's work together</h2>
-      <a class="email" href="mailto:hello@yourdomain.com">hello@yourdomain.com</a>
-      <div class="socials">
-        <a href="https://www.linkedin.com/in/kietngu" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <div class="sticky yellow contact-note">
+        <p class="hand">Let's work together!</p>
+        <a class="email" href="mailto:hello@yourdomain.com">hello@yourdomain.com</a>
+        <a class="linkedin" href="https://www.linkedin.com/in/kietngu" target="_blank" rel="noopener">LinkedIn ↗</a>
       </div>
     </section>
   </main>
