@@ -113,3 +113,77 @@
 @media (max-width: 520px) {
   .hero-note { width: 100%; margin-right: 0; }
 }
+
+/* ---------- Paper board ----------
+   The dotted paper fills the whole screen and stays put; everything else sits in front of it.
+   No opaque panels: text is written straight onto the board, images are white-bordered prints. */
+:root {
+  --board: #f4f2ec;
+  --dot: #bfbaad;
+  --print: 0 1px 1px rgba(23, 23, 26, .08), 0 10px 22px -4px rgba(23, 23, 26, .16);
+  --print-up: 0 2px 2px rgba(23, 23, 26, .08), 0 26px 40px -8px rgba(23, 23, 26, .22);
+}
+body {
+  background-color: var(--board);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(var(--dot) 1.3px, transparent 1.6px);
+  background-size: 200px 200px, 22px 22px;
+  background-attachment: fixed;
+}
+
+/* Lifted lettering: a hairline highlight plus a soft shadow cast on the paper */
+.raised, .hero h1, .cs-hero h1, .frame h2, .cs-h, .about-lead {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .9), 0 2px 1px rgba(23, 23, 26, .06), 0 8px 14px rgba(23, 23, 26, .08);
+}
+/* Body copy gets a faint paper-coloured halo so dots never cut through letters */
+.frame p, .about-card p, .cs-body p, .cs-body li, .cs-specs dd, .cs-lead, .hero p {
+  text-shadow: 0 0 4px var(--board), 0 0 8px var(--board);
+}
+
+/* Header: just ink on the board, no bar */
+.toolbar {
+  position: absolute;
+  background: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  padding-left: 8px;
+  padding-right: 0;
+}
+nav a:hover { background: #fff; box-shadow: var(--print); }
+
+/* Project frames: the image is a print pinned to the board, the caption is written beneath it */
+.frame .card { background: none; box-shadow: none; border-radius: 0; padding: 0; }
+.frame:hover .card { box-shadow: none; transform: none; }
+.frame img {
+  border: 8px solid #fff;
+  border-radius: 4px;
+  box-shadow: var(--print);
+  transition: transform .5s cubic-bezier(.2, .7, .1, 1), box-shadow .5s;
+}
+.frame:nth-child(4n+1) img { transform: rotate(-1deg); }
+.frame:nth-child(4n+2) img { transform: rotate(.8deg); }
+.frame:nth-child(4n+3) img { transform: rotate(.6deg); }
+.frame:nth-child(4n) img { transform: rotate(-.7deg); }
+.frame:hover img { transform: rotate(0) translateY(-6px); box-shadow: var(--print-up); }
+.frame .card, .frame:nth-child(n) .card { transform: none; }
+.frame h2 { margin: 20px 0 2px; }
+.frame p { margin: 0; }
+.badge { top: -12px; right: 14px; }
+
+/* About: text on the board, skills as little paper tags */
+.about-card { background: none; box-shadow: none; padding: 0; }
+.skills li { background: #fff; box-shadow: 0 1px 1px rgba(23, 23, 26, .08), 0 4px 8px rgba(23, 23, 26, .06); }
+.polaroids figure { box-shadow: var(--print); }
+.polaroids figure:hover { box-shadow: var(--print-up); }
+
+/* Case studies: no sheet — content sits directly on the board */
+.cs-body { background: none; box-shadow: none; border-radius: 0; padding: 0; max-width: 820px; }
+.cs-body > p, .cs-split p, .cs-list { color: #2c2c31; }
+.cs-media img, .cs-media video, .cs-media.yt iframe {
+  border: 8px solid #fff;
+  border-radius: 4px;
+  box-shadow: var(--print);
+}
+.cs-gallery { gap: 24px; }
+.tags li, .back { box-shadow: 0 1px 1px rgba(23, 23, 26, .08), 0 4px 8px rgba(23, 23, 26, .06); }
