@@ -3,53 +3,125 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kiet Nguyen — Choose a version</title>
-  <meta name="robots" content="noindex">
+  <title>Kiet Nguyen — Designer</title>
+  <meta name="description" content="Kiet Nguyen is a designer based in Melbourne, AU — curious about how the world learns, and making it better.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: "Inter", system-ui, sans-serif;
-      background: #f6f4ef;
-      color: #141414;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-    }
-    main { width: 100%; max-width: 880px; }
-    p.label { font-size: .8rem; text-transform: uppercase; letter-spacing: .15em; color: #6b6b6b; margin-bottom: 24px; }
-    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    a {
-      display: block;
-      padding: 40px 32px;
-      border: 1px solid #141414;
-      border-radius: 10px;
-      color: inherit;
-      text-decoration: none;
-      transition: background .3s, color .3s;
-    }
-    a:hover { background: #141414; color: #f6f4ef; }
-    a h2 { font-family: "Fraunces", Georgia, serif; font-size: 2rem; letter-spacing: -0.02em; margin-bottom: 8px; }
-    a span { opacity: .7; }
-    @media (max-width: 600px) { .options { grid-template-columns: 1fr; } }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Caveat:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/board.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header class="toolbar">
+    <a href="./" class="logo"><span class="dot"></span>Kiet Nguyen</a>
+    <nav>
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
   <main>
-    <p class="label">Kiet Nguyen — portfolio drafts</p>
-    <div class="options">
-      <a href="experimental/">
-        <h2>Experimental →</h2>
-        <span>Interactive three.js scroll gallery</span>
+    <section class="hero">
+      <h1 class="raised">
+        Hello, I'm Kiet.<br>
+        A designer based in
+        <span class="doodled">Melbourne<img class="doodle underline" src="assets/doodles/underline.svg" alt=""></span>, AU.
+      </h1>
+
+      <div class="sticky yellow hero-note">
+        I'm curious about how the world <strong>learns</strong> — and making it better.
+      </div>
+      <div class="sticky pink hero-tags">e-Learning<br>Branding<br>UX / UI</div>
+      <img class="doodle sparkle" src="assets/doodles/sparkle.svg" alt="">
+
+      <p class="hand-note">some recent work <img src="assets/doodles/arrow.svg" alt=""></p>
+    </section>
+
+    <section id="work" class="work">
+      <a class="frame" href="work/indigenous-inclusion/">
+        <span class="frame-label">01 — e-Learning · 2023</span>
+        <div class="card">
+          <img src="assets/indigenous-inclusion/02-poster.jpg" alt="Indigenous Inclusion Storyline" loading="lazy">
+          <h2>Indigenous Inclusion Storyline</h2>
+          <p>A story-driven e-Learning module on Aboriginal Australian history and culture.</p>
+        </div>
       </a>
-      <a href="plain/">
-        <h2>Plain →</h2>
-        <span>Simple, clean HTML &amp; CSS</span>
+      <a class="frame" href="work/motivational-interviewing/">
+        <span class="frame-label">02 — e-Learning · 2023</span>
+        <div class="card">
+          <img src="assets/motivational-interviewing/01-poster.jpg" alt="Motivational Interviewing e-Learning" loading="lazy">
+          <h2>Motivational Interviewing</h2>
+          <p>Making mental-health communication techniques approachable for support workers.</p>
+        </div>
       </a>
-    </div>
+      <a class="frame" href="work/mamaskangaroo/">
+        <span class="frame-label">03 — E-commerce · Branding · 2021</span>
+        <div class="card">
+          <img src="assets/mamaskangaroo/06-poster.jpg" alt="Mamas Kangaroo" loading="lazy">
+          <h2>Mamas Kangaroo</h2>
+          <p>Brand and Shopify store for a startup supporting expectant mothers.</p>
+        </div>
+      </a>
+      <a class="frame" href="work/melbourne-hack-2021/">
+        <span class="frame-label">04 — Hackathon · 2021</span>
+        <div class="card">
+          <span class="badge">1st place</span>
+          <img src="assets/melbourne-hack-2021/03.png" alt="Melbourne Hack 2021" loading="lazy">
+          <h2>Melbourne Hack 2021</h2>
+          <p>AnyExercise — a gamified, pose-detecting exercise app for seniors.</p>
+        </div>
+      </a>
+      <a class="frame" href="work/living-museum-of-the-west/">
+        <span class="frame-label">05 — UX/UI · Branding · 2021</span>
+        <div class="card">
+          <img src="assets/living-museum-of-the-west/04.png" alt="Living Museum of the West" loading="lazy">
+          <h2>Living Museum of the West</h2>
+          <p>A branding and UX refresh for a Melbourne ecomuseum.</p>
+        </div>
+      </a>
+    </section>
+
+    <section id="about" class="about">
+      <div class="card about-card">
+        <span class="frame-label">About</span>
+        <p class="about-lead raised">I'm a designer based in Melbourne, curious about how the world learns — and making it better.</p>
+        <p>My work spans e-Learning, branding, and UX/UI — from story-driven learning modules built with Articulate and Vyond, to e-commerce identities and award-winning hackathon products.</p>
+        <ul class="skills">
+          <li>e-Learning</li>
+          <li>Branding &amp; Identity</li>
+          <li>UX/UI Design</li>
+          <li>Illustration &amp; Motion</li>
+          <li>Adobe Creative Suite</li>
+          <li>Figma</li>
+          <li>Articulate</li>
+          <li>Vyond</li>
+        </ul>
+      </div>
+      <div class="polaroids">
+        <figure><img src="assets/about/01.jpg" alt="Golden retriever napping on an outdoor couch" loading="lazy" data-zoom></figure>
+        <figure><img src="assets/about/03.jpg" alt="Pencil sketch of a kitten" loading="lazy" data-zoom></figure>
+        <figure><img src="assets/about/02.jpg" alt="Friends walking down a narrow street lined with shops" loading="lazy" data-zoom></figure>
+        <figure><img src="assets/about/04.jpg" alt="Hillside town with sun rays over green mountains" loading="lazy" data-zoom></figure>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="sticky yellow contact-note">
+        <p class="hand">Let's work together!</p>
+        <a class="email" href="mailto:hello@yourdomain.com">hello@yourdomain.com</a>
+        <a class="linkedin" href="https://www.linkedin.com/in/kietngu" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+    </section>
   </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span class="year"></span> Kiet Nguyen</p>
+    <a href="#">Back to top ↑</a>
+  </footer>
+
+  <div class="lightbox" hidden><img alt=""></div>
+
+  <script src="script.js"></script>
 </body>
 </html>

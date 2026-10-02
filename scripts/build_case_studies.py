@@ -2,7 +2,7 @@
 
     python3 scripts/build_case_studies.py
 
-Writes experimental/work/<slug>/index.html and plain/work/<slug>/index.html.
+Writes work/<slug>/index.html (plain site, at the root) and experimental/work/<slug>/index.html.
 Edit project text here (not in the generated pages), then re-run.
 """
 import html, os, re
@@ -208,7 +208,9 @@ def render_block(b, a):
 
 
 def page(i, p, site):
-    a = f"../../../assets/{p['slug']}/"
+    # the plain site lives at the repo root, the experimental one in experimental/
+    up = "../../../" if site == "experimental" else "../../"
+    a = f"{up}assets/{p['slug']}/"
     css, js = ("../../css/style.css", "../../js/main.js") if site == "experimental" else ("../../style.css", "../../script.js")
     nxt = P[(i + 1) % len(P)]
     tags = "".join(f"<li>{e(t)}</li>" for t in p["tags"])
@@ -224,7 +226,7 @@ def page(i, p, site):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Caveat:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../../shared/board.css">
+  <link rel="stylesheet" href="{up}shared/board.css">
   <link rel="stylesheet" href="{css}">
 </head>
 <body class="case-study">
@@ -278,7 +280,7 @@ for site in ("experimental", "plain"):
             out = out.replace("  <div class=\"progress\" aria-hidden=\"true\"></div>\n", "")
             out = re.sub(r' class="(?:split-words|reveal)"', "", out)
             out = out.replace(" reveal", "")
-        d = os.path.join(ROOT, site, "work", p["slug"])
+        d = os.path.join(ROOT, "experimental" if site == "experimental" else "", "work", p["slug"])
         os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, "index.html"), "w") as f:
             f.write(out)
