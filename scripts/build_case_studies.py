@@ -210,7 +210,7 @@ def render_block(b, a):
 def page(i, p):
     up = "../../"
     a = f"{up}assets/{p['slug']}/"
-    css, js = "../../style.css", "../../script.js"
+    css, js = "../../style.css?v=3", "../../script.js?v=3"
     nxt = P[(i + 1) % len(P)]
     tags = "".join(f"<li>{e(t)}</li>" for t in p["tags"])
     sub = f' <em>({e(p["subtitle"])})</em>' if p.get("subtitle") else ""
@@ -225,8 +225,8 @@ def page(i, p):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{up}shared/board.css">
-  <link rel="stylesheet" href="{css}">
+  <link rel="stylesheet" href="{up}shared/board.css?v=3">
+  <link rel="stylesheet" href="{css}?v=3">
 </head>
 <body class="case-study">
   <header class="toolbar">
@@ -263,7 +263,7 @@ def page(i, p):
   </footer>
 
   <div class="lightbox" hidden><img alt=""></div>
-  <script src="{js}"></script>
+  <script src="{js}?v=3"></script>
 </body>
 </html>
 """
