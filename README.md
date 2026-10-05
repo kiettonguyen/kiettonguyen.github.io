@@ -24,7 +24,7 @@ scripts/build_case_studies.py   case-study content + generator
   `python3 scripts/build_case_studies.py` — this rewrites `work/`.
 - **Home page:** edit `index.html` directly.
 - **Colours / fonts:** `:root` at the top of `shared/board.css` (fonts: Zen Kaku Gothic New, Klee One for the 阮 mark).
-- **Cache:** CSS/JS links end in `?v=N`. Bump N in `index.html`, `work/*/index.html` and the generator after changing them, so visitors skip their cached copy.
+- **Cache:** CSS/JS links end in `?v=N`. Bump N in `index.html`, `404.html`, `work/*/index.html` and the generator after changing them, so visitors skip their cached copy.
 
 Preview locally: `python3 -m http.server` in this folder, then open http://localhost:8000.
 Push to `main` and GitHub Pages redeploys in a minute or two.
