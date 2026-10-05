@@ -35,13 +35,14 @@
    a narrow, light statement on the right. */
 .hero {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 64px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 48px 32px;
   align-items: start;
   padding: 130px 0 200px;
 }
 .hero-meta { --f: -1.2; display: flex; flex-direction: column; gap: 8px; }
-.hero-text { display: flex; flex-direction: column; gap: 14px; max-width: 420px; }
+/* the statement starts at the second column, lining up with the work and about columns below */
+.hero-text { grid-column: 2 / -1; display: flex; flex-direction: column; gap: 14px; max-width: 560px; }
 .hero h1 {
   --f: -.6;
   font-size: 21px;
@@ -86,7 +87,10 @@
 /* About */
 .about-cols { font-size: 15px; line-height: 1.75; }
 /* 3.1 About gets the full row so the text can breathe; Skills and Connect sit in columns under it */
-.about-cols > .about-lead { grid-column: 1 / -1; max-width: 640px; }
+.about-cols > .about-lead { grid-column: 1 / -1; }
+/* its two paragraphs flow in two columns, so the row is filled without overlong lines */
+.about-lead .about-text { columns: 2; column-gap: 32px; }
+.about-lead .about-text p { break-inside: avoid; margin-bottom: 14px; }
 .about-cols > div { display: flex; flex-direction: column; gap: 14px; }
 .about-cols .label { margin: 0; }
 .list { list-style: none; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
@@ -96,6 +100,8 @@
 
 @media (max-width: 860px) {
   .hero { grid-template-columns: minmax(0, 1fr); gap: 32px; padding: 72px 0 120px; }
+  .hero-text { grid-column: auto; }
+  .about-lead .about-text { columns: 1; }
   .cols { grid-template-columns: minmax(0, 1fr); }
   #work { padding-bottom: 96px; }
   #about { padding-bottom: 140px; }

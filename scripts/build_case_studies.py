@@ -12,7 +12,7 @@ e = html.escape
 
 # The Living Museum card sort, redrawn as text on the paper (the original was a dark screenshot)
 CARD_SORT = (
-    '<figure class="cs-media wide sort-fig"><div class="sort">'
+    '<figure class="cs-media wide plate sort-fig"><div class="sort">'
     '<div class="sort-col"><h4>Homepage <small>4 cards</small></h4><p class="sort-card">Acknowledgements</p><p class="sort-card">Event / exhibition / workshop schedule or calendar</p><p class="sort-card">Storytelling concept: objects users hover for more info</p><p class="sort-card">What’s on / news (quick view)</p><p class="sort-card loose">News page / blog</p></div>'
     '<div class="sort-col"><h4>About <small>3 cards</small></h4><p class="sort-card">Pipemakers Park</p><p class="sort-card">About us</p><p class="sort-card">Buildings + facilities</p><p class="sort-card loose">FAQ?</p></div>'
     '<div class="sort-col"><h4>Digital library / catalogue <small>5 cards</small></h4><p class="sort-card">Browsing section</p><p class="sort-card">Reference enquiry</p><p class="sort-card">Search function</p><p class="sort-card">“Cart”: favourites</p><p class="sort-card">Research</p><p class="sort-card loose">Login</p></div>'
@@ -31,7 +31,7 @@ P = [
       ("h", "My Role"),
       ("p", "I was assigned this project to create a piece of e-Learning and create a fresh perspective/outlook on an older PowerPoint."),
       ("p", "I was acutely aware of the importance of accurate representation and cultural authenticity. To ensure a respectful and genuine portrayal of the topic, I actively sought the guidance and collaboration of a subject matter expert who is an Aboriginal Australian. This collaborative engagement was foundational in shaping the content and approach of the e-Learning module."),
-      ("img", "01.png", "Storyline structure map for the module", "wide"),
+      ("img", "01.png", "Storyline structure map for the module", "wide plate"),
       ("h", "Storytelling through imagery and motion effects"),
       ("p", "This e-Learning module emphasises a story-driven approach, leveraging animations and moving visual effects to engage and immerse learners. The stories shared within this module highlight the historical context, cultural practices, and the ongoing journey of Aboriginal Australians, providing a platform for empathy, reflection, and learning."),
       ("p", "I thought of ways to animate and showcase what the sophisticated systems that the Aboriginal Australians had would look like. I created an isometric illustration of land, water and the skies to portray this."),
@@ -81,7 +81,7 @@ P = [
       ("h", "Information Architecture"),
       ("p", "Considering the target audience of expectant mothers, creating a basic and simple web structure is important. I built an information architecture diagram to map out the priorities of the customer. Bringing focus to a user-friendly customer journey, the diagram aims to direct customers to checkout as seamlessly as possible."),
       ("p", "With a theme-coded website builder like Shopify, I ensured that only key pages and functions are mapped out, to prevent any roadblocks in cases where certain functions are ambitious to create in the builder."),
-      ("img", "02.png", "Information architecture diagram", "wide"),
+      ("img", "02.png", "Information architecture diagram", "wide plate"),
       ("h", "E-Commerce Friendly"),
       ("p", "E-commerce sites can be tricky to develop, especially when using a theme-coded builder such as Shopify. Creating wireframes that are simple, easy to build and modular is the most effective directive to prevent redesigning in cases where the builder is not able to replicate the design."),
       ("p", "Hence, I created a system of wireframes that understands the ecosystem of Shopify and presents itself in a modular manner."),
@@ -136,7 +136,7 @@ P = [
     lead="Founded in 1984, Melbourne's Living Museum of the West is an ecomuseum located at Pipemakers Park, Maribyrnong. It acts as an archive hub for researchers looking to learn more about West Melbourne's past through recorded storytelling.",
     cover=("video", "01"),
     blocks=[
-      ("video", "01", "Living Museum logo animation", "medium"),
+      ("video", "01", "Living Museum logo animation", "medium plate"),
       ("h", "The Brief"),
       ("p", "The Living Museum had been hoping to reinvigorate and expand its subjective story collection in contemporary ways. Part of this goal is achieved through increasing their website accessibility. It is important the museum expresses its non-compartmentalised nature through a modern website framework as a contemporary reinvention. We were tasked to produce a branding and UX refresh of the museum's website in both desktop and mobile iterations."),
       ("h", "Our Concept"),
@@ -162,14 +162,14 @@ P = [
       ("raw", CARD_SORT),
       ("h", "Creating an initial system"),
       ("p", "Part of the challenge of reorganising such a large archive of information and pages is managing the information architecture and how it flows. These are some initial wireframes we made to understand the order of the user experience and flow of the customer journey."),
-      ("img", "04.png", "Initial wireframes", "wide"),
+      ("img", "04.png", "Initial wireframes", "wide plate"),
       ("h", "Implementing a Grid System"),
       ("p", "We revisited the drawing board to find more efficient ways to display the content. Due to the astronomical amount of text within the museum website, it was imperative to break the verticality of the site. This helps reduce user frustration as users don't have to scroll so far to find their information."),
       ("ul", ["Using a grid system improves space efficiency and allows for less verticality.",
               "Having everything properly aligned increases usability, as elements are easy to track and find.",
               "Within each project, breaking up the page into blocks reduces huge chunks of text and allocates a visual to each text."]),
       ("gallery", [("img", "05.png", "Projects overview page"), ("img", "06.png", "Art projects page"),
-                   ("img", "07.png", "History and community projects page"), ("img", "08.png", "Student projects page")]),
+                   ("img", "07.png", "History and community projects page"), ("img", "08.png", "Student projects page")], "plate"),
       ("h", "Demo"),
       ("yt", "GURWAT-_vqU", "The Living Museum Website [Desktop]"),
       ("yt", "LWNiWBBJUT0", "The Living Museum Website [Mobile]"),
@@ -201,7 +201,8 @@ def render_block(b, a):
         return f'<figure class="cs-media {size}">{media(t, f, b[2])}</figure>'
     if t == "gallery":
         items = "".join(f'<figure class="cs-media">{media(k, a + f, alt)}</figure>' for k, f, alt in b[1])
-        return f'<div class="cs-gallery n{len(b[1])}">{items}</div>'
+        extra = f" {b[2]}" if len(b) > 2 else ""
+        return f'<div class="cs-gallery n{len(b[1])}{extra}">{items}</div>'
     if t == "yt":
         return (f'<figure class="cs-media wide yt"><iframe src="https://www.youtube-nocookie.com/embed/{b[1]}" '
                 f'title="{e(b[2])}" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>'
@@ -214,7 +215,7 @@ def render_block(b, a):
     if t == "specs":
         return '<dl class="cs-specs">' + "".join(f"<dt>{e(k)}</dt><dd>{e(v)}</dd>" for k, v in b[1]) + "</dl>"
     if t == "split":
-        left = render_block(b[1] + ("small",), a)
+        left = render_block(b[1] + ("small plate",), a)  # the style guide sits on a soft plate
         right = "".join(render_block(x, a) for x in b[2])
         return f'<div class="cs-split">{left}<div>{right}</div></div>'
     raise ValueError(t)
@@ -244,8 +245,8 @@ def page(i, p):
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
-  <link rel="stylesheet" href="{up}shared/board.css?v=14">
-  <link rel="stylesheet" href="{css}?v=14">
+  <link rel="stylesheet" href="{up}shared/board.css?v=15">
+  <link rel="stylesheet" href="{css}?v=15">
 </head>
 <body class="case-study" style="--fig: '{FIG[p['slug']]}'">
   <header class="toolbar">
@@ -277,7 +278,7 @@ def page(i, p):
   </footer>
 
   <div class="lightbox" hidden><img alt=""></div>
-  <script src="{js}?v=14"></script>
+  <script src="{js}?v=15"></script>
 </body>
 </html>
 """

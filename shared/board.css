@@ -4,7 +4,7 @@
 
 :root {
   --paper: #EFE9DF;
-  --dot: rgba(59, 52, 45, .24);
+  --dot: rgba(59, 52, 45, .2);
   --ink: #3B342D;
   --sumi: #2B2520;
   --muted: #6B6157;
@@ -37,12 +37,13 @@ body {
   inset: -48px;
   z-index: -1;
   pointer-events: none;
-  background-image: radial-gradient(var(--dot) 1.15px, transparent 1.45px);
+  background-image: radial-gradient(var(--dot) 1.08px, transparent 1.35px);
   background-size: 24px 24px;
   /* script.js moves it with transform, not background-position, so it never repaints */
   will-change: transform;
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, .7) 22%, rgba(0, 0, 0, .7) 78%, #000 100%);
-  mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, .7) 22%, rgba(0, 0, 0, .7) 78%, #000 100%);
+  /* very faint fade: a touch lighter toward the middle, full strength at the edges */
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, .72) 0%, rgba(0, 0, 0, .8) 40%, #000 100%);
+  mask-image: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, .72) 0%, rgba(0, 0, 0, .8) 40%, #000 100%);
 }
 
 a { color: inherit; text-decoration: none; }
@@ -111,7 +112,7 @@ nav a { color: var(--muted); }
 
 /* ---------- Case-study pages: numbered like a textbook ---------- */
 .case-study { counter-reset: sec fig; }
-.cs-hero { padding: 80px 0 72px 220px; max-width: 1040px; }
+.cs-hero { padding: 80px 0 72px 220px; max-width: 900px; }
 .back { font-size: 14px; color: var(--muted); }
 .cs-year { margin-top: 48px; font-size: 13px; color: var(--accent); }
 .cs-year::before { content: "fig. " var(--fig, "") " · "; }
@@ -125,12 +126,12 @@ nav a { color: var(--muted); }
 .cs-hero h1 em { font-style: normal; font-size: .55em; color: var(--accent); white-space: nowrap; }
 .tags { list-style: none; display: flex; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
 .tags li + li::before { content: "·"; padding: 0 8px; }
-.cs-lead { margin-top: 28px; font-size: 17px; color: var(--muted); max-width: 56ch; }
+.cs-lead { margin-top: 28px; font-size: 17px; color: var(--muted); }
 
 /* body sits in a wide column; section numbers and figure labels hang in the left margin */
 .cs-body { max-width: 900px; margin-bottom: 96px; padding-left: 220px; }
 .cs-body > :first-child { margin-top: 0; }
-.cs-body > p, .cs-split p { font-size: 16px; margin-bottom: 18px; max-width: 68ch; }
+.cs-body > p, .cs-split p { font-size: 16px; margin-bottom: 18px; }
 .cs-h {
   position: relative;
   font-size: 22px;
@@ -148,7 +149,7 @@ nav a { color: var(--muted); }
   color: var(--accent);
   white-space: nowrap;
 }
-.cs-list { margin: 0 0 18px 1.2em; max-width: 66ch; }
+.cs-list { margin: 0 0 18px 1.2em; }
 .cs-list li { margin-bottom: 8px; }
 .cs-link { color: var(--accent); }
 .cs-link:hover { text-decoration: underline; }
@@ -164,13 +165,15 @@ nav a { color: var(--muted); }
   color: var(--accent);
   white-space: nowrap;
 }
-/* Figures sit in a hairline frame with a little padding, like a printed figure. Images multiply onto
-   the paper, so white backgrounds disappear and the frame keeps grey ones distinct. */
-.cs-media:not(.yt) { background: var(--paper); isolation: isolate; }
-.cs-media:not(.yt):not(.bare) { padding: 16px; box-shadow: inset 0 0 0 1px rgba(59, 52, 45, .14); }
-.cs-media img, .cs-media video { width: 100%; mix-blend-mode: multiply; }
+.cs-media img, .cs-media video { width: 100%; }
+/* Plate: a soft, see-through warm ground for diagrams and screenshots that had light backgrounds
+   (their white is cut out of the files, so the dots show through). Video can't be cut out, so it
+   multiplies onto a solid warm plate instead. */
+.cs-media.plate, .cs-gallery.plate .cs-media { padding: 18px; background: rgba(120, 98, 76, .07); }
+.cs-media.plate:has(video) { background: #E7E0D5; isolation: isolate; }
+.cs-media.plate video { mix-blend-mode: multiply; }
 /* a cut-out illustration: no plate, centred in the column */
-.cs-media.small.bare { max-width: none; background: none; }
+.cs-media.small.bare { max-width: none; }
 .cs-media.bare img { width: auto; max-width: 280px; margin: 0 auto; }
 .cs-media img { cursor: zoom-in; }
 .cs-media.small { max-width: 280px; }
@@ -300,10 +303,13 @@ html.ink-cursor, html.ink-cursor a, html.ink-cursor button, html.ink-cursor img[
 @media (max-width: 860px) { .sort { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* Sticky index in the left margin of project pages (built by script.js from the section headings) */
-.cs-body { position: relative; }
-.toc-wrap { position: absolute; left: 0; top: 0; bottom: 0; width: 180px; }
+.case-study main { position: relative; }
+.toc-wrap { position: absolute; left: 32px; width: 180px; }
 .toc { position: sticky; top: 40px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; line-height: 1.5; text-align: right; }
+.toc .toc-back { color: var(--muted); margin-bottom: 20px; }
 .toc .toc-fig { color: var(--accent); margin-bottom: 4px; }
 .toc a { color: var(--muted); transition: color .2s ease; }
 .toc a:hover, .toc a.here { color: var(--accent); }
+/* with the index showing, the back link lives in it rather than above the title */
+@media (min-width: 861px) { .has-toc .cs-hero .back { display: none; } .has-toc .cs-year { margin-top: 0; } }
 @media (max-width: 860px) { .toc-wrap { display: none; } }

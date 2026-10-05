@@ -182,6 +182,13 @@ if (heads.length >= 3) {
   const toc = document.createElement("nav");
   toc.className = "toc";
   toc.setAttribute("aria-label", "On this page");
+  // like the N1 prototype: the way back sits at the top of the index, then the figure number
+  const heroBack = document.querySelector(".cs-hero .back");
+  if (heroBack) {
+    const back = heroBack.cloneNode(true);
+    back.className = "toc-back";
+    toc.append(back);
+  }
   const label = document.createElement("span");
   label.className = "toc-fig";
   label.textContent = "fig. " + fig;
@@ -195,7 +202,18 @@ if (heads.length >= 3) {
     return a;
   });
   wrap.append(toc);
-  body.prepend(wrap);
+  // the index runs alongside the whole page, from the title down to the end of the write-up
+  const main = body.parentElement;
+  const hero = document.querySelector(".cs-hero");
+  main.prepend(wrap);
+  document.body.classList.add("has-toc");
+  const place = () => {
+    const top = hero.offsetTop + parseFloat(getComputedStyle(hero).paddingTop);
+    wrap.style.top = top + "px";
+    wrap.style.height = body.offsetTop + body.offsetHeight - top + "px";
+  };
+  place();
+  new ResizeObserver(place).observe(main);
   const spy = new IntersectionObserver((entries) => {
     entries.forEach((en) => {
       if (!en.isIntersecting) return;
