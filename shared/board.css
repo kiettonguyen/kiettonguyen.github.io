@@ -304,7 +304,9 @@ html.ink-cursor, html.ink-cursor a, html.ink-cursor button, html.ink-cursor img[
 
 /* Sticky index in the left margin of project pages (built by script.js from the section headings) */
 .case-study main { position: relative; }
-.toc-wrap { position: absolute; left: 32px; width: 180px; }
+/* above the drifting hero and body, which otherwise sit on top of it and swallow the clicks */
+.toc-wrap { position: absolute; left: 32px; width: 180px; z-index: 2; }
+.cs-h { scroll-margin-top: 40px; }
 .toc { position: sticky; top: 40px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; line-height: 1.5; text-align: right; }
 .toc .toc-back { color: var(--muted); margin-bottom: 20px; }
 .toc .toc-fig { color: var(--accent); margin-bottom: 4px; }
