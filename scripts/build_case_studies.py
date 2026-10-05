@@ -238,8 +238,12 @@ def page(i, p):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{e(p['title'])} — 阮 Kiet Nguyen</title>
+  <title>{e(p['title'])} — Kiet Nguyen 阮</title>
   <meta name="description" content="{e(p['lead'])}">
+  <link rel="canonical" href="https://kietn.com/work/{p['slug']}/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kiet Nguyen">
+  <meta property="og:url" content="https://kietn.com/work/{p['slug']}/">
   <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
