@@ -47,6 +47,23 @@ body::before {
   transition: transform 900ms var(--ease);
 }
 
+/* Parallax: each foreground layer drifts against the cursor by its own factor,
+   so the page floats over the still dots. Layers set --f; script.js sets --mx/--my. */
+.drift,
+.toolbar, .site-footer,
+#work, .about .cols, .photos,
+.cs-hero, .cs-body, .next-project {
+  transform: translate3d(calc(var(--mx) * var(--k) * var(--f, -.4)), calc(var(--my) * var(--k) * var(--f, -.4)), 0);
+  transition: transform 900ms var(--ease);
+}
+.toolbar, .site-footer { --f: -.2; }
+#work { --f: -.5; }
+.about .cols { --f: -.4; }
+.photos { --f: -.7; }
+.cs-hero { --f: -.6; }
+.cs-body { --f: -.3; }
+.next-project { --f: -.5; }
+
 a { color: inherit; text-decoration: none; }
 a:hover { color: var(--accent); }
 img, video { display: block; max-width: 100%; }

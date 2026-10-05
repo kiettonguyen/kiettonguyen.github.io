@@ -1,12 +1,6 @@
 /* Home page: hero with figure notes, work in category columns, about.
    Theme tokens and shared pieces live in shared/board.css */
 
-/* Parallax: each layer moves against the cursor by its own factor */
-.drift {
-  transform: translate3d(calc(var(--mx) * var(--k) * var(--f)), calc(var(--my) * var(--k) * var(--f)), 0);
-  transition: transform 900ms var(--ease);
-}
-
 /* Hero */
 .hero { position: relative; padding: 140px 0 190px; }
 .hero h1 {
