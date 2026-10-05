@@ -81,8 +81,8 @@ img, video { display: block; max-width: 100%; }
   padding-top: 40px;
   padding-bottom: 40px;
 }
-.logo { display: flex; align-items: center; gap: 12px; }
-.logo:hover { color: var(--ink); }
+.logo { display: flex; align-items: center; gap: 12px; margin: -10px -16px; padding: 10px 16px; border-radius: 14px; transition: background-color .25s ease; }
+.logo:hover { color: var(--ink); background: var(--hover); }
 .seal { flex: none; width: 36px; height: 36px; overflow: visible; transition: transform .6s var(--ease); }
 .seal text { font-family: "Klee One", serif; font-weight: 600; font-size: 34px; fill: var(--sumi); }
 .logo:hover .seal { transform: translateY(-1px); }
@@ -116,8 +116,8 @@ nav a { color: var(--muted); }
 .cs-year { margin-top: 48px; font-size: 13px; color: var(--accent); }
 .cs-year::before { content: "fig. " var(--fig, "") " · "; }
 .cs-hero h1 {
-  font-size: clamp(30px, 4vw, 48px);
-  font-weight: 300;
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 400;
   line-height: 1.3;
   letter-spacing: -0.01em;
   margin: 8px 0 20px;
@@ -165,12 +165,19 @@ nav a { color: var(--muted); }
   color: var(--accent);
   white-space: nowrap;
 }
-.cs-media img, .cs-media video { width: 100%; border-radius: 14px; background: var(--media-bg); }
+/* Figures sit in a hairline frame with a little padding, like a printed figure. Images multiply onto
+   the paper, so white backgrounds disappear and the frame keeps grey ones distinct. */
+.cs-media:not(.yt) { background: var(--paper); isolation: isolate; }
+.cs-media:not(.yt):not(.bare) { padding: 16px; box-shadow: inset 0 0 0 1px rgba(59, 52, 45, .14); }
+.cs-media img, .cs-media video { width: 100%; mix-blend-mode: multiply; }
+/* a cut-out illustration: no plate, centred in the column */
+.cs-media.small.bare { max-width: none; background: none; }
+.cs-media.bare img { width: auto; max-width: 280px; margin: 0 auto; }
 .cs-media img { cursor: zoom-in; }
 .cs-media.small { max-width: 280px; }
 .cs-media.medium { max-width: 560px; }
 .cs-media.yt { aspect-ratio: 16 / 9; margin-bottom: 64px; }
-.cs-media.yt iframe { width: 100%; height: 100%; border: 0; border-radius: 14px; background: #000; }
+.cs-media.yt iframe { width: 100%; height: 100%; border: 0; background: #000; }
 .cs-media figcaption { margin-top: 10px; font-size: 13px; color: var(--muted); }
 
 .cs-gallery { position: relative; display: grid; gap: 20px; align-items: start; margin: 36px 0; }
@@ -203,7 +210,7 @@ nav a { color: var(--muted); }
 }
 .next-project:hover { background: var(--hover); color: var(--ink); }
 .next-project span { font-size: 13px; color: var(--accent); }
-.next-project strong { font-size: clamp(20px, 3vw, 26px); font-weight: 300; }
+.next-project strong { font-size: clamp(18px, 2.4vw, 22px); font-weight: 400; }
 
 /* ---------- Glass droplet and ink-arrow cursor (built by script.js) ---------- */
 .drop, .arrow { position: fixed; left: 0; top: 0; pointer-events: none; }
@@ -281,3 +288,15 @@ html.ink-cursor, html.ink-cursor a, html.ink-cursor button, html.ink-cursor img[
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Living Museum card sort, redrawn as text on a figure plate */
+.sort { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; font-size: 12.5px; line-height: 1.45; align-items: start; }
+.sort-col { display: flex; flex-direction: column; gap: 6px; }
+.sort-col h4 { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.sort-col h4 small { display: block; font-size: 11px; font-weight: 400; color: var(--muted); }
+.sort-card { padding: 8px 10px; background: rgba(255, 255, 255, .6); box-shadow: inset 0 0 0 1px rgba(59, 52, 45, .12); }
+.sort-card.loose { margin-top: 8px; background: none; box-shadow: none; outline: 1px dashed rgba(59, 52, 45, .3); outline-offset: -1px; color: var(--muted); }
+.sort-card strong { font-weight: 500; }
+.sort-card ul { margin: 4px 0 0 1.1em; color: var(--muted); }
+.sort-fig figcaption { margin-top: 14px; }
+@media (max-width: 860px) { .sort { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

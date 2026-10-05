@@ -50,7 +50,7 @@
 }
 .hero-text .fig { --f: -.35; }
 /* a drawn "↳" with a longer horizontal run than the font's glyph */
-.turn { width: 30px; height: 12px; margin-right: 8px; vertical-align: -1px; overflow: visible; }
+.turn { width: 20px; height: 12px; margin-right: 8px; vertical-align: -1px; overflow: visible; }
 .turn path { fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
 .fig {
   font-size: 13px;
@@ -78,7 +78,7 @@
 }
 .row:hover { background: var(--hover); color: var(--ink); }
 .row .num { font-size: 12px; color: var(--accent); }
-.row strong { font-size: 17px; font-weight: 400; }
+.row strong { font-size: 15px; font-weight: 500; }
 .row span:last-child { font-size: 14px; color: var(--muted); }
 .row em { font-style: normal; color: var(--accent); }
 

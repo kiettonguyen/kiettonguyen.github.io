@@ -137,7 +137,16 @@ document.addEventListener("mousemove", (e) => {
     my = y / window.innerHeight - 0.5;
     paint();
     if (!drop) return;
-    drop.style.transform = `translate3d(${px}px, ${py}px, 0)`;
+    if (!last) {
+      // first sighting (new page, or back from outside the window): appear on the cursor,
+      // don't glide in from the corner
+      drop.style.transition = "none";
+      drop.style.transform = `translate3d(${px}px, ${py}px, 0)`;
+      drop.getBoundingClientRect();
+      drop.style.transition = "";
+    } else {
+      drop.style.transform = `translate3d(${px}px, ${py}px, 0)`;
+    }
     arrow.classList.toggle("on-link", !!(next.target.closest && next.target.closest("a, button, [data-zoom]")));
     // stretch the droplet's shade along the direction of travel. Direction and speed are
     // smoothed so jittery mouse input doesn't make it flicker, and the stretch is applied as

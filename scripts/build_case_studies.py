@@ -10,6 +10,17 @@ import html, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 e = html.escape
 
+# The Living Museum card sort, redrawn as text on the paper (the original was a dark screenshot)
+CARD_SORT = (
+    '<figure class="cs-media wide sort-fig"><div class="sort">'
+    '<div class="sort-col"><h4>Homepage <small>4 cards</small></h4><p class="sort-card">Acknowledgements</p><p class="sort-card">Event / exhibition / workshop schedule or calendar</p><p class="sort-card">Storytelling concept: objects users hover for more info</p><p class="sort-card">What’s on / news (quick view)</p><p class="sort-card loose">News page / blog</p></div>'
+    '<div class="sort-col"><h4>About <small>3 cards</small></h4><p class="sort-card">Pipemakers Park</p><p class="sort-card">About us</p><p class="sort-card">Buildings + facilities</p><p class="sort-card loose">FAQ?</p></div>'
+    '<div class="sort-col"><h4>Digital library / catalogue <small>5 cards</small></h4><p class="sort-card">Browsing section</p><p class="sort-card">Reference enquiry</p><p class="sort-card">Search function</p><p class="sort-card">“Cart”: favourites</p><p class="sort-card">Research</p><p class="sort-card loose">Login</p></div>'
+    '<div class="sort-col"><h4>Contact <small>3 cards</small></h4><p class="sort-card">Possible footer</p><p class="sort-card">Enquiries (pop-up)</p><p class="sort-card">Digital donor wall</p><p class="sort-card loose">FAQ?</p></div>'
+    '<div class="sort-col"><h4>Projects <small>5 cards</small></h4><div class="sort-card"><strong>Student / university projects</strong><ul><li>Student research and residency program</li><li>Student work experience program</li></ul></div><div class="sort-card"><strong>Historical projects</strong><ul><li>Footscray wharves and environs</li></ul></div><div class="sort-card"><strong>Art / exhibition project</strong><ul><li>Artist in residency program: timeline</li><li>Contemporary art exhibition program: current exhibitions timeline</li><li>Past arts events projects</li></ul></div><div class="sort-card"><strong>Aboriginal program</strong><ul><li>Local history</li><li>Program</li></ul></div><p class="sort-card">Projects timeline</p></div>'
+    '</div><figcaption>Card sorting results, redrawn from the team’s board</figcaption></figure>'
+)
+
 P = [
   dict(
     slug="indigenous-inclusion", title="Indigenous Inclusion Storyline", year="2023",
@@ -95,7 +106,7 @@ P = [
     cover=("img", "03.png"),
     blocks=[
       ("p", "As a spoiler, we did end up winning both 1st place and also the 'Greatest Maker' Arcitecta Sponsor Prize."),
-      ("img", "01.png", "AnyExercise mascot illustration", "small"),
+      ("img", "01.png", "AnyExercise mascot illustration", "small bare"),
       ("h", "The Covid Slump"),
       ("p", "With consecutive lockdowns in Melbourne, the closure of public spaces and gyms, it has become increasingly difficult for elderly people such as our grandparents to find the motivation to exercise, as it has simply become too inconvenient. We hence identified that this was a niche issue that had potential to be explored."),
       ("h", "An opportunity to improve at-home exercise"),
@@ -148,7 +159,7 @@ P = [
       ("h", "Card Sorting"),
       ("p", "By employing this user-centred design technique, I gathered valuable insights into how users naturally categorise and prioritise information."),
       ("p", "Our group was presented with various content elements in the form of digital 'cards' and asked to categorise them based on their perceived relationships and importance. The results provided a clear understanding of users' mental models and preferences, enabling a well-structured and intuitive navigation system."),
-      ("img", "03.jpg", "Card sorting results", "wide"),
+      ("raw", CARD_SORT),
       ("h", "Creating an initial system"),
       ("p", "Part of the challenge of reorganising such a large archive of information and pages is managing the information architecture and how it flows. These are some initial wireframes we made to understand the order of the user experience and flow of the customer journey."),
       ("img", "04.png", "Initial wireframes", "wide"),
@@ -176,6 +187,8 @@ def media(kind, file, alt, cls=""):
 
 def render_block(b, a):
     t = b[0]
+    if t == "raw":
+        return b[1]
     if t == "h":
         return f'<h2 class="cs-h">{e(b[1])}</h2>'
     if t == "p":
@@ -224,14 +237,15 @@ def page(i, p):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{e(p['title'])} — Kiet Nguyen</title>
+  <title>{e(p['title'])} — 阮 Kiet Nguyen</title>
   <meta name="description" content="{e(p['lead'])}">
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
-  <link rel="stylesheet" href="{up}shared/board.css?v=12">
-  <link rel="stylesheet" href="{css}?v=12">
+  <link rel="stylesheet" href="{up}shared/board.css?v=13">
+  <link rel="stylesheet" href="{css}?v=13">
 </head>
 <body class="case-study" style="--fig: '{FIG[p['slug']]}'">
   <header class="toolbar">
@@ -263,7 +277,7 @@ def page(i, p):
   </footer>
 
   <div class="lightbox" hidden><img alt=""></div>
-  <script src="{js}?v=12"></script>
+  <script src="{js}?v=13"></script>
 </body>
 </html>
 """
@@ -273,6 +287,6 @@ def page(i, p):
 for i, p in enumerate(P):
     d = os.path.join(ROOT, "work", p["slug"])
     os.makedirs(d, exist_ok=True)
-    with open(os.path.join(d, "index.html"), "w") as f:
+    with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
         f.write(page(i, p))
 print("built", len(P), "case studies")
