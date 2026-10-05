@@ -192,7 +192,7 @@ nav a { color: var(--muted); }
 .cs-media.plate video { mix-blend-mode: multiply; }
 /* a cut-out illustration: no plate, centred in the column */
 .cs-media.small.bare { max-width: none; }
-.cs-media.bare img { width: auto; max-width: 280px; margin: 0 auto; }
+.cs-media.bare img { width: auto; max-width: 180px; margin: 0 auto; }
 .cs-media img { cursor: zoom-in; }
 .cs-media.small { max-width: 280px; }
 .cs-media.medium { max-width: 560px; }
