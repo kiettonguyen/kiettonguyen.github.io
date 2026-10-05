@@ -207,10 +207,14 @@ def render_block(b, a):
     raise ValueError(t)
 
 
+FIG = {"indigenous-inclusion": "3.1", "motivational-interviewing": "3.2", "mamaskangaroo": "3.3",
+       "living-museum-of-the-west": "3.4", "melbourne-hack-2021": "3.5"}
+
+
 def page(i, p):
     up = "../../"
     a = f"{up}assets/{p['slug']}/"
-    css, js = "../../style.css?v=4", "../../script.js?v=4"
+    css, js = "../../style.css", "../../script.js"
     nxt = P[(i + 1) % len(P)]
     tags = "".join(f"<li>{e(t)}</li>" for t in p["tags"])
     sub = f' <em>({e(p["subtitle"])})</em>' if p.get("subtitle") else ""
@@ -225,12 +229,13 @@ def page(i, p):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{up}shared/board.css?v=4">
-  <link rel="stylesheet" href="{css}?v=4">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="{up}shared/board.css?v=5">
+  <link rel="stylesheet" href="{css}?v=5">
 </head>
-<body class="case-study">
+<body class="case-study" style="--fig: '{FIG[p['slug']]}'">
   <header class="toolbar">
-    <a href="../../" class="logo"><svg class="mug" viewBox="0 0 24 24" aria-hidden="true"><path class="cup" d="M5.2 9.6c3.6-.3 7.2-.2 10.8 0 .1 2 .1 4 0 6.1-.1 2.5-2.1 4.4-4.6 4.4H9.7c-2.5 0-4.4-1.9-4.5-4.4-.1-2-.1-4 0-6.1z"/><path class="handle" d="M16.1 11.4c1.9-.4 3.4.6 3.3 2.2-.1 1.6-1.7 2.5-3.5 2.2"/><path class="shine" d="M5.6 10.1c3.4-.2 6.8-.1 10.1.1" transform="translate(0.4 0.6)"/><path class="steam" d="M8.7 7c-.9-1.1.8-1.9-.1-3.2M12.5 7c-.9-1.1.8-1.9-.1-3.2"/></svg>Kiet Nguyen</a>
+    <a href="../../" class="logo"><svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><filter id="pen" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.2" numOctaves="2" seed="21"/><feDisplacementMap in="SourceGraphic" scale="1.1" xChannelSelector="R" yChannelSelector="G"/></filter><text x="20" y="21" text-anchor="middle" dominant-baseline="central" filter="url(#pen)">阮</text></svg><span class="logo-text"><span class="logo-name">Kiet Nguyen</span><span class="logo-fig">fig. 00 · 阮, the lute</span></span></a>
     <nav>
       <a href="../../#work">Work</a>
       <a href="../../#about">About</a>
@@ -240,7 +245,7 @@ def page(i, p):
 
   <main>
     <section class="cs-hero">
-      <a class="back" href="../../#work">← All work</a>
+      <a class="back" href="../../#work">← fig. 03 · all work</a>
       <p class="cs-year">{p['year']}</p>
       <h1>{e(p['title'])}{sub}</h1>
       <ul class="tags">{tags}</ul>
@@ -258,12 +263,12 @@ def page(i, p):
   </main>
 
   <footer class="site-footer">
-    <p>&copy; <span class="year"></span> Kiet Nguyen</p>
+    <p>&copy; <span class="year"></span> Kiet Nguyen <span class="end">· end of figures</span></p>
     <a href="https://www.linkedin.com/in/kietngu" target="_blank" rel="noopener">LinkedIn ↗</a>
   </footer>
 
   <div class="lightbox" hidden><img alt=""></div>
-  <script src="{js}?v=4"></script>
+  <script src="{js}?v=5"></script>
 </body>
 </html>
 """

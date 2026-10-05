@@ -10,10 +10,10 @@ assets/                 images & videos
   <project>/            NN.png/jpg, NN.mp4 (+ NN-poster.jpg) converted from the original GIFs, NN.gif originals
   about/                personal photos
   doodles/              hand-drawn SVGs (underline, arrow, sparkle, tape)
-shared/board.css        Ink + Paper theme (dotted paper, header, about, case-study layout)
+shared/board.css        paper theme, figure labels, case-study layout, glass droplet + ink-arrow cursor
 index.html              home page
-style.css               home page layout (hero figure notes, work columns, about)
-script.js               cursor parallax, lightbox, video autoplay, footer year
+style.css               home page layout (hero figure notes, numbered work columns, about)
+script.js               slow-scrolling dots, cursor drift, droplet + arrow cursor, lightbox, video autoplay
 work/<project>/         case-study pages (generated)
 scripts/build_case_studies.py   case-study content + generator
 ```
@@ -23,7 +23,7 @@ scripts/build_case_studies.py   case-study content + generator
 - **Case-study text / images:** edit the content in `scripts/build_case_studies.py`, then run
   `python3 scripts/build_case_studies.py` — this rewrites `work/`.
 - **Home page:** edit `index.html` directly.
-- **Colours / fonts:** `:root` at the top of `shared/board.css` (font: Zen Kaku Gothic New).
+- **Colours / fonts:** `:root` at the top of `shared/board.css` (fonts: Zen Kaku Gothic New, Klee One for the 阮 mark).
 - **Cache:** CSS/JS links end in `?v=N`. Bump N in `index.html`, `work/*/index.html` and the generator after changing them, so visitors skip their cached copy.
 
 Preview locally: `python3 -m http.server` in this folder, then open http://localhost:8000.

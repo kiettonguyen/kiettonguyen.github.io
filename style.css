@@ -1,4 +1,4 @@
-/* Home page: hero with figure notes, work in category columns, about.
+/* Home page: hero with figure notes, work in numbered category columns, about.
    Theme tokens and shared pieces live in shared/board.css */
 
 /* Hero */
@@ -33,10 +33,10 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 48px 32px;
-  padding-bottom: 140px;
 }
+#work, #about { padding-bottom: 140px; }
 
-/* Work rows */
+/* Work rows, each with its figure number */
 .rows { display: flex; flex-direction: column; gap: 4px; margin: 0 -20px; }
 .row {
   display: flex;
@@ -47,38 +47,23 @@
   transition: background-color .25s ease;
 }
 .row:hover { background: var(--hover); color: var(--ink); }
+.row .num { font-size: 12px; color: var(--accent); }
 .row strong { font-size: 17px; font-weight: 400; }
-.row span { font-size: 14px; color: var(--muted); }
+.row span:last-child { font-size: 14px; color: var(--muted); }
 .row em { font-style: normal; color: var(--accent); }
 
 /* About */
-.about { font-size: 15px; }
-.about .cols { padding-bottom: 56px; }
-.about .cols > div { display: flex; flex-direction: column; gap: 14px; }
-.about .label { margin: 0; }
+.about-cols { font-size: 15px; line-height: 1.75; }
+.about-cols > div { display: flex; flex-direction: column; gap: 14px; }
+.about-cols .label { margin: 0; }
 .list { list-style: none; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
 .connect a { color: var(--accent); }
 .connect a:hover { text-decoration: underline; }
 .email { overflow-wrap: anywhere; }
 
-.photos {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
-  padding-bottom: 140px;
-}
-.photos img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: 14px;
-  background: var(--media-bg);
-  cursor: zoom-in;
-}
-
 @media (max-width: 860px) {
   .hero { padding: 72px 0 120px; }
   .fig { display: none; }
-  .cols { grid-template-columns: minmax(0, 1fr); padding-bottom: 96px; }
-  .photos { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-bottom: 96px; }
+  .cols { grid-template-columns: minmax(0, 1fr); }
+  #work, #about { padding-bottom: 96px; }
 }
