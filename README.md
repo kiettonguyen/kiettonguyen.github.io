@@ -41,3 +41,8 @@ Then set the custom domain to `kietn.com` in repo Settings → Pages (this adds 
 
 Note: GitHub Pages on a free account requires the repo to be public. A private repo needs GitHub Pro,
 or a host that deploys from private repos (e.g. Cloudflare Pages, Netlify).
+
+## Credits
+
+The 阮 intro animation uses stroke data from [Make Me a Hanzi](https://github.com/skishore/makemeahanzi)
+(via hanzi-writer-data), derived from Arphic fonts under the Arphic Public License — see `licenses/ARPHICPL.txt`.
