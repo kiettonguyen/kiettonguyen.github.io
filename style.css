@@ -49,6 +49,9 @@
   font-weight: 300;
 }
 .hero-text .fig { --f: -.35; }
+/* a drawn "↳" with a longer horizontal run than the font's glyph */
+.turn { width: 30px; height: 12px; margin-right: 8px; vertical-align: -1px; overflow: visible; }
+.turn path { fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
 .fig {
   font-size: 13px;
   line-height: 1.6;

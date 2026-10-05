@@ -230,8 +230,8 @@ def page(i, p):
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
-  <link rel="stylesheet" href="{up}shared/board.css?v=11">
-  <link rel="stylesheet" href="{css}?v=11">
+  <link rel="stylesheet" href="{up}shared/board.css?v=12">
+  <link rel="stylesheet" href="{css}?v=12">
 </head>
 <body class="case-study" style="--fig: '{FIG[p['slug']]}'">
   <header class="toolbar">
@@ -263,7 +263,7 @@ def page(i, p):
   </footer>
 
   <div class="lightbox" hidden><img alt=""></div>
-  <script src="{js}?v=11"></script>
+  <script src="{js}?v=12"></script>
 </body>
 </html>
 """
