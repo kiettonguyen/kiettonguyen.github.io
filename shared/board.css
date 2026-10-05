@@ -22,7 +22,6 @@
 
 html { scroll-behavior: smooth; }
 
-/* Paper: dot grid that drifts a little with the cursor */
 body {
   min-height: 100vh;
   font-family: var(--font);
@@ -30,11 +29,22 @@ body {
   color: var(--ink);
   line-height: 1.75;
   background-color: var(--paper);
+  overflow-x: hidden;
+}
+
+/* Paper: a dot grid pinned to the screen, so the page scrolls over it,
+   drifting a little with the cursor. A fixed layer rather than
+   background-attachment: fixed, which iOS ignores. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -40px;
+  z-index: -1;
+  pointer-events: none;
   background-image: radial-gradient(var(--dot) 1px, transparent 1.3px);
   background-size: 22px 22px;
-  background-position: calc(var(--mx) * var(--k) * .25) calc(var(--my) * var(--k) * .25);
-  transition: background-position 900ms var(--ease);
-  overflow-x: hidden;
+  transform: translate3d(calc(var(--mx) * var(--k) * .25), calc(var(--my) * var(--k) * .25), 0);
+  transition: transform 900ms var(--ease);
 }
 
 a { color: inherit; text-decoration: none; }
