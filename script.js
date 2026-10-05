@@ -11,19 +11,38 @@ const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
 const fine = window.matchMedia("(pointer: fine)");
 const forced = window.matchMedia("(forced-colors: active)");
 
-// Scroll: the dot paper follows at half speed, and the cursor drift rests while scrolling
+// Parallax. Transforms are set straight on each layer (not through CSS variables on
+// <html>), so a mouse move never restyles the whole page; that keeps Firefox smooth.
+const layers = [...document.querySelectorAll(".drift, .toolbar, .site-footer, #work, #about, .cs-hero, .cs-body, .next-project")]
+  .map((el) => ({ el, f: parseFloat(getComputedStyle(el).getPropertyValue("--f")) || -0.4 }));
+const dots = document.createElement("div");
+dots.className = "paper-dots";
+dots.setAttribute("aria-hidden", "true");
+document.body.prepend(dots);
+
+const K = 14; // drift strength in px
+let mx = 0, my = 0, scrolling = false;
+function paint() {
+  const k = scrolling ? 0 : K; // the drift rests while the page scrolls, so nothing swims
+  for (const { el, f } of layers) el.style.transform = `translate3d(${(mx * k * f).toFixed(2)}px, ${(my * k * f).toFixed(2)}px, 0)`;
+  // dots follow the scroll at half speed, wrapped to one 24px dot step so the layer never runs out
+  const sy = calm.matches ? 0 : -((window.scrollY * 0.5) % 24);
+  dots.style.transform = `translate3d(${(mx * k * 0.2).toFixed(2)}px, ${(sy + my * k * 0.2).toFixed(2)}px, 0)`;
+}
+
 let scrollFrame = null;
 let settle = null;
 window.addEventListener("scroll", () => {
   if (scrollFrame) return;
   scrollFrame = requestAnimationFrame(() => {
     scrollFrame = null;
-    root.style.setProperty("--sy", window.scrollY + "px");
-    root.classList.add("scrolling");
+    scrolling = true;
+    paint();
     clearTimeout(settle);
-    settle = setTimeout(() => root.classList.remove("scrolling"), 160);
+    settle = setTimeout(() => { scrolling = false; paint(); }, 160);
   });
 }, { passive: true });
+paint();
 
 // Glass droplet + ink arrow: only with a mouse, and not for reduced motion or high contrast
 const liquid = fine.matches && !calm.matches && !forced.matches;
@@ -33,6 +52,7 @@ let arrow = null;
 if (liquid) {
   // Chromium can bend what's under the droplet; elsewhere it's just the soft shade
   const refract = CSS.supports("backdrop-filter", "url(#a)") && /Chrome\//.test(navigator.userAgent);
+  if (!refract) root.classList.add("lite");
   const svg = (s) => "data:image/svg+xml," + encodeURIComponent(s);
   // Glass bead: flat in the middle, bending most toward the rim, back to neutral at the edge
   const beadMap = svg(
@@ -100,13 +120,17 @@ document.addEventListener("mousemove", (e) => {
   moveFrame = requestAnimationFrame(() => {
     moveFrame = null;
     const { clientX: x, clientY: y } = next;
-    root.style.setProperty("--mx", (x / window.innerWidth - 0.5).toFixed(3));
-    root.style.setProperty("--my", (y / window.innerHeight - 0.5).toFixed(3));
-    if (!drop) return;
-    drop.hidden = arrow.hidden = false;
     const px = Math.round(x), py = Math.round(y);
+    // the arrow goes first so it always sits exactly on the pointer
+    if (arrow) {
+      arrow.hidden = drop.hidden = false;
+      arrow.style.transform = `translate3d(${px}px, ${py}px, 0)`;
+    }
+    mx = x / window.innerWidth - 0.5;
+    my = y / window.innerHeight - 0.5;
+    paint();
+    if (!drop) return;
     drop.style.transform = `translate3d(${px}px, ${py}px, 0)`;
-    arrow.style.transform = `translate3d(${px}px, ${py}px, 0)`;
     arrow.classList.toggle("on-link", !!(next.target.closest && next.target.closest("a, button, [data-zoom]")));
     // stretch the droplet's shade in the direction of travel; an oval looks the same flipped
     if (last) {

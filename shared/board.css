@@ -14,18 +14,11 @@
   --max: 1080px;
   --font: "Zen Kaku Gothic New", system-ui, sans-serif;
   --ease: cubic-bezier(.2, .7, .2, 1);
-  /* set by script.js: pointer position (-0.5..0.5) and page scroll */
-  --mx: 0;
-  --my: 0;
-  --sy: 0px;
-  --k: 14px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
-/* the cursor drift rests while the page scrolls, so nothing swims */
-html.scrolling { --k: 0px; }
 
 body {
   min-height: 100vh;
@@ -39,15 +32,15 @@ body {
 
 /* Paper: a dot grid on a fixed layer that scrolls at half speed and drifts
    a little with the cursor, faded behind the text column */
-body::before {
-  content: "";
+.paper-dots {
   position: fixed;
-  inset: 0;
+  inset: -48px;
   z-index: -1;
   pointer-events: none;
   background-image: radial-gradient(var(--dot) 1px, transparent 1.25px);
   background-size: 24px 24px;
-  background-position: calc(var(--mx) * var(--k) * .2) calc(var(--sy) * -.5 + var(--my) * var(--k) * .2);
+  /* script.js moves it with transform, not background-position, so it never repaints */
+  will-change: transform;
   -webkit-mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, .7) 22%, rgba(0, 0, 0, .7) 78%, #000 100%);
   mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, .7) 22%, rgba(0, 0, 0, .7) 78%, #000 100%);
 }
@@ -63,13 +56,12 @@ img, video { display: block; max-width: 100%; }
   padding-right: 32px;
 }
 
-/* Parallax: each foreground layer drifts against the cursor by its own factor.
-   Layers set --f; script.js sets --mx/--my. */
+/* Parallax: each foreground layer drifts against the cursor by its own factor --f;
+   script.js sets the transforms and this eases them */
 .drift,
 .toolbar, .site-footer,
 #work, #about,
 .cs-hero, .cs-body, .next-project {
-  transform: translate3d(calc(var(--mx) * var(--k) * var(--f, -.4)), calc(var(--my) * var(--k) * var(--f, -.4)), 0);
   transition: transform 900ms var(--ease);
 }
 .toolbar, .site-footer { --f: -.2; }
@@ -231,6 +223,20 @@ nav a { color: var(--muted); }
   0%, 100% { border-radius: 58% 42% 55% 45% / 47% 56% 44% 53%; transform: rotate(0deg); }
   33% { border-radius: 44% 56% 40% 60% / 58% 42% 58% 42%; transform: rotate(40deg); }
   66% { border-radius: 52% 48% 62% 38% / 42% 60% 40% 58%; transform: rotate(-30deg); }
+}
+.drop, .arrow, .drop .stretch { will-change: transform; }
+/* Browsers without the glass bend (Firefox, Safari) get a lighter droplet: the shade
+   moves with transform only, so no SVG filter is re-drawn on every frame */
+html.lite .drop .shade {
+  filter: blur(12px);
+  border-radius: 58% 42% 55% 45% / 47% 56% 44% 53%;
+  animation: sway 9s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg) scale(1, 1); }
+  33% { transform: rotate(40deg) scale(1.06, .95); }
+  66% { transform: rotate(-30deg) scale(.96, 1.05); }
 }
 .arrow { z-index: 60; width: 0; height: 0; }
 .arrow svg { position: absolute; left: -10px; top: -2px; width: 20px; height: 28px; overflow: visible; transform-origin: 10px 2px; transform: rotate(-24deg); }
