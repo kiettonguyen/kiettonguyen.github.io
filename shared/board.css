@@ -4,7 +4,7 @@
 
 :root {
   --paper: #EFE9DF;
-  --dot: rgba(59, 52, 45, .17);
+  --dot: rgba(59, 52, 45, .24);
   --ink: #3B342D;
   --sumi: #2B2520;
   --muted: #6B6157;
@@ -37,7 +37,7 @@ body {
   inset: -48px;
   z-index: -1;
   pointer-events: none;
-  background-image: radial-gradient(var(--dot) 1px, transparent 1.25px);
+  background-image: radial-gradient(var(--dot) 1.15px, transparent 1.45px);
   background-size: 24px 24px;
   /* script.js moves it with transform, not background-position, so it never repaints */
   will-change: transform;
@@ -141,9 +141,8 @@ nav a { color: var(--muted); }
 }
 .cs-h::before {
   content: var(--fig, "") "." counter(sec);
-  position: absolute;
-  right: calc(100% + 40px);
-  top: .35em;
+  display: block;
+  margin-bottom: 4px;
   font-size: 13px;
   line-height: 1.6;
   color: var(--accent);
@@ -156,11 +155,11 @@ nav a { color: var(--muted); }
 
 .cs-media { position: relative; margin: 36px 0; }
 .cs-body > .cs-media, .cs-gallery { counter-increment: fig; }
-.cs-body > .cs-media::before, .cs-gallery::before {
+/* figure labels sit under each figure, like a caption on a print */
+.cs-body > .cs-media::after, .cs-gallery::after {
   content: "fig. " var(--fig, "") counter(fig, lower-alpha);
-  position: absolute;
-  right: calc(100% + 40px);
-  bottom: 0;
+  display: block;
+  margin-top: 10px;
   font-size: 13px;
   color: var(--accent);
   white-space: nowrap;
@@ -181,6 +180,7 @@ nav a { color: var(--muted); }
 .cs-media figcaption { margin-top: 10px; font-size: 13px; color: var(--muted); }
 
 .cs-gallery { position: relative; display: grid; gap: 20px; align-items: start; margin: 36px 0; }
+.cs-gallery::after { grid-column: 1 / -1; margin-top: 0; }
 .cs-gallery.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .cs-gallery.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .cs-gallery.n4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -272,10 +272,8 @@ html.ink-cursor, html.ink-cursor a, html.ink-cursor button, html.ink-cursor img[
 
 @media (max-width: 860px) {
   .cs-hero, .cs-body { padding-left: 0; }
-  .cs-h::before, .cs-body > .cs-media::before, .cs-gallery::before { position: static; display: block; margin-bottom: 6px; }
   .cs-body > .cs-media, .cs-gallery { display: flex; flex-direction: column; }
   .cs-gallery.n2, .cs-gallery.n3, .cs-gallery.n4 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .cs-gallery::before { grid-column: 1 / -1; }
   .cs-cards, .cs-split { grid-template-columns: minmax(0, 1fr); }
   .cs-split .cs-media { max-width: 180px; }
 }
@@ -300,3 +298,12 @@ html.ink-cursor, html.ink-cursor a, html.ink-cursor button, html.ink-cursor img[
 .sort-card ul { margin: 4px 0 0 1.1em; color: var(--muted); }
 .sort-fig figcaption { margin-top: 14px; }
 @media (max-width: 860px) { .sort { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Sticky index in the left margin of project pages (built by script.js from the section headings) */
+.cs-body { position: relative; }
+.toc-wrap { position: absolute; left: 0; top: 0; bottom: 0; width: 180px; }
+.toc { position: sticky; top: 40px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; line-height: 1.5; text-align: right; }
+.toc .toc-fig { color: var(--accent); margin-bottom: 4px; }
+.toc a { color: var(--muted); transition: color .2s ease; }
+.toc a:hover, .toc a.here { color: var(--accent); }
+@media (max-width: 860px) { .toc-wrap { display: none; } }

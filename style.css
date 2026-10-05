@@ -64,7 +64,8 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 48px 32px;
 }
-#work, #about { padding-bottom: 140px; }
+#work { padding-bottom: 140px; }
+#about { padding-bottom: 200px; }
 
 /* Work rows, each with its figure number */
 .rows { display: flex; flex-direction: column; gap: 4px; margin: 0 -20px; }
@@ -84,6 +85,8 @@
 
 /* About */
 .about-cols { font-size: 15px; line-height: 1.75; }
+/* 3.1 About gets the full row so the text can breathe; Skills and Connect sit in columns under it */
+.about-cols > .about-lead { grid-column: 1 / -1; max-width: 640px; }
 .about-cols > div { display: flex; flex-direction: column; gap: 14px; }
 .about-cols .label { margin: 0; }
 .list { list-style: none; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
@@ -94,5 +97,6 @@
 @media (max-width: 860px) {
   .hero { grid-template-columns: minmax(0, 1fr); gap: 32px; padding: 72px 0 120px; }
   .cols { grid-template-columns: minmax(0, 1fr); }
-  #work, #about { padding-bottom: 96px; }
+  #work { padding-bottom: 96px; }
+  #about { padding-bottom: 140px; }
 }

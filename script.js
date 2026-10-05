@@ -171,6 +171,40 @@ root.addEventListener("mouseleave", () => {
   last = null;
 });
 
+// Project pages: a sticky index in the left margin, built from the section headings,
+// with the section you're reading highlighted
+const body = document.querySelector(".case-study .cs-body");
+const heads = body ? [...body.querySelectorAll(".cs-h")] : [];
+if (heads.length >= 3) {
+  const fig = getComputedStyle(document.body).getPropertyValue("--fig").replace(/["'\s]/g, "");
+  const wrap = document.createElement("div");
+  wrap.className = "toc-wrap";
+  const toc = document.createElement("nav");
+  toc.className = "toc";
+  toc.setAttribute("aria-label", "On this page");
+  const label = document.createElement("span");
+  label.className = "toc-fig";
+  label.textContent = "fig. " + fig;
+  toc.append(label);
+  const links = heads.map((h, i) => {
+    h.id = h.id || "s" + (i + 1);
+    const a = document.createElement("a");
+    a.href = "#" + h.id;
+    a.textContent = `${fig}.${i + 1} · ${h.textContent}`;
+    toc.append(a);
+    return a;
+  });
+  wrap.append(toc);
+  body.prepend(wrap);
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      links.forEach((a) => a.classList.toggle("here", a.hash === "#" + en.target.id));
+    });
+  }, { rootMargin: "0px 0px -70% 0px" });
+  heads.forEach((h) => spy.observe(h));
+}
+
 // Simple lightbox: click an image to view it full screen
 const lightbox = document.querySelector(".lightbox");
 const lightboxImg = lightbox.querySelector("img");
