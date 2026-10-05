@@ -249,7 +249,7 @@ html.lite .drop .shade {
   66% { transform: rotate(-30deg) scale(.96, 1.05); }
 }
 .arrow { z-index: 60; width: 0; height: 0; }
-.arrow svg { position: absolute; left: -10px; top: -2px; width: 20px; height: 28px; overflow: visible; transform-origin: 10px 2px; transform: rotate(-24deg); }
+.arrow svg { position: absolute; left: -8.5px; top: -1.7px; width: 17px; height: 23.8px; overflow: visible; transform-origin: 8.5px 1.7px; transform: rotate(-24deg); }
 .arrow path { fill: #1F1B17; transition: fill .2s ease; }
 /* no outline: a soft paper-coloured glow vanishes on the paper but keeps the arrow visible over dark images */
 .arrow svg { filter: drop-shadow(0 0 1.2px rgba(247, 243, 236, .9)); }
