@@ -240,7 +240,9 @@ html.lite .drop .shade {
 }
 .arrow { z-index: 60; width: 0; height: 0; }
 .arrow svg { position: absolute; left: -10px; top: -2px; width: 20px; height: 28px; overflow: visible; transform-origin: 10px 2px; transform: rotate(-24deg); }
-.arrow path { fill: #1F1B17; stroke: #F7F3EC; stroke-width: 1.6; stroke-linejoin: round; transition: fill .2s ease; }
+.arrow path { fill: #1F1B17; transition: fill .2s ease; }
+/* no outline: a soft paper-coloured glow vanishes on the paper but keeps the arrow visible over dark images */
+.arrow svg { filter: drop-shadow(0 0 1.2px rgba(247, 243, 236, .9)); }
 .arrow.on-link path { fill: var(--accent); }
 .drop[hidden], .arrow[hidden] { display: none; }
 /* the system pointer is only swapped out where the ink arrow can show */
