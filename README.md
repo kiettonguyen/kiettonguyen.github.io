@@ -10,10 +10,10 @@ assets/                 images & videos
   <project>/            NN.png/jpg, NN.mp4 (+ NN-poster.jpg) converted from the original GIFs, NN.gif originals
   about/                personal photos
   doodles/              hand-drawn SVGs (underline, arrow, sparkle, tape)
-shared/board.css        base whiteboard theme (dotted board, cards, sticky notes, case-study layout)
+shared/board.css        Ink + Paper theme (dotted paper, header, about, case-study layout)
 index.html              home page
-style.css               paper-board styles (layered on shared/board.css)
-script.js               lightbox, video autoplay, footer year
+style.css               home page layout (hero figure notes, work columns, about)
+script.js               cursor parallax, lightbox, video autoplay, footer year
 work/<project>/         case-study pages (generated)
 scripts/build_case_studies.py   case-study content + generator
 ```
@@ -23,7 +23,7 @@ scripts/build_case_studies.py   case-study content + generator
 - **Case-study text / images:** edit the content in `scripts/build_case_studies.py`, then run
   `python3 scripts/build_case_studies.py` — this rewrites `work/`.
 - **Home page:** edit `index.html` directly.
-- **Colours / fonts:** `:root` at the top of `shared/board.css` (fonts: Bricolage Grotesque, Inter, Caveat).
+- **Colours / fonts:** `:root` at the top of `shared/board.css` (font: Zen Kaku Gothic New).
 
 Preview locally: `python3 -m http.server` in this folder, then open http://localhost:8000.
 Push to `main` and GitHub Pages redeploys in a minute or two.
