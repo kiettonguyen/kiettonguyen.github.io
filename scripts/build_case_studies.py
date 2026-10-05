@@ -207,8 +207,8 @@ def render_block(b, a):
     raise ValueError(t)
 
 
-FIG = {"indigenous-inclusion": "3.1", "motivational-interviewing": "3.2", "mamaskangaroo": "3.3",
-       "living-museum-of-the-west": "3.4", "melbourne-hack-2021": "3.5"}
+FIG = {"indigenous-inclusion": "2.1", "motivational-interviewing": "2.2", "mamaskangaroo": "2.3",
+       "living-museum-of-the-west": "2.4", "melbourne-hack-2021": "2.5"}
 
 
 def page(i, p):
@@ -236,16 +236,11 @@ def page(i, p):
 <body class="case-study" style="--fig: '{FIG[p['slug']]}'">
   <header class="toolbar">
     <a href="../../" class="logo"><svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><filter id="pen" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.2" numOctaves="2" seed="21"/><feDisplacementMap in="SourceGraphic" scale="1.1" xChannelSelector="R" yChannelSelector="G"/></filter><text x="20" y="21" text-anchor="middle" dominant-baseline="central" filter="url(#pen)">阮</text></svg><span class="logo-text"><span class="logo-name">Kiet Nguyen</span><span class="logo-fig">fig. 00 · 阮, the lute</span></span></a>
-    <nav>
-      <a href="../../#work">Work</a>
-      <a href="../../#about">About</a>
-      <a href="../../#contact">Contact</a>
-    </nav>
   </header>
 
   <main>
     <section class="cs-hero">
-      <a class="back" href="../../#work">← fig. 03 · all work</a>
+      <a class="back" href="../../#work">← fig. 02 · all work</a>
       <p class="cs-year">{p['year']}</p>
       <h1>{e(p['title'])}{sub}</h1>
       <ul class="tags">{tags}</ul>
