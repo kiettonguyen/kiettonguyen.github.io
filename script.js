@@ -113,6 +113,13 @@ let moveFrame = null;
 let last = null;
 let next = null;
 let still = null;
+let dirX = 1, dirY = 0, speed = 0;
+function stretchShade() {
+  const a = (Math.atan2(dirY, dirX) / 2) * 180 / Math.PI;
+  const s = 0.12 * speed;
+  drop.querySelector(".stretch").style.transform =
+    `rotate(${a.toFixed(1)}deg) scale(${(1 + s).toFixed(3)}, ${(1 - s * 0.6).toFixed(3)}) rotate(${(-a).toFixed(1)}deg)`;
+}
 document.addEventListener("mousemove", (e) => {
   if (calm.matches || !fine.matches) return;
   next = e;
@@ -132,22 +139,22 @@ document.addEventListener("mousemove", (e) => {
     if (!drop) return;
     drop.style.transform = `translate3d(${px}px, ${py}px, 0)`;
     arrow.classList.toggle("on-link", !!(next.target.closest && next.target.closest("a, button, [data-zoom]")));
-    // stretch the droplet's shade in the direction of travel; an oval looks the same flipped
+    // stretch the droplet's shade along the direction of travel. Direction and speed are
+    // smoothed so jittery mouse input doesn't make it flicker, and the stretch is applied as
+    // rotate(a) scale rotate(-a), so the shade itself never turns or flips.
     if (last) {
       const dx = x - last.x, dy = y - last.y, d = Math.hypot(dx, dy);
       if (d > 0.5) {
-        let a = Math.atan2(dy, dx) * 180 / Math.PI;
-        if (a > 90) a -= 180; else if (a <= -90) a += 180;
-        const s = 0.12 * Math.min(1, d / 40);
-        drop.querySelector(".stretch").style.transform = `rotate(${a.toFixed(1)}deg) scale(${(1 + s).toFixed(3)}, ${(1 - s * 0.6).toFixed(3)})`;
+        const a2 = 2 * Math.atan2(dy, dx); // doubled angle: travelling left or right stretch the same way
+        dirX += (Math.cos(a2) - dirX) * 0.2;
+        dirY += (Math.sin(a2) - dirY) * 0.2;
+        speed += (Math.min(1, d / 40) - speed) * 0.25;
       }
     }
     last = { x, y };
+    stretchShade();
     clearTimeout(still);
-    still = setTimeout(() => {
-      const st = drop.querySelector(".stretch").style.transform.replace(/scale\([^)]*\)/, "scale(1, 1)");
-      drop.querySelector(".stretch").style.transform = st;
-    }, 90);
+    still = setTimeout(() => { speed = 0; stretchShade(); }, 90);
   });
 });
 root.addEventListener("mouseleave", () => {
