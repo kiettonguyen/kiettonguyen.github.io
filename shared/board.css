@@ -257,19 +257,9 @@ html.ink-cursor .row:hover { background: none; }
   66% { border-radius: 52% 48% 62% 38% / 42% 60% 40% 58%; transform: rotate(-30deg); }
 }
 .drop, .arrow, .drop .stretch { will-change: transform; }
-/* Browsers without the glass bend (Firefox, Safari) get a lighter droplet: the shade
-   moves with transform only, so no SVG filter is re-drawn on every frame */
-html.lite .drop .shade {
-  filter: blur(12px);
-  border-radius: 58% 42% 55% 45% / 47% 56% 44% 53%;
-  animation: sway 9s ease-in-out infinite;
-  will-change: transform;
-}
-@keyframes sway {
-  0%, 100% { transform: rotate(0deg) scale(1, 1); }
-  33% { transform: rotate(40deg) scale(1.06, .95); }
-  66% { transform: rotate(-30deg) scale(.96, 1.05); }
-}
+/* Browsers without the glass bend (Firefox, Safari) get just the arrow: the shade on its own
+   was choppy there and didn't add much */
+html.lite .drop { display: none !important; }
 .arrow { z-index: 60; width: 0; height: 0; }
 /* a soft, rounded pointer in the classic tilted shape: the corners are rounded by stroking the
    outline in its own colour */

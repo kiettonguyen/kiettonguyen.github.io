@@ -86,7 +86,7 @@ function trackRow(row) {
 }
 
 if (liquid) {
-  // Chromium can bend what's under the droplet; elsewhere it's just the soft shade
+  // Chromium can bend what's under the droplet; elsewhere there's just the arrow
   const refract = CSS.supports("backdrop-filter", "url(#a)") && /Chrome\//.test(navigator.userAgent);
   if (!refract) root.classList.add("lite");
   const svg = (s) => "data:image/svg+xml," + encodeURIComponent(s);
