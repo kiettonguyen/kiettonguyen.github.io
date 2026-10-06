@@ -1,0 +1,342 @@
+/* Paper theme: tokens, slow-scrolling dot paper, header, figure labels,
+   case-study pages, the glass droplet and ink-arrow cursor, and lightbox.
+   Home-page layout lives in style.css. */
+
+:root {
+  --paper: #EFE9DF;
+  --dot: rgba(59, 52, 45, .2);
+  --ink: #3B342D;
+  --sumi: #2B2520;
+  --muted: #6B6157;
+  --accent: #A0573D;
+  --hover: rgba(59, 52, 45, .06);
+  --media-bg: #E6DFD3;
+  --max: 1080px;
+  --font: "Zen Kaku Gothic New", system-ui, sans-serif;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.75;
+  background-color: var(--paper);
+  overflow-x: hidden;
+}
+
+/* Paper: a dot grid on a fixed layer that scrolls at half speed and drifts
+   a little with the cursor, faded behind the text column */
+.paper-dots {
+  position: fixed;
+  inset: -48px;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(var(--dot) 1.08px, transparent 1.35px);
+  background-size: 24px 24px;
+  /* script.js moves it with transform, not background-position, so it never repaints */
+  will-change: transform;
+  /* very faint fade: a touch lighter toward the middle, full strength at the edges */
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, .72) 0%, rgba(0, 0, 0, .8) 40%, #000 100%);
+  mask-image: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, .72) 0%, rgba(0, 0, 0, .8) 40%, #000 100%);
+}
+
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--accent); }
+img, video { display: block; max-width: 100%; }
+
+.toolbar, main, .site-footer {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+/* Parallax: each foreground layer drifts against the cursor by its own factor --f;
+   script.js sets the transforms and this eases them */
+.drift,
+.toolbar, .site-footer,
+#work, #about,
+.cs-hero, .cs-body, .next-project {
+  transition: transform 900ms var(--ease);
+}
+.toolbar, .site-footer { --f: -.2; }
+#work { --f: -.5; }
+#about { --f: -.4; }
+.cs-hero { --f: -.6; }
+.cs-body { --f: -.3; }
+.next-project { --f: -.5; }
+
+/* Header: the 阮 mark, name, and its figure caption */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+.logo { display: flex; align-items: center; gap: 12px; margin: -10px -16px; padding: 10px 16px; border-radius: 14px; transition: background-color .25s ease; }
+.logo:hover { color: var(--ink); background: var(--hover); }
+.seal { flex: none; width: 36px; height: 36px; overflow: visible; transition: transform .6s var(--ease); }
+.seal text { font-family: "Klee One", serif; font-weight: 600; font-size: 34px; fill: var(--sumi); }
+.logo:hover .seal { transform: translateY(-1px); }
+/* two faint wisps of steam rise from the 阮 while the name is hovered, like a cup of tea */
+.steam path {
+  fill: none;
+  stroke: var(--sumi);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+.logo:hover .steam path { animation: steam 2.4s ease-out infinite; }
+.logo:hover .steam path + path { animation-delay: .7s; }
+@keyframes steam {
+  0% { stroke-dashoffset: 1; opacity: 0; transform: translateY(3px); }
+  25% { opacity: .45; }
+  70% { stroke-dashoffset: 0; opacity: .3; }
+  100% { stroke-dashoffset: 0; opacity: 0; transform: translateY(-4px); }
+}
+.logo-text { display: flex; flex-direction: column; gap: 1px; }
+.logo-name { font-size: 15px; font-weight: 500; line-height: 1.3; }
+.logo-fig { font-size: 11px; line-height: 1.3; color: var(--accent); }
+nav { display: flex; gap: 32px; font-size: 14px; }
+nav a { color: var(--muted); }
+
+/* Figure labels, e.g. "fig. 03 · selected work" */
+.fig-label { font-size: 13px; font-weight: 400; color: var(--accent); margin-bottom: 28px; }
+.label { font-size: 14px; font-weight: 500; margin-bottom: 14px; }
+.label span { font-weight: 400; color: var(--muted); }
+.label .num { color: var(--accent); }
+
+/* Footer */
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 48px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.site-footer .end { color: var(--accent); }
+
+/* ---------- Case-study pages: numbered like a textbook ---------- */
+.case-study { counter-reset: sec fig; }
+.cs-hero { padding: 80px 0 72px 220px; max-width: 900px; }
+.back { font-size: 14px; color: var(--muted); }
+.cs-year { margin-top: 48px; font-size: 13px; color: var(--accent); }
+.cs-year::before { content: "fig. " var(--fig, "") " · "; }
+.cs-hero h1 {
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  margin: 8px 0 20px;
+}
+.cs-hero h1 em { font-style: normal; font-size: .55em; color: var(--accent); white-space: nowrap; }
+.tags { list-style: none; display: flex; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+.tags li + li::before { content: "·"; padding: 0 8px; }
+.cs-lead { margin-top: 28px; font-size: 17px; color: var(--muted); }
+
+/* body sits in a wide column; section numbers and figure labels hang in the left margin */
+.cs-body { max-width: 900px; margin-bottom: 96px; padding-left: 220px; }
+.cs-body > :first-child { margin-top: 0; }
+.cs-body > p, .cs-split p { font-size: 16px; margin-bottom: 18px; }
+.cs-h {
+  position: relative;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.4;
+  margin: 72px 0 14px;
+  counter-increment: sec;
+}
+.cs-h::before {
+  content: var(--fig, "") "." counter(sec);
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.cs-list { margin: 0 0 18px 1.2em; }
+.cs-list li { margin-bottom: 8px; }
+.cs-link { color: var(--accent); }
+.cs-link:hover { text-decoration: underline; }
+
+.cs-media { position: relative; margin: 36px 0; }
+.cs-body > .cs-media, .cs-gallery { counter-increment: fig; }
+/* figure labels sit under each figure, like a caption on a print */
+.cs-body > .cs-media::after, .cs-gallery::after {
+  content: "fig. " var(--fig, "") counter(fig, lower-alpha);
+  display: block;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.cs-media img, .cs-media video { width: 100%; }
+/* Plate: a soft, see-through warm ground for diagrams and screenshots that had light backgrounds
+   (their white is cut out of the files, so the dots show through). Video can't be cut out, so it
+   multiplies onto a solid warm plate instead. */
+.cs-media.plate, .cs-gallery.plate .cs-media { padding: 18px; background: rgba(120, 98, 76, .07); }
+.cs-media.plate:has(video) { background: #E7E0D5; isolation: isolate; }
+.cs-media.plate video { mix-blend-mode: multiply; }
+/* a cut-out illustration: no plate, centred in the column */
+.cs-media.small.bare { max-width: none; }
+.cs-media.bare img { width: auto; max-width: 180px; margin: 0 auto; }
+.cs-media img { cursor: zoom-in; }
+.cs-media.small { max-width: 280px; }
+.cs-media.medium { max-width: 560px; }
+.cs-media.yt { aspect-ratio: 16 / 9; margin-bottom: 64px; }
+.cs-media.yt iframe { width: 100%; height: 100%; border: 0; background: #000; }
+.cs-media figcaption { margin-top: 10px; font-size: 13px; color: var(--muted); }
+
+.cs-gallery { position: relative; display: grid; gap: 20px; align-items: start; margin: 36px 0; }
+.cs-gallery::after { grid-column: 1 / -1; margin-top: 0; }
+.cs-gallery.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cs-gallery.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cs-gallery.n4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.cs-gallery .cs-media { margin: 0; }
+
+.cs-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 24px 0; }
+.cs-card { padding: 20px 22px; border-radius: 14px; background: var(--hover); }
+.cs-card h3 { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
+.cs-card p { font-size: 15px; color: var(--muted); }
+
+.cs-split { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 32px; align-items: start; }
+.cs-split .cs-media { margin: 0; }
+.cs-specs dt { font-weight: 500; margin-top: 16px; }
+.cs-specs dt:first-child { margin-top: 0; }
+.cs-specs dd { color: var(--muted); }
+
+.next-project {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: fit-content;
+  margin: 0 -20px 120px auto;
+  padding: 18px 20px;
+  border-radius: 14px;
+  text-align: right;
+  transition: background-color .25s ease, transform 900ms var(--ease);
+}
+.next-project:hover { background: var(--hover); color: var(--ink); }
+.next-project span { font-size: 13px; color: var(--accent); }
+.next-project strong { font-size: clamp(18px, 2.4vw, 22px); font-weight: 400; }
+
+/* ---------- Glass droplet and ink-arrow cursor (built by script.js) ---------- */
+.drop, .arrow { position: fixed; left: 0; top: 0; pointer-events: none; }
+.drop { z-index: 50; width: 200px; height: 200px; margin: -100px 0 0 -100px; transition: transform 320ms cubic-bezier(.2, .8, .2, 1); }
+.drop .glass { position: absolute; inset: 0; border-radius: 50%; }
+/* with the glass on, a project row's highlight is drawn above the glass (by script.js) so only the words bend */
+.row-hl { position: fixed; left: 0; top: 0; z-index: 55; border-radius: 14px; background: var(--hover); pointer-events: none; opacity: 0; transition: opacity .25s ease; }
+.row-hl.on { opacity: 1; }
+html.ink-cursor .row:hover { background: none; }
+.drop .glass.refract { -webkit-backdrop-filter: url(#bead); backdrop-filter: url(#bead); }
+.drop .stretch { position: absolute; inset: 0; transition: transform 180ms ease-out; }
+.drop .shade {
+  position: absolute;
+  inset: 14%;
+  filter: blur(10px) url(#wavy);
+  background: radial-gradient(ellipse at 60% 68%, rgba(59, 52, 45, .07), rgba(59, 52, 45, 0) 70%),
+              radial-gradient(ellipse at 34% 30%, rgba(255, 255, 255, .049), rgba(255, 255, 255, 0) 45%);
+  animation: morph 9s ease-in-out infinite;
+}
+@keyframes morph {
+  0%, 100% { border-radius: 58% 42% 55% 45% / 47% 56% 44% 53%; transform: rotate(0deg); }
+  33% { border-radius: 44% 56% 40% 60% / 58% 42% 58% 42%; transform: rotate(40deg); }
+  66% { border-radius: 52% 48% 62% 38% / 42% 60% 40% 58%; transform: rotate(-30deg); }
+}
+.drop, .arrow, .drop .stretch { will-change: transform; }
+/* Browsers without the glass bend (Firefox, Safari) get a lighter droplet: the shade
+   moves with transform only, so no SVG filter is re-drawn on every frame */
+html.lite .drop .shade {
+  filter: blur(12px);
+  border-radius: 58% 42% 55% 45% / 47% 56% 44% 53%;
+  animation: sway 9s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg) scale(1, 1); }
+  33% { transform: rotate(40deg) scale(1.06, .95); }
+  66% { transform: rotate(-30deg) scale(.96, 1.05); }
+}
+.arrow { z-index: 60; width: 0; height: 0; }
+/* a soft, rounded pointer in the classic tilted shape: the corners are rounded by stroking the
+   outline in its own colour */
+.arrow { color: #1F1B17; transition: color .2s ease; }
+.arrow svg { position: absolute; left: -0.82px; top: -0.82px; width: 10.8px; height: 14.7px; overflow: visible; }
+.arrow path { fill: currentColor; stroke: currentColor; stroke-width: 2.2; stroke-linejoin: round; }
+/* no outline: a soft paper-coloured glow vanishes on the paper but keeps the arrow visible over dark images */
+.arrow svg { filter: drop-shadow(0 0 1.2px rgba(247, 243, 236, .9)); }
+.arrow.on-link { color: var(--accent); }
+.drop[hidden], .arrow[hidden] { display: none; }
+/* the system pointer is only swapped out where the ink arrow can show */
+html.ink-cursor, html.ink-cursor a, html.ink-cursor button, html.ink-cursor img[data-zoom] { cursor: none; }
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(59, 52, 45, .92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  z-index: 100;
+  cursor: zoom-out;
+}
+.lightbox[hidden] { display: none; }
+.lightbox img { max-width: 100%; max-height: 100%; border-radius: 8px; }
+
+@media (max-width: 860px) {
+  .cs-hero, .cs-body { padding-left: 0; }
+  .cs-body > .cs-media, .cs-gallery { display: flex; flex-direction: column; }
+  .cs-gallery.n2, .cs-gallery.n3, .cs-gallery.n4 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cs-cards, .cs-split { grid-template-columns: minmax(0, 1fr); }
+  .cs-split .cs-media { max-width: 180px; }
+}
+@media (max-width: 520px) {
+  .toolbar, main, .site-footer { padding-left: 20px; padding-right: 20px; }
+  nav { gap: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* Living Museum card sort, redrawn as text on a figure plate */
+.sort { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; font-size: 12.5px; line-height: 1.45; align-items: start; }
+.sort-col { display: flex; flex-direction: column; gap: 6px; }
+.sort-col h4 { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.sort-col h4 small { display: block; font-size: 11px; font-weight: 400; color: var(--muted); }
+.sort-card { padding: 8px 10px; background: rgba(255, 255, 255, .6); box-shadow: inset 0 0 0 1px rgba(59, 52, 45, .12); }
+.sort-card.loose { margin-top: 8px; background: none; box-shadow: none; outline: 1px dashed rgba(59, 52, 45, .3); outline-offset: -1px; color: var(--muted); }
+.sort-card strong { font-weight: 500; }
+.sort-card ul { margin: 4px 0 0 1.1em; color: var(--muted); }
+.sort-fig figcaption { margin-top: 14px; }
+@media (max-width: 860px) { .sort { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Sticky index in the left margin of project pages (built by script.js from the section headings) */
+.case-study main { position: relative; }
+/* above the drifting hero and body, which otherwise sit on top of it and swallow the clicks */
+.toc-wrap { position: absolute; left: 32px; width: 180px; z-index: 2; }
+.cs-h { scroll-margin-top: 40px; }
+.toc { position: sticky; top: 40px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; line-height: 1.5; text-align: right; }
+.toc .toc-back { color: var(--muted); margin-bottom: 20px; }
+.toc .toc-fig { color: var(--accent); margin-bottom: 4px; }
+.toc a { color: var(--muted); transition: color .2s ease; }
+.toc a:hover, .toc a.here { color: var(--accent); }
+/* with the index showing, the back link lives in it rather than above the title */
+@media (min-width: 861px) { .has-toc .cs-hero .back { display: none; } .has-toc .cs-year { margin-top: 0; } }
+@media (max-width: 860px) { .toc-wrap { display: none; } }

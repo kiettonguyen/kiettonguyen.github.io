@@ -1,0 +1,105 @@
+/* Home page: hero with figure notes, work in numbered category columns, about.
+   Theme tokens and shared pieces live in shared/board.css */
+
+/* Intro: 阮 written stroke by stroke on the paper, then it lifts away (about 2s).
+   Pure CSS, so it clears itself even if scripts fail; never blocks clicks. */
+.intro[hidden] { display: none; }
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  pointer-events: none;
+  animation: intro-out .5s ease 1.75s forwards;
+}
+.intro svg { width: min(28vw, 168px); height: auto; overflow: visible; }
+.intro .stroke {
+  fill: none;
+  stroke: var(--sumi);
+  stroke-width: 128;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 1.05;
+  animation: write .26s cubic-bezier(.45, 0, .3, 1) forwards;
+  animation-delay: calc(.15s + var(--i) * .22s);
+}
+@keyframes write { to { stroke-dashoffset: 0; } }
+@keyframes intro-out { to { opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .intro { display: none; } }
+
+/* Hero */
+/* Hero: an editorial split, like a book's title page. The figure note on the left,
+   a narrow, light statement on the right. */
+.hero {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 48px 32px;
+  align-items: start;
+  padding: 130px 0 200px;
+}
+.hero-meta { --f: -1.2; display: flex; flex-direction: column; gap: 8px; }
+/* the statement starts at the second column, lining up with the work and about columns below */
+.hero-text { grid-column: 2 / -1; display: flex; flex-direction: column; gap: 14px; max-width: 560px; }
+.hero h1 {
+  --f: -.6;
+  font-size: 21px;
+  line-height: 1.6;
+  font-weight: 300;
+}
+.hero-text .fig { --f: -.35; }
+/* a drawn "↳" with a longer horizontal run than the font's glyph */
+.turn { width: 20px; height: 12px; margin-right: 8px; vertical-align: -1px; overflow: visible; }
+.turn path { fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.fig {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--accent);
+}
+
+/* Columns used by work and about */
+.cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 48px 32px;
+}
+#work { padding-bottom: 140px; }
+#about { padding-bottom: 200px; }
+
+/* Work rows, each with its figure number */
+.rows { display: flex; flex-direction: column; gap: 4px; margin: 0 -14px; }
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 14px;
+  border-radius: 14px;
+  transition: background-color .25s ease;
+}
+.row:hover { background: var(--hover); color: var(--ink); }
+.row .num { font-size: 12px; color: var(--accent); }
+.row strong { font-size: 15px; font-weight: 500; }
+.row span:last-child { font-size: 12px; color: var(--muted); }
+.row em { font-style: normal; color: var(--accent); }
+
+/* About */
+.about-cols { font-size: 15px; line-height: 1.75; }
+/* 3.1 About gets the full row so the text can breathe; Skills and Connect sit in columns under it */
+.about-cols > .about-lead { grid-column: 1 / -1; }
+.about-lead .about-text p + p { margin-top: 14px; }
+.about-cols > div { display: flex; flex-direction: column; gap: 14px; }
+.about-cols .label { margin: 0; }
+.list { list-style: none; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
+.connect a { color: var(--accent); }
+.connect a:hover { text-decoration: underline; }
+.email { overflow-wrap: anywhere; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); gap: 32px; padding: 72px 0 120px; }
+  .hero-text { grid-column: auto; }
+  .cols { grid-template-columns: minmax(0, 1fr); }
+  #work { padding-bottom: 96px; }
+  #about { padding-bottom: 140px; }
+}
