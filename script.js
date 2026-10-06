@@ -14,37 +14,20 @@ const forced = window.matchMedia("(forced-colors: active)");
 // Parallax. Transforms are set straight on each layer (not through CSS variables on
 // <html>), so a mouse move never restyles the whole page; that keeps Firefox smooth.
 const layers = [...document.querySelectorAll(".drift, .toolbar, .site-footer, #work, #about, .cs-hero, .cs-body, .next-project")]
-  .map((el) => ({ el, f: parseFloat(getComputedStyle(el).getPropertyValue("--f")) || -0.4, x: 0, y: 0 }));
+  .map((el) => ({ el, f: parseFloat(getComputedStyle(el).getPropertyValue("--f")) || -0.4 }));
 const dots = document.createElement("div");
 dots.className = "paper-dots";
 dots.setAttribute("aria-hidden", "true");
 document.body.prepend(dots);
 
 const K = 14; // drift strength in px
-let mx = 0, my = 0, scrolling = false, driftFrame = null;
+let mx = 0, my = 0, scrolling = false;
 function paint() {
   const k = scrolling ? 0 : K; // the drift rests while the page scrolls, so nothing swims
+  for (const { el, f } of layers) el.style.transform = `translate3d(${(mx * k * f).toFixed(2)}px, ${(my * k * f).toFixed(2)}px, 0)`;
   // dots follow the scroll at half speed, wrapped to one 24px dot step so the layer never runs out
   const sy = calm.matches ? 0 : -((window.scrollY * 0.5) % 24);
   dots.style.transform = `translate3d(${(mx * k * 0.2).toFixed(2)}px, ${(sy + my * k * 0.2).toFixed(2)}px, 0)`;
-  if (!driftFrame) driftFrame = requestAnimationFrame(drift);
-}
-// The layers ease toward the cursor here rather than with a CSS transition. A transition (or any
-// 3D transform) hands the layer to the GPU as a ready-made picture, and sliding that picture between
-// pixels smudges the text. A plain 2D translate set every frame keeps the layer in the page, so the
-// browser redraws the text crisply at each in-between position and the glide stays smooth.
-function drift() {
-  const k = scrolling ? 0 : K;
-  let moving = false;
-  for (const l of layers) {
-    const tx = mx * k * l.f, ty = my * k * l.f;
-    l.x += (tx - l.x) * 0.1;
-    l.y += (ty - l.y) * 0.1;
-    if (Math.abs(tx - l.x) > 0.02 || Math.abs(ty - l.y) > 0.02) moving = true;
-    else { l.x = tx; l.y = ty; }
-    l.el.style.transform = `translate(${l.x.toFixed(2)}px, ${l.y.toFixed(2)}px)`;
-  }
-  driftFrame = moving ? requestAnimationFrame(drift) : null;
 }
 
 let scrollFrame = null;

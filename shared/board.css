@@ -58,7 +58,13 @@ img, video { display: block; max-width: 100%; }
 }
 
 /* Parallax: each foreground layer drifts against the cursor by its own factor --f;
-   script.js sets and eases the transforms */
+   script.js sets the transforms and this eases them */
+.drift,
+.toolbar, .site-footer,
+#work, #about,
+.cs-hero, .cs-body, .next-project {
+  transition: transform 900ms var(--ease);
+}
 .toolbar, .site-footer { --f: -.2; }
 #work { --f: -.5; }
 #about { --f: -.4; }
