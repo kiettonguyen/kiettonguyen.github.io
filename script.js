@@ -149,7 +149,10 @@ document.addEventListener("mousemove", (e) => {
     } else {
       drop.style.transform = `translate3d(${px}px, ${py}px, 0)`;
     }
-    arrow.classList.toggle("on-link", !!(next.target.closest && next.target.closest("a, button, [data-zoom]")));
+    const onLink = !!(next.target.closest && next.target.closest("a, button, [data-zoom]"));
+    arrow.classList.toggle("on-link", onLink);
+    // over links (e.g. the project rows) the glass steps aside, so their highlight stays crisp
+    drop.classList.toggle("on-link", onLink);
     // stretch the droplet's shade along the direction of travel. Direction and speed are
     // smoothed so jittery mouse input doesn't make it flicker, and the stretch is applied as
     // rotate(a) scale rotate(-a), so the shade itself never turns or flips.
