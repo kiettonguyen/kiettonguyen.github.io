@@ -216,7 +216,8 @@ document.addEventListener("mousemove", (e) => {
         const a2 = 2 * Math.atan2(dy, dx); // doubled angle: travelling left or right stretch the same way
         dirX += (Math.cos(a2) - dirX) * 0.2;
         dirY += (Math.sin(a2) - dirY) * 0.2;
-        speed += (Math.min(1, d / 40) - speed) * 0.25;
+        // square root: even a slow nudge visibly pushes the droplet out of round, like water ahead of a hand
+        speed += (Math.min(1, Math.sqrt(d / 30)) - speed) * 0.25;
       }
     }
     last = { x, y };
