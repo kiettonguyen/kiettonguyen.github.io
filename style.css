@@ -81,7 +81,7 @@
 .row:hover { background: var(--hover); color: var(--ink); }
 .row .num { font-size: 12px; color: var(--accent); }
 .row strong { font-size: 15px; font-weight: 500; }
-.row span:last-child { font-size: 14px; color: var(--muted); }
+.row span:last-child { font-size: 12px; color: var(--muted); }
 .row em { font-style: normal; color: var(--accent); }
 
 /* About */
