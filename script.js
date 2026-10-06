@@ -87,9 +87,11 @@ if (liquid) {
         <feFlood flood-color="#808000" result="mid"/>
         <feMerge result="field"><feMergeNode in="mid"/><feMergeNode in="soft"/></feMerge>
         <feComposite in="map" in2="field" operator="arithmetic" k2="1" k3="0.8" k4="-0.4" result="water"/>
-        <feDisplacementMap in="SourceGraphic" in2="water" scale="-28" xChannelSelector="R" yChannelSelector="G">
-          <animate attributeName="scale" dur="4.5s" values="-28;-35;-28" ${ease}/>
+        <feDisplacementMap in="SourceGraphic" in2="water" scale="-28" xChannelSelector="R" yChannelSelector="G" result="bent">
+          <animate attributeName="scale" dur="3.75s" values="-28;-35;-28" ${ease}/>
         </feDisplacementMap>
+        <!-- displacement samples pixels without smoothing, which makes text look jagged; a hair of blur evens it out -->
+        <feGaussianBlur in="bent" stdDeviation="0.3"/>
       </filter>
       <filter id="wavy" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
         <feTurbulence type="fractalNoise" baseFrequency="0.007" numOctaves="1" seed="5" result="a"/>
