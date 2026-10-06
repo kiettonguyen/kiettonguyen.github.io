@@ -12,8 +12,10 @@ const fine = window.matchMedia("(pointer: fine)");
 const forced = window.matchMedia("(forced-colors: active)");
 
 // Parallax. Transforms are set straight on each layer (not through CSS variables on
-// <html>), so a mouse move never restyles the whole page; that keeps Firefox smooth.
-const layers = [...document.querySelectorAll(".drift, .toolbar, .site-footer, #work, #about, .cs-hero, .cs-body, .next-project")]
+// <html>), so a mouse move never restyles the whole page. Firefox still struggles to keep the
+// glide smooth, so there the page stays put and only the dots follow the scroll.
+const firefox = navigator.userAgent.includes("Firefox/");
+const layers = firefox ? [] : [...document.querySelectorAll(".drift, .toolbar, .site-footer, #work, #about, .cs-hero, .cs-body, .next-project")]
   .map((el) => ({ el, f: parseFloat(getComputedStyle(el).getPropertyValue("--f")) || -0.4 }));
 const dots = document.createElement("div");
 dots.className = "paper-dots";
@@ -27,7 +29,7 @@ function paint() {
   for (const { el, f } of layers) el.style.transform = `translate3d(${(mx * k * f).toFixed(2)}px, ${(my * k * f).toFixed(2)}px, 0)`;
   // dots follow the scroll at half speed, wrapped to one 24px dot step so the layer never runs out
   const sy = calm.matches ? 0 : -((window.scrollY * 0.5) % 24);
-  dots.style.transform = `translate3d(${(mx * k * 0.2).toFixed(2)}px, ${(sy + my * k * 0.2).toFixed(2)}px, 0)`;
+  dots.style.transform = `translate3d(${(firefox ? 0 : mx * k * 0.2).toFixed(2)}px, ${(sy + (firefox ? 0 : my * k * 0.2)).toFixed(2)}px, 0)`;
 }
 
 let scrollFrame = null;
