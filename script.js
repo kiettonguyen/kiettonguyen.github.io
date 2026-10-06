@@ -101,7 +101,7 @@ if (liquid) {
       </filter>
     </svg>
     <div class="drop" hidden><div class="glass${refract ? " refract" : ""}"></div><div class="stretch"><div class="shade"></div></div></div>
-    <div class="arrow" hidden><svg viewBox="-1.4 -1.4 18.5 25.2"><path d="M0 0 L2.2 18.6 L6.83 14.7 L10.87 21.77 A1.52 1.52 0 0 0 13.53 20.31 L9.77 13.1 L15.7 10.8 Z"/></svg></div>`;
+    <div class="arrow" hidden><svg viewBox="-1.4 -1.4 18.5 25.2"><path d="M0 0 L2.2 18.6 L6.97 14.63 L10.87 21.77 A1.52 1.52 0 0 0 13.53 20.31 L9.63 13.17 L15.7 10.8 Z"/></svg></div>`;
   document.body.appendChild(fx);
   drop = fx.querySelector(".drop");
   arrow = fx.querySelector(".arrow");
