@@ -126,8 +126,6 @@ if (liquid) {
         <feDisplacementMap in="SourceGraphic" in2="water" scale="-28" xChannelSelector="R" yChannelSelector="G" result="bent">
           <animate attributeName="scale" dur="2.5s" values="-28;-35;-28" ${ease}/>
         </feDisplacementMap>
-        <!-- displacement samples pixels without smoothing, which makes text look jagged; a hair of blur evens it out -->
-        <feGaussianBlur in="bent" stdDeviation="0.3"/>
       </filter>
       <filter id="wavy" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
         <feTurbulence type="fractalNoise" baseFrequency="0.007" numOctaves="1" seed="5" result="a"/>
@@ -138,7 +136,7 @@ if (liquid) {
         <feDisplacementMap in="SourceGraphic" in2="w" scale="34" xChannelSelector="R" yChannelSelector="G"/>
       </filter>
     </svg>
-    <div class="drop" hidden><div class="stretch"><div class="glass${refract ? " refract" : ""}"></div><div class="shade"></div></div></div>
+    <div class="drop" hidden><div class="glass${refract ? " refract" : ""}"></div><div class="stretch"><div class="shade"></div></div></div>
     <div class="arrow" hidden><svg viewBox="-1.4 -1.4 18.5 25.2"><path d="M0 0 L2.2 18.6 L6.97 14.63 L10.87 21.77 A1.52 1.52 0 0 0 13.53 20.31 L9.63 13.17 L15.7 10.8 Z"/></svg></div>`;
   document.body.appendChild(fx);
   drop = fx.querySelector(".drop");
@@ -178,6 +176,16 @@ function wobble() {
   if (settled) { blob = blobVel = 0; drop.querySelector(".stretch").style.transform = ""; }
   blobFrame = settled ? null : requestAnimationFrame(wobble);
 }
+// the droplet eases after the pointer here, always landing on whole pixels so the glass never sits between pixels
+let dropX = 0, dropY = 0, goalX = 0, goalY = 0, followFrame = null;
+function follow() {
+  dropX += (goalX - dropX) * 0.2;
+  dropY += (goalY - dropY) * 0.2;
+  const done = Math.abs(goalX - dropX) < 0.5 && Math.abs(goalY - dropY) < 0.5;
+  if (done) { dropX = goalX; dropY = goalY; }
+  drop.style.transform = `translate3d(${Math.round(dropX)}px, ${Math.round(dropY)}px, 0)`;
+  followFrame = done ? null : requestAnimationFrame(follow);
+}
 document.addEventListener("mousemove", (e) => {
   if (calm.matches || !fine.matches) return;
   next = e;
@@ -195,16 +203,10 @@ document.addEventListener("mousemove", (e) => {
     my = y / window.innerHeight - 0.5;
     paint();
     if (!drop) return;
-    if (!last) {
-      // first sighting (new page, or back from outside the window): appear on the cursor,
-      // don't glide in from the corner
-      drop.style.transition = "none";
-      drop.style.transform = `translate3d(${px}px, ${py}px, 0)`;
-      drop.getBoundingClientRect();
-      drop.style.transition = "";
-    } else {
-      drop.style.transform = `translate3d(${px}px, ${py}px, 0)`;
-    }
+    goalX = px; goalY = py;
+    // first sighting (new page, or back from outside the window): appear on the cursor
+    if (!last) { dropX = px; dropY = py; }
+    if (!followFrame) follow();
     const onLink = !!(next.target.closest && next.target.closest("a, button, [data-zoom]"));
     arrow.classList.toggle("on-link", onLink);
     // project rows: the words stay under the glass, but their highlight is drawn above it, so it stays crisp
