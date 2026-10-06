@@ -48,6 +48,7 @@
   font-size: 21px;
   line-height: 1.6;
   font-weight: 300;
+  text-wrap: balance;
 }
 .hero-text .fig { --f: -.35; }
 /* a drawn "↳" with a longer horizontal run than the font's glyph */
