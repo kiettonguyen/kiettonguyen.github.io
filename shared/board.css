@@ -242,7 +242,7 @@ nav a { color: var(--muted); }
 .row-hl.on { opacity: 1; }
 html.ink-cursor .row:hover { background: none; }
 .drop .glass.refract { -webkit-backdrop-filter: url(#bead); backdrop-filter: url(#bead); }
-.drop .stretch { position: absolute; inset: 0; transition: transform 180ms ease-out; }
+.drop .stretch { position: absolute; inset: 0; }
 .drop .shade {
   position: absolute;
   inset: 14%;

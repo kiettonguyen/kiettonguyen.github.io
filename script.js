@@ -136,7 +136,7 @@ if (liquid) {
         <feDisplacementMap in="SourceGraphic" in2="w" scale="34" xChannelSelector="R" yChannelSelector="G"/>
       </filter>
     </svg>
-    <div class="drop" hidden><div class="glass${refract ? " refract" : ""}"></div><div class="stretch"><div class="shade"></div></div></div>
+    <div class="drop" hidden><div class="stretch"><div class="glass${refract ? " refract" : ""}"></div><div class="shade"></div></div></div>
     <div class="arrow" hidden><svg viewBox="-1.4 -1.4 18.5 25.2"><path d="M0 0 L2.2 18.6 L6.97 14.63 L10.87 21.77 A1.52 1.52 0 0 0 13.53 20.31 L9.63 13.17 L15.7 10.8 Z"/></svg></div>`;
   document.body.appendChild(fx);
   drop = fx.querySelector(".drop");
@@ -157,11 +157,24 @@ let last = null;
 let next = null;
 let still = null;
 let dirX = 1, dirY = 0, speed = 0;
+// squash and stretch: the whole droplet (glass and shade) is pulled long along the direction of
+// travel and squeezed across it, keeping its area. A spring drives it, so when the cursor stops
+// the blob overshoots a little and wobbles back to round, like jelly.
+let blob = 0, blobVel = 0, blobFrame = null;
 function stretchShade() {
+  if (!blobFrame) blobFrame = requestAnimationFrame(wobble);
+}
+function wobble() {
+  const target = 0.32 * speed;
+  blobVel = (blobVel + (target - blob) * 0.16) * 0.78;
+  blob = Math.max(-0.2, blob + blobVel);
   const a = (Math.atan2(dirY, dirX) / 2) * 180 / Math.PI;
-  const s = 0.12 * speed;
+  const along = 1 + blob, across = 1 / along;
   drop.querySelector(".stretch").style.transform =
-    `rotate(${a.toFixed(1)}deg) scale(${(1 + s).toFixed(3)}, ${(1 - s * 0.6).toFixed(3)}) rotate(${(-a).toFixed(1)}deg)`;
+    `rotate(${a.toFixed(1)}deg) scale(${along.toFixed(3)}, ${across.toFixed(3)}) rotate(${(-a).toFixed(1)}deg)`;
+  const settled = target === 0 && Math.abs(blob) < 0.002 && Math.abs(blobVel) < 0.002;
+  if (settled) { blob = blobVel = 0; drop.querySelector(".stretch").style.transform = ""; }
+  blobFrame = settled ? null : requestAnimationFrame(wobble);
 }
 document.addEventListener("mousemove", (e) => {
   if (calm.matches || !fine.matches) return;
@@ -194,9 +207,9 @@ document.addEventListener("mousemove", (e) => {
     arrow.classList.toggle("on-link", onLink);
     // project rows: the words stay under the glass, but their highlight is drawn above it, so it stays crisp
     trackRow(next.target.closest ? next.target.closest(".row") : null);
-    // stretch the droplet's shade along the direction of travel. Direction and speed are
+    // stretch the droplet along the direction of travel. Direction and speed are
     // smoothed so jittery mouse input doesn't make it flicker, and the stretch is applied as
-    // rotate(a) scale rotate(-a), so the shade itself never turns or flips.
+    // rotate(a) scale rotate(-a), so the droplet itself never turns or flips.
     if (last) {
       const dx = x - last.x, dy = y - last.y, d = Math.hypot(dx, dy);
       if (d > 0.5) {
