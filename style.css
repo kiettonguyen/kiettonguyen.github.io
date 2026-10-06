@@ -42,7 +42,7 @@
 }
 .hero-meta { --f: -1.2; display: flex; flex-direction: column; gap: 8px; }
 /* the statement starts at the second column, lining up with the work and about columns below */
-.hero-text { grid-column: 2; display: flex; flex-direction: column; gap: 14px; }
+.hero-text { grid-column: 2 / -1; display: flex; flex-direction: column; gap: 14px; }
 .hero h1 {
   --f: -.6;
   font-size: 21px;
