@@ -96,9 +96,9 @@ if (liquid) {
       <filter id="bead" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" x="0" y="0" width="200" height="200" color-interpolation-filters="sRGB">
         <feImage href="${beadMap}" x="0" y="0" width="200" height="200" preserveAspectRatio="none" result="map"/>
         <feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="1" seed="11" result="na"/>
-        <feOffset in="na" result="na2"><animate attributeName="dx" dur="5.5s" values="0;36;0" ${ease}/></feOffset>
+        <feOffset in="na" result="na2"><animate attributeName="dx" dur="3.7s" values="0;36;0" ${ease}/></feOffset>
         <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="1" seed="29" result="nb"/>
-        <feOffset in="nb" result="nb2"><animate attributeName="dy" dur="8.5s" values="0;-30;0" ${ease}/></feOffset>
+        <feOffset in="nb" result="nb2"><animate attributeName="dy" dur="5.7s" values="0;-30;0" ${ease}/></feOffset>
         <feComposite in="na2" in2="nb2" operator="arithmetic" k2="0.5" k3="0.5" result="noise"/>
         <feImage href="${fadeMap}" x="0" y="0" width="200" height="200" preserveAspectRatio="none" result="fade"/>
         <feComposite in="noise" in2="fade" operator="in" result="soft"/>
@@ -106,16 +106,16 @@ if (liquid) {
         <feMerge result="field"><feMergeNode in="mid"/><feMergeNode in="soft"/></feMerge>
         <feComposite in="map" in2="field" operator="arithmetic" k2="1" k3="0.8" k4="-0.4" result="water"/>
         <feDisplacementMap in="SourceGraphic" in2="water" scale="-28" xChannelSelector="R" yChannelSelector="G" result="bent">
-          <animate attributeName="scale" dur="3.75s" values="-28;-35;-28" ${ease}/>
+          <animate attributeName="scale" dur="2.5s" values="-28;-35;-28" ${ease}/>
         </feDisplacementMap>
         <!-- displacement samples pixels without smoothing, which makes text look jagged; a hair of blur evens it out -->
         <feGaussianBlur in="bent" stdDeviation="0.3"/>
       </filter>
       <filter id="wavy" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
         <feTurbulence type="fractalNoise" baseFrequency="0.007" numOctaves="1" seed="5" result="a"/>
-        <feOffset in="a" result="a2"><animate attributeName="dx" dur="11s" values="0;70;0" ${ease}/></feOffset>
+        <feOffset in="a" result="a2"><animate attributeName="dx" dur="7.3s" values="0;70;0" ${ease}/></feOffset>
         <feTurbulence type="fractalNoise" baseFrequency="0.009" numOctaves="1" seed="23" result="b"/>
-        <feOffset in="b" result="b2"><animate attributeName="dy" dur="17s" values="0;-60;0" ${ease}/></feOffset>
+        <feOffset in="b" result="b2"><animate attributeName="dy" dur="11.3s" values="0;-60;0" ${ease}/></feOffset>
         <feComposite in="a2" in2="b2" operator="arithmetic" k2="0.5" k3="0.5" result="w"/>
         <feDisplacementMap in="SourceGraphic" in2="w" scale="34" xChannelSelector="R" yChannelSelector="G"/>
       </filter>
