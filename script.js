@@ -48,6 +48,24 @@ paint();
 const liquid = fine.matches && !calm.matches && !forced.matches;
 let drop = null;
 let arrow = null;
+let hl = null;
+let hlRow = null;
+let hlFrame = null;
+// follows the hovered row every frame (rows drift with the cursor), so the highlight sits exactly on it
+function syncHighlight() {
+  if (!hlRow) { hlFrame = null; return; }
+  const r = hlRow.getBoundingClientRect();
+  hl.style.transform = `translate3d(${r.left}px, ${r.top}px, 0)`;
+  hl.style.width = r.width + "px";
+  hl.style.height = r.height + "px";
+  hlFrame = requestAnimationFrame(syncHighlight);
+}
+function trackRow(row) {
+  if (!hl || row === hlRow) return;
+  hlRow = row;
+  hl.classList.toggle("on", !!row);
+  if (row && !hlFrame) syncHighlight();
+}
 
 if (liquid) {
   // Chromium can bend what's under the droplet; elsewhere it's just the soft shade
@@ -108,6 +126,10 @@ if (liquid) {
   drop = fx.querySelector(".drop");
   arrow = fx.querySelector(".arrow");
   root.classList.add("ink-cursor");
+  hl = document.createElement("div");
+  hl.className = "row-hl";
+  hl.setAttribute("aria-hidden", "true");
+  fx.append(hl);
 }
 
 // Cursor: drift for the foreground, the droplet following a beat behind, the arrow exactly on the pointer
@@ -151,8 +173,8 @@ document.addEventListener("mousemove", (e) => {
     }
     const onLink = !!(next.target.closest && next.target.closest("a, button, [data-zoom]"));
     arrow.classList.toggle("on-link", onLink);
-    // over links (e.g. the project rows) the glass steps aside, so their highlight stays crisp
-    drop.classList.toggle("on-link", onLink);
+    // project rows: the words stay under the glass, but their highlight is drawn above it, so it stays crisp
+    trackRow(next.target.closest ? next.target.closest(".row") : null);
     // stretch the droplet's shade along the direction of travel. Direction and speed are
     // smoothed so jittery mouse input doesn't make it flicker, and the stretch is applied as
     // rotate(a) scale rotate(-a), so the shade itself never turns or flips.
@@ -173,6 +195,7 @@ document.addEventListener("mousemove", (e) => {
 });
 root.addEventListener("mouseleave", () => {
   if (drop) drop.hidden = arrow.hidden = true;
+  trackRow(null);
   last = null;
 });
 
