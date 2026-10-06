@@ -83,60 +83,44 @@ function trackRow(row) {
   if (!hlFrame) syncHighlight();
 }
 
-const STRETCH_STEPS = 16;
-const stretchMaps = [];
 if (liquid) {
   // Chromium can bend what's under the droplet; elsewhere it's just the soft shade
   const refract = CSS.supports("backdrop-filter", "url(#a)") && /Chrome\//.test(navigator.userAgent);
   if (!refract) root.classList.add("lite");
   const svg = (s) => "data:image/svg+xml," + encodeURIComponent(s);
-  // The glass sits in a 320px box so a stretched droplet has room; the round droplet is the
-  // middle 200px of it. Maps are drawn in that box's pixels.
-  const box = "<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'>";
-  const paint =
-    "<rect width='320' height='320' fill='#808000'/>" +
-    "<g mask='url(#k)'><rect width='320' height='320' fill='url(#x)'/><rect width='320' height='320' fill='url(#y)' style='mix-blend-mode:screen'/></g></svg>";
-  // Glass bead: flat in the middle, bending most toward the rim, back to neutral at the edge.
-  // stretch(deg, s) is the same bead pulled s times longer along deg and squeezed across it.
-  const bead = (shape) => svg(box + "<defs>" +
-    "<linearGradient id='x' gradientUnits='userSpaceOnUse' x1='60' x2='260'><stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#f00'/></linearGradient>" +
-    "<linearGradient id='y' gradientUnits='userSpaceOnUse' x1='0' y1='60' x2='0' y2='260'><stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#0f0'/></linearGradient>" +
-    `<radialGradient id='m' gradientUnits='userSpaceOnUse' cx='160' cy='160' r='100'${shape}><stop offset='0' stop-color='#000'/><stop offset='0.4' stop-color='#555'/><stop offset='0.78' stop-color='#fff'/><stop offset='1' stop-color='#000'/></radialGradient>` +
-    "<mask id='k'><rect width='320' height='320' fill='url(#m)'/></mask></defs>" + paint);
-  const beadMap = bead("");
-  // Stretching the glass element itself would blur everything under it, so instead there's one
-  // stretched map per direction, and script.js blends toward the one facing the way the cursor goes.
-  for (let i = 0; refract && i < STRETCH_STEPS; i++) {
-    const deg = (i / STRETCH_STEPS) * 180;
-    const map = bead(` gradientTransform='translate(160 160) rotate(${deg.toFixed(2)}) scale(1.32 0.76) translate(-160 -160)'`);
-    new Image().src = map; // decode ahead, so swapping never shows a blank frame
-    stretchMaps.push(map);
-  }
+  // Glass bead: flat in the middle, bending most toward the rim, back to neutral at the edge
+  const beadMap = svg(
+    "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'>" +
+    "<defs><linearGradient id='x'><stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#f00'/></linearGradient>" +
+    "<linearGradient id='y' x2='0' y2='1'><stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#0f0'/></linearGradient>" +
+    "<radialGradient id='m'><stop offset='0' stop-color='#000'/><stop offset='0.4' stop-color='#555'/><stop offset='0.78' stop-color='#fff'/><stop offset='1' stop-color='#000'/></radialGradient>" +
+    "<mask id='k'><rect width='100' height='100' fill='url(#m)'/></mask></defs>" +
+    "<rect width='100' height='100' fill='#808000'/>" +
+    "<g mask='url(#k)'><rect width='100' height='100' fill='url(#x)'/><rect width='100' height='100' fill='url(#y)' style='mix-blend-mode:screen'/></g></svg>"
+  );
   // Where the watery wobble may move: everywhere but the very rim
-  const fadeMap = svg(box +
-    "<defs><radialGradient id='f' gradientUnits='userSpaceOnUse' cx='160' cy='160' r='100'><stop offset='0' stop-color='#fff'/><stop offset='0.62' stop-color='#fff'/><stop offset='0.96' stop-color='#fff' stop-opacity='0'/></radialGradient></defs>" +
-    "<rect width='320' height='320' fill='url(#f)'/></svg>");
+  const fadeMap = svg(
+    "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'>" +
+    "<defs><radialGradient id='f'><stop offset='0' stop-color='#fff'/><stop offset='0.62' stop-color='#fff'/><stop offset='0.96' stop-color='#fff' stop-opacity='0'/></radialGradient></defs>" +
+    "<rect width='100' height='100' fill='url(#f)'/></svg>"
+  );
   const ease = 'calcMode="spline" keyTimes="0;0.5;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" repeatCount="indefinite"';
   const fx = document.createElement("div");
   fx.setAttribute("aria-hidden", "true");
   fx.innerHTML = `
     <svg width="0" height="0" style="position:absolute">
-      <filter id="bead" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" x="0" y="0" width="320" height="320" color-interpolation-filters="sRGB">
-        <feImage href="${beadMap}" x="0" y="0" width="320" height="320" preserveAspectRatio="none" result="map"/>
-        <feImage id="bead-a" href="${stretchMaps[0]}" x="0" y="0" width="320" height="320" preserveAspectRatio="none" result="long-a"/>
-        <feImage id="bead-b" href="${stretchMaps[1]}" x="0" y="0" width="320" height="320" preserveAspectRatio="none" result="long-b"/>
-        <feComposite id="bead-turn" in="long-a" in2="long-b" operator="arithmetic" k1="0" k2="1" k3="0" k4="0" result="long"/>
-        <feComposite id="bead-mix" in="map" in2="long" operator="arithmetic" k1="0" k2="1" k3="0" k4="0" result="shape"/>
+      <filter id="bead" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" x="0" y="0" width="200" height="200" color-interpolation-filters="sRGB">
+        <feImage href="${beadMap}" x="0" y="0" width="200" height="200" preserveAspectRatio="none" result="map"/>
         <feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="1" seed="11" result="na"/>
         <feOffset in="na" result="na2"><animate attributeName="dx" dur="3.7s" values="0;36;0" ${ease}/></feOffset>
         <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="1" seed="29" result="nb"/>
         <feOffset in="nb" result="nb2"><animate attributeName="dy" dur="5.7s" values="0;-30;0" ${ease}/></feOffset>
         <feComposite in="na2" in2="nb2" operator="arithmetic" k2="0.5" k3="0.5" result="noise"/>
-        <feImage href="${fadeMap}" x="0" y="0" width="320" height="320" preserveAspectRatio="none" result="fade"/>
+        <feImage href="${fadeMap}" x="0" y="0" width="200" height="200" preserveAspectRatio="none" result="fade"/>
         <feComposite in="noise" in2="fade" operator="in" result="soft"/>
         <feFlood flood-color="#808000" result="mid"/>
         <feMerge result="field"><feMergeNode in="mid"/><feMergeNode in="soft"/></feMerge>
-        <feComposite in="shape" in2="field" operator="arithmetic" k2="1" k3="0.8" k4="-0.4" result="water"/>
+        <feComposite in="map" in2="field" operator="arithmetic" k2="1" k3="0.8" k4="-0.4" result="water"/>
         <feDisplacementMap in="SourceGraphic" in2="water" scale="-28" xChannelSelector="R" yChannelSelector="G" result="bent">
           <animate attributeName="scale" dur="2.5s" values="-28;-35;-28" ${ease}/>
         </feDisplacementMap>
@@ -152,7 +136,7 @@ if (liquid) {
         <feDisplacementMap in="SourceGraphic" in2="w" scale="34" xChannelSelector="R" yChannelSelector="G"/>
       </filter>
     </svg>
-    <div class="drop" hidden><div class="glass${refract ? " refract" : ""}"></div><div class="stretch"><div class="shade"></div></div></div>
+    <div class="drop" hidden><div class="stretch"><div class="glass${refract ? " refract" : ""}"></div><div class="shade"></div></div></div>
     <div class="arrow" hidden><svg viewBox="-1.4 -1.4 18.5 25.2"><path d="M0 0 L2.2 18.6 L6.97 14.63 L10.87 21.77 A1.52 1.52 0 0 0 13.53 20.31 L9.63 13.17 L15.7 10.8 Z"/></svg></div>`;
   document.body.appendChild(fx);
   drop = fx.querySelector(".drop");
@@ -173,11 +157,10 @@ let last = null;
 let next = null;
 let still = null;
 let dirX = 1, dirY = 0, speed = 0;
-// squash and stretch: the droplet is pulled long along the direction of travel and squeezed
-// across it. A spring drives it, so when the cursor stops the blob overshoots a little and
-// wobbles back to round, like jelly. The bend is reshaped inside the glass filter, never by
-// transforming the glass, which would blur the words under it; only the soft shade is transformed.
-let blob = 0, blobVel = 0, blobFrame = null, stretchStep = -1;
+// squash and stretch: the whole droplet (glass and shade) is pulled long along the direction of
+// travel and squeezed across it, keeping its area. A spring drives it, so when the cursor stops
+// the blob overshoots a little and wobbles back to round, like jelly.
+let blob = 0, blobVel = 0, blobFrame = null;
 function stretchShade() {
   if (!blobFrame) blobFrame = requestAnimationFrame(wobble);
 }
@@ -185,50 +168,13 @@ function wobble() {
   const target = 0.32 * speed;
   blobVel = (blobVel + (target - blob) * 0.16) * 0.78;
   blob = Math.max(-0.2, blob + blobVel);
-  const angle = Math.atan2(dirY, dirX) / 2;
-  const a = angle * 180 / Math.PI;
+  const a = (Math.atan2(dirY, dirX) / 2) * 180 / Math.PI;
   const along = 1 + blob, across = 1 / along;
   drop.querySelector(".stretch").style.transform =
     `rotate(${a.toFixed(1)}deg) scale(${along.toFixed(3)}, ${across.toFixed(3)}) rotate(${(-a).toFixed(1)}deg)`;
-  const mix = document.getElementById("bead-mix");
-  if (mix && stretchMaps.length) {
-    // the stretched maps are 1.32 long, so blend toward them by blob / 0.32; a squash is a
-    // stretch across the direction of travel
-    const w = Math.min(1, Math.abs(blob) / 0.32);
-    const turn = blob < 0 ? Math.PI / 2 : 0;
-    // the direction falls between two of the stretched maps: blend those two by how close it is
-    // to each, so turning is smooth instead of snapping from one map to the next
-    const pos = ((((angle + turn) / Math.PI) * STRETCH_STEPS) % STRETCH_STEPS + STRETCH_STEPS) % STRETCH_STEPS;
-    const step = Math.floor(pos), f = pos - step;
-    if (step !== stretchStep) {
-      stretchStep = step;
-      document.getElementById("bead-a").setAttribute("href", stretchMaps[step]);
-      document.getElementById("bead-b").setAttribute("href", stretchMaps[(step + 1) % STRETCH_STEPS]);
-    }
-    const turnMix = document.getElementById("bead-turn");
-    turnMix.setAttribute("k2", (1 - f).toFixed(3));
-    turnMix.setAttribute("k3", f.toFixed(3));
-    mix.setAttribute("k2", (1 - w).toFixed(3));
-    mix.setAttribute("k3", w.toFixed(3));
-  }
   const settled = target === 0 && Math.abs(blob) < 0.002 && Math.abs(blobVel) < 0.002;
-  if (settled) {
-    blob = blobVel = 0;
-    drop.querySelector(".stretch").style.transform = "";
-    if (mix) { mix.setAttribute("k2", "1"); mix.setAttribute("k3", "0"); }
-  }
+  if (settled) { blob = blobVel = 0; drop.querySelector(".stretch").style.transform = ""; }
   blobFrame = settled ? null : requestAnimationFrame(wobble);
-}
-// The droplet follows a beat behind the pointer. It's eased here rather than with a CSS
-// transition so it always lands on whole pixels: glass sitting between pixels blurs the words.
-let dropX = 0, dropY = 0, goalX = 0, goalY = 0, followFrame = null;
-function follow() {
-  dropX += (goalX - dropX) * 0.2;
-  dropY += (goalY - dropY) * 0.2;
-  const done = Math.abs(goalX - dropX) < 0.5 && Math.abs(goalY - dropY) < 0.5;
-  if (done) { dropX = goalX; dropY = goalY; }
-  drop.style.transform = `translate3d(${Math.round(dropX)}px, ${Math.round(dropY)}px, 0)`;
-  followFrame = done ? null : requestAnimationFrame(follow);
 }
 document.addEventListener("mousemove", (e) => {
   if (calm.matches || !fine.matches) return;
@@ -247,17 +193,23 @@ document.addEventListener("mousemove", (e) => {
     my = y / window.innerHeight - 0.5;
     paint();
     if (!drop) return;
-    goalX = px; goalY = py;
-    // first sighting (new page, or back from outside the window): appear on the cursor,
-    // don't glide in from the corner
-    if (!last) { dropX = px; dropY = py; }
-    if (!followFrame) follow();
+    if (!last) {
+      // first sighting (new page, or back from outside the window): appear on the cursor,
+      // don't glide in from the corner
+      drop.style.transition = "none";
+      drop.style.transform = `translate3d(${px}px, ${py}px, 0)`;
+      drop.getBoundingClientRect();
+      drop.style.transition = "";
+    } else {
+      drop.style.transform = `translate3d(${px}px, ${py}px, 0)`;
+    }
     const onLink = !!(next.target.closest && next.target.closest("a, button, [data-zoom]"));
     arrow.classList.toggle("on-link", onLink);
     // project rows: the words stay under the glass, but their highlight is drawn above it, so it stays crisp
     trackRow(next.target.closest ? next.target.closest(".row") : null);
     // stretch the droplet along the direction of travel. Direction and speed are
-    // smoothed so jittery mouse input doesn't make it flicker.
+    // smoothed so jittery mouse input doesn't make it flicker, and the stretch is applied as
+    // rotate(a) scale rotate(-a), so the droplet itself never turns or flips.
     if (last) {
       const dx = x - last.x, dy = y - last.y, d = Math.hypot(dx, dy);
       if (d > 0.5) {

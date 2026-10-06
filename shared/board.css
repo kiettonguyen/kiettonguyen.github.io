@@ -235,9 +235,8 @@ nav a { color: var(--muted); }
 
 /* ---------- Glass droplet and ink-arrow cursor (built by script.js) ---------- */
 .drop, .arrow { position: fixed; left: 0; top: 0; pointer-events: none; }
-.drop { z-index: 50; width: 200px; height: 200px; margin: -100px 0 0 -100px; }
-/* the glass reaches 60px past the droplet on every side, room for the bend to stretch */
-.drop .glass { position: absolute; inset: -60px; border-radius: 50%; }
+.drop { z-index: 50; width: 200px; height: 200px; margin: -100px 0 0 -100px; transition: transform 320ms cubic-bezier(.2, .8, .2, 1); }
+.drop .glass { position: absolute; inset: 0; border-radius: 50%; }
 /* with the glass on, a project row's highlight is drawn above the glass (by script.js) so only the words bend */
 .row-hl { position: fixed; left: 0; top: 0; z-index: 55; border-radius: 14px; background: var(--hover); pointer-events: none; opacity: 0; transition: opacity .25s ease; }
 .row-hl.on { opacity: 1; }
