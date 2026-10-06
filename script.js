@@ -83,56 +83,61 @@ function trackRow(row) {
   if (!hlFrame) syncHighlight();
 }
 
+const TEAR_STEPS = 32;
+const tearMaps = [];
 if (liquid) {
   // Chromium can bend what's under the droplet; elsewhere it's just the soft shade
   const refract = CSS.supports("backdrop-filter", "url(#a)") && /Chrome\//.test(navigator.userAgent);
   if (!refract) root.classList.add("lite");
   const svg = (s) => "data:image/svg+xml," + encodeURIComponent(s);
+  // The glass sits in a 320px box so a moving droplet has room for its tail; the round droplet is
+  // the middle 200px of it. Maps are drawn in that box's pixels.
   // Glass bead: flat in the middle, bending most toward the rim, back to neutral at the edge
-  const beadMap = svg(
-    "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'>" +
-    "<defs><linearGradient id='x'><stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#f00'/></linearGradient>" +
-    "<linearGradient id='y' x2='0' y2='1'><stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#0f0'/></linearGradient>" +
-    "<radialGradient id='m'><stop offset='0' stop-color='#000'/><stop offset='0.4' stop-color='#555'/><stop offset='0.78' stop-color='#fff'/><stop offset='1' stop-color='#000'/></radialGradient>" +
-    "<mask id='k'><rect width='100' height='100' fill='url(#m)'/></mask></defs>" +
-    "<rect width='100' height='100' fill='#808000'/>" +
-    "<g mask='url(#k)'><rect width='100' height='100' fill='url(#x)'/><rect width='100' height='100' fill='url(#y)' style='mix-blend-mode:screen'/></g></svg>"
-  );
-  // Moving droplet: the same glass, reshaped like a fireball heading right. A round head sits just
-  // behind the pointer (its front edge closer in than the round droplet's) and tapers to a point behind.
-  // The droplet is turned to face the way the cursor travels, and blends between the two shapes.
-  const tearMap = svg(
-    "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'>" +
-    "<defs><linearGradient id='x' gradientUnits='userSpaceOnUse' x1='-2' x2='98'><stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#f00'/></linearGradient>" +
-    "<linearGradient id='y' x2='0' y2='1'><stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#0f0'/></linearGradient>" +
-    "<radialGradient id='m' gradientUnits='userSpaceOnUse' cx='48' cy='50' r='30'><stop offset='0' stop-color='#000'/><stop offset='0.45' stop-color='#555'/><stop offset='0.85' stop-color='#fff'/></radialGradient>" +
-    "<filter id='b' x='-30%' y='-30%' width='160%' height='160%'><feGaussianBlur stdDeviation='4'/></filter>" +
-    "<mask id='t'><path d='M4 50 L27.55 28.07 A30 30 0 1 1 27.55 71.93 Z' fill='#fff' filter='url(#b)'/></mask>" +
-    "<mask id='k'><rect width='100' height='100' fill='url(#m)' mask='url(#t)'/></mask></defs>" +
-    "<rect width='100' height='100' fill='#808000'/>" +
-    "<g mask='url(#k)'><rect width='100' height='100' fill='url(#x)'/><rect width='100' height='100' fill='url(#y)' style='mix-blend-mode:screen'/></g></svg>"
-  );
+  const lens = (cx, cy = 160) =>
+    `<linearGradient id='x' gradientUnits='userSpaceOnUse' x1='${cx - 100}' x2='${cx + 100}'><stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#f00'/></linearGradient>` +
+    `<linearGradient id='y' gradientUnits='userSpaceOnUse' x1='0' y1='${cy - 100}' x2='0' y2='${cy + 100}'><stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#0f0'/></linearGradient>`;
+  const ring = (cx, r) =>
+    `<radialGradient id='m' gradientUnits='userSpaceOnUse' cx='${cx}' cy='160' r='${r}'><stop offset='0' stop-color='#000'/><stop offset='0.4' stop-color='#555'/><stop offset='0.78' stop-color='#fff'/><stop offset='1' stop-color='#000'/></radialGradient>`;
+  const paint =
+    "<rect width='320' height='320' fill='#808000'/>" +
+    "<g mask='url(#k)'><rect width='320' height='320' fill='url(#x)'/><rect width='320' height='320' fill='url(#y)' style='mix-blend-mode:screen'/></g></svg>";
+  const box = "<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'>";
+  const beadMap = svg(box + "<defs>" + lens(160) + ring(160, 100) +
+    "<mask id='k'><rect width='320' height='320' fill='url(#m)'/></mask></defs>" + paint);
+  // Moving droplet: the same glass reshaped like a fireball heading right. Its round head sits a
+  // little behind the pointer, so the front edge comes in closer than the round droplet's, and a
+  // tail tapers off behind. script.js faces it the way the cursor travels.
+  // Turning the glass itself would blur everything under it, so instead there's one map per
+  // direction (32 of them), each drawn already facing that way; script.js swaps between them.
+  for (let i = 0; refract && i < TEAR_STEPS; i++) {
+    const a = (i / TEAR_STEPS) * 2 * Math.PI;
+    const map = svg(box + "<defs>" + lens(160 - 20 * Math.cos(a), 160 - 20 * Math.sin(a)) + ring(140, 92) +
+      "<linearGradient id='tg' gradientUnits='userSpaceOnUse' x1='14' x2='140'><stop offset='0' stop-color='#444'/><stop offset='0.6' stop-color='#fff'/><stop offset='1' stop-color='#000'/></linearGradient>" +
+      "<filter id='b' x='-30%' y='-30%' width='160%' height='160%'><feGaussianBlur stdDeviation='7'/></filter>" +
+      `<mask id='k'><g transform='rotate(${((a * 180) / Math.PI).toFixed(2)} 160 160)'><rect x='-100' y='-100' width='520' height='520' fill='url(#m)'/>` +
+      "<path d='M14 160 L97 99 L140 160 L97 221 Z' fill='url(#tg)' filter='url(#b)' style='mix-blend-mode:lighten'/></g></mask></defs>" + paint);
+    new Image().src = map; // decode ahead, so swapping never shows a blank frame
+    tearMaps.push(map);
+  }
   // Where the watery wobble may move: everywhere but the very rim
-  const fadeMap = svg(
-    "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'>" +
-    "<defs><radialGradient id='f'><stop offset='0' stop-color='#fff'/><stop offset='0.62' stop-color='#fff'/><stop offset='0.96' stop-color='#fff' stop-opacity='0'/></radialGradient></defs>" +
-    "<rect width='100' height='100' fill='url(#f)'/></svg>"
-  );
+  const fadeMap = svg(box +
+    "<defs><radialGradient id='f' gradientUnits='userSpaceOnUse' cx='160' cy='160' r='100'><stop offset='0' stop-color='#fff'/><stop offset='0.62' stop-color='#fff'/><stop offset='0.96' stop-color='#fff' stop-opacity='0'/></radialGradient></defs>" +
+    "<rect width='320' height='320' fill='url(#f)'/></svg>");
   const ease = 'calcMode="spline" keyTimes="0;0.5;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" repeatCount="indefinite"';
   const fx = document.createElement("div");
   fx.setAttribute("aria-hidden", "true");
   fx.innerHTML = `
     <svg width="0" height="0" style="position:absolute">
-      <filter id="bead" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" x="0" y="0" width="200" height="200" color-interpolation-filters="sRGB">
-        <feImage href="${beadMap}" x="0" y="0" width="200" height="200" preserveAspectRatio="none" result="map"/>
-        <feImage href="${tearMap}" x="0" y="0" width="200" height="200" preserveAspectRatio="none" result="tear"/>
+      <filter id="bead" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" x="0" y="0" width="320" height="320" color-interpolation-filters="sRGB">
+        <feImage href="${beadMap}" x="0" y="0" width="320" height="320" preserveAspectRatio="none" result="map"/>
+        <feImage href="${tearMaps[0]}" x="0" y="0" width="320" height="320" preserveAspectRatio="none" result="tear"/>
         <feComposite id="bead-mix" in="map" in2="tear" operator="arithmetic" k1="0" k2="1" k3="0" k4="0" result="shape"/>
         <feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="1" seed="11" result="na"/>
         <feOffset in="na" result="na2"><animate attributeName="dx" dur="3.7s" values="0;36;0" ${ease}/></feOffset>
         <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="1" seed="29" result="nb"/>
         <feOffset in="nb" result="nb2"><animate attributeName="dy" dur="5.7s" values="0;-30;0" ${ease}/></feOffset>
         <feComposite in="na2" in2="nb2" operator="arithmetic" k2="0.5" k3="0.5" result="noise"/>
-        <feImage href="${fadeMap}" x="0" y="0" width="200" height="200" preserveAspectRatio="none" result="fade"/>
+        <feImage href="${fadeMap}" x="0" y="0" width="320" height="320" preserveAspectRatio="none" result="fade"/>
         <feComposite in="noise" in2="fade" operator="in" result="soft"/>
         <feFlood flood-color="#808000" result="mid"/>
         <feMerge result="field"><feMergeNode in="mid"/><feMergeNode in="soft"/></feMerge>
@@ -173,11 +178,11 @@ let last = null;
 let next = null;
 let still = null;
 let dirX = 1, dirY = 0, speed = 0;
-// Still, the droplet is round and centred on the pointer. Moving, it turns to face the way it's
+// Still, the droplet is round and centred on the pointer. Moving, it faces the way it's
 // going and flows into a fireball: the front edge comes in closer to the pointer and the back tapers
 // off behind. A spring drives the change, so when the cursor stops the droplet overshoots into a
 // little squash and wobbles back to round, like jelly.
-let blob = 0, blobVel = 0, blobFrame = null;
+let blob = 0, blobVel = 0, blobFrame = null, tearStep = -1;
 function stretchShade() {
   if (!blobFrame) blobFrame = requestAnimationFrame(wobble);
 }
@@ -185,16 +190,28 @@ function wobble() {
   const target = speed;
   blobVel = (blobVel + (target - blob) * 0.16) * 0.78;
   blob = Math.max(-0.35, blob + blobVel);
-  const a = Math.atan2(dirY, dirX) * 180 / Math.PI;
+  const angle = Math.atan2(dirY, dirX);
+  const a = angle * 180 / Math.PI;
   // a quick change of direction shrinks the tail before it grows on the other side
   const w = Math.min(1, Math.max(0, blob)) * Math.min(1, Math.hypot(dirX, dirY));
   const mix = document.getElementById("bead-mix");
-  if (mix) { mix.setAttribute("k2", (1 - w).toFixed(3)); mix.setAttribute("k3", w.toFixed(3)); }
+  if (mix) {
+    mix.setAttribute("k2", (1 - w).toFixed(3));
+    mix.setAttribute("k3", w.toFixed(3));
+    const step = (Math.round((angle / (2 * Math.PI)) * TEAR_STEPS) + TEAR_STEPS) % TEAR_STEPS;
+    if (step !== tearStep && tearMaps.length) {
+      tearStep = step;
+      mix.previousElementSibling.setAttribute("href", tearMaps[step]);
+    }
+  }
+  // the jelly squash after stopping: squeezed along the way it was going, wider across
   const squash = 1 + 0.3 * Math.min(0, blob);
+  let t = squash < 0.999 ? `rotate(${a.toFixed(1)}deg) scale(${squash.toFixed(3)}, ${(1 / squash).toFixed(3)}) rotate(${(-a).toFixed(1)}deg)` : "";
   // without the glass bend (Firefox, Safari) only the soft shade can show the shape: shift it back and draw it out
-  const lite = root.classList.contains("lite") ? ` translateX(${(-14 * w).toFixed(1)}px) scale(${(1 + 0.25 * w).toFixed(3)}, ${(1 - 0.12 * w).toFixed(3)})` : "";
-  drop.querySelector(".stretch").style.transform =
-    `rotate(${a.toFixed(1)}deg)${lite} scale(${squash.toFixed(3)}, ${(1 / squash).toFixed(3)})`;
+  if (root.classList.contains("lite") && w > 0.001) {
+    t = `rotate(${a.toFixed(1)}deg) translateX(${(-14 * w).toFixed(1)}px) scale(${(1 + 0.25 * w).toFixed(3)}, ${(1 - 0.12 * w).toFixed(3)}) rotate(${(-a).toFixed(1)}deg) ` + t;
+  }
+  drop.querySelector(".stretch").style.transform = t;
   const settled = target === 0 && Math.abs(blob) < 0.002 && Math.abs(blobVel) < 0.002;
   if (settled) blob = blobVel = 0;
   blobFrame = settled ? null : requestAnimationFrame(wobble);
