@@ -69,12 +69,12 @@
 #about { padding-bottom: 200px; }
 
 /* Work rows, each with its figure number */
-.rows { display: flex; flex-direction: column; gap: 4px; margin: 0 -20px; }
+.rows { display: flex; flex-direction: column; gap: 4px; margin: 0 -14px; }
 .row {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 18px 20px;
+  padding: 18px 14px;
   border-radius: 14px;
   transition: background-color .25s ease;
 }

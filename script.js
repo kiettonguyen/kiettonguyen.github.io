@@ -48,23 +48,39 @@ paint();
 const liquid = fine.matches && !calm.matches && !forced.matches;
 let drop = null;
 let arrow = null;
-let hl = null;
-let hlRow = null;
+// two highlights take turns: the old one fades out on its row while the new one fades in on the next
+const hls = [];
+let hlCur = null;
 let hlFrame = null;
-// follows the hovered row every frame (rows drift with the cursor), so the highlight sits exactly on it
+function placeHighlight(h) {
+  const r = h.row.getBoundingClientRect();
+  h.el.style.transform = `translate3d(${r.left}px, ${r.top}px, 0)`;
+  h.el.style.width = r.width + "px";
+  h.el.style.height = r.height + "px";
+}
+// follows the rows every frame (rows drift with the cursor), so each highlight sits exactly on its row
 function syncHighlight() {
-  if (!hlRow) { hlFrame = null; return; }
-  const r = hlRow.getBoundingClientRect();
-  hl.style.transform = `translate3d(${r.left}px, ${r.top}px, 0)`;
-  hl.style.width = r.width + "px";
-  hl.style.height = r.height + "px";
-  hlFrame = requestAnimationFrame(syncHighlight);
+  let busy = false;
+  for (const h of hls) {
+    if (!h.row) continue;
+    if (h !== hlCur && getComputedStyle(h.el).opacity === "0") { h.row = null; continue; }
+    placeHighlight(h);
+    busy = true;
+  }
+  hlFrame = busy ? requestAnimationFrame(syncHighlight) : null;
 }
 function trackRow(row) {
-  if (!hl || row === hlRow) return;
-  hlRow = row;
-  hl.classList.toggle("on", !!row);
-  if (row && !hlFrame) syncHighlight();
+  if (!hls.length || (hlCur ? hlCur.row : null) === row) return;
+  const prev = hlCur;
+  if (prev) prev.el.classList.remove("on");
+  hlCur = null;
+  if (row) {
+    hlCur = hls.find((h) => h.row === row) || hls.find((h) => !h.row) || hls.find((h) => h !== prev);
+    hlCur.row = row;
+    placeHighlight(hlCur);
+    hlCur.el.classList.add("on");
+  }
+  if (!hlFrame) syncHighlight();
 }
 
 if (liquid) {
@@ -126,10 +142,13 @@ if (liquid) {
   drop = fx.querySelector(".drop");
   arrow = fx.querySelector(".arrow");
   root.classList.add("ink-cursor");
-  hl = document.createElement("div");
-  hl.className = "row-hl";
-  hl.setAttribute("aria-hidden", "true");
-  fx.append(hl);
+  for (let i = 0; i < 2; i++) {
+    const el = document.createElement("div");
+    el.className = "row-hl";
+    el.setAttribute("aria-hidden", "true");
+    fx.append(el);
+    hls.push({ el, row: null });
+  }
 }
 
 // Cursor: drift for the foreground, the droplet following a beat behind, the arrow exactly on the pointer
