@@ -42,6 +42,7 @@ window.addEventListener("scroll", () => {
     paint();
     clearTimeout(settle);
     settle = setTimeout(() => { scrolling = false; paint(); }, 160);
+    keepShielding();
   });
 }, { passive: true });
 paint();
@@ -186,6 +187,30 @@ function follow() {
   drop.style.transform = `translate3d(${Math.round(dropX)}px, ${Math.round(dropY)}px, 0)`;
   followFrame = done ? null : requestAnimationFrame(follow);
 }
+// Images, videos and embeds are never bent: the glass gets a hole cut wherever one sits under it.
+// Pictures drift with the cursor and scroll, so this keeps following them for a moment after either.
+const shielded = [...document.querySelectorAll("main img, main video, main iframe")];
+let shieldUntil = 0, shieldFrame = null;
+function shield() {
+  const glass = drop && drop.querySelector(".glass.refract");
+  if (!glass) { shieldFrame = null; return; }
+  const ox = Math.round(dropX) - 100, oy = Math.round(dropY) - 100; // the droplet is 200px, centred on dropX/dropY
+  let holes = "";
+  for (const el of shielded) {
+    const r = el.getBoundingClientRect();
+    if (!r.width || r.right <= ox || r.left >= ox + 200 || r.bottom <= oy || r.top >= oy + 200) continue;
+    const x1 = Math.max(0, r.left - ox), y1 = Math.max(0, r.top - oy);
+    const x2 = Math.min(200, r.right - ox), y2 = Math.min(200, r.bottom - oy);
+    holes += `M${x1.toFixed(1)} ${y1.toFixed(1)}H${x2.toFixed(1)}V${y2.toFixed(1)}H${x1.toFixed(1)}Z`;
+  }
+  glass.style.clipPath = holes ? `path(evenodd, "M0 0H200V200H0Z${holes}")` : "";
+  shieldFrame = performance.now() < shieldUntil ? requestAnimationFrame(shield) : null;
+}
+function keepShielding() {
+  if (!drop || !shielded.length) return;
+  shieldUntil = performance.now() + 1200;
+  if (!shieldFrame) shieldFrame = requestAnimationFrame(shield);
+}
 document.addEventListener("mousemove", (e) => {
   if (calm.matches || !fine.matches) return;
   next = e;
@@ -207,6 +232,7 @@ document.addEventListener("mousemove", (e) => {
     // first sighting (new page, or back from outside the window): appear on the cursor
     if (!last) { dropX = px; dropY = py; }
     if (!followFrame) follow();
+    keepShielding();
     const onLink = !!(next.target.closest && next.target.closest("a, button, [data-zoom]"));
     arrow.classList.toggle("on-link", onLink);
     // project rows: the words stay under the glass, but their highlight is drawn above it, so it stays crisp
