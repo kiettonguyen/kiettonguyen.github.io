@@ -125,6 +125,34 @@
     .score { font-weight: 600; }
     .lab-back { position: fixed; right: 16px; bottom: 16px; background: #1F1B17; color: #EFE9DF; padding: 9px 14px; border-radius: 99px; font-size: 13px; text-decoration: none; }
 
+    /* ---------- motion: small, and only where it helps you follow what changed ---------- */
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+    @keyframes pop { 0% { transform: scale(.4); } 70% { transform: scale(1.15); } }
+    @keyframes nudge { 0%, 100% { transform: none; } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+    .page > * { animation: rise .45s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--n, 0) * 40ms); }
+    .steps div, .purpose, .tiers button, .pager button, .check button { transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease; }
+    .steps div:hover { transform: translateY(-3px); box-shadow: 0 6px 14px rgba(20, 40, 40, .08); }
+    .tiers button:hover { transform: scale(1.03); }
+    .check button:active, .pager button:active { transform: scale(.97); }
+    summary::before { transition: transform .25s ease; }
+    details[open] summary::before { transform: rotate(180deg); }
+    details { interpolate-size: allow-keywords; }
+    details::details-content { height: 0; overflow: clip; transition: height .3s ease, content-visibility .3s allow-discrete; }
+    details[open]::details-content { height: auto; }
+    #tierText > * { animation: rise .3s ease both; }
+    .gantt .bar { transform-origin: left center; transform: scaleX(0); transition: transform .6s cubic-bezier(.2, .7, .2, 1); transition-delay: calc(var(--i, 0) * 80ms); }
+    .gantt.go .bar { transform: none; }
+    .q.right select, .q.wrong select { transition: background-color .3s ease, border-color .3s ease; }
+    .q.wrong select { animation: nudge .3s ease; }
+    .q.right label::after { content: " ✓"; color: var(--good); font-weight: 700; display: inline-block; animation: pop .35s ease both; }
+    .q .why { animation: rise .3s ease both; }
+    .side a.seen .tick { animation: pop .35s ease both; }
+    .side a .tick { transition: background-color .3s ease, border-color .3s ease; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after, ::details-content { animation: none !important; transition: none !important; }
+      .gantt .bar { transform: none; }
+    }
+
     @media (max-width: 900px) {
       .shell { grid-template-columns: 1fr; }
       .rail { display: none; }
@@ -374,7 +402,7 @@ const PAGES = [
     <p>Here's the plan for the newsletter's first issue, in weeks from 6 January:</p>
     <div class="gantt" role="img" aria-label="Gantt chart of the first issue, from week 1 to week 12">
       <div class="h t">Task</div>${Array.from({ length: 12 }, (_, i) => `<div class="h">${i + 1}</div>`).join("")}
-      ${[["Name and masthead", 1, 3], ["Plan stories", 2, 3], ["Write and edit", 4, 4], ["Lay out and proofread", 7, 3], ["Print and deliver", 10, 2], ["Email edition", 11, 1], ["First issue out", 12, 1, 1]].map(([t, s, n, ms]) => `<div class="t">${t}</div><div class="bar${ms ? " ms" : ""}" style="grid-column:${s + 1} / span ${n}"></div>`).join("")}
+      ${[["Name and masthead", 1, 3], ["Plan stories", 2, 3], ["Write and edit", 4, 4], ["Lay out and proofread", 7, 3], ["Print and deliver", 10, 2], ["Email edition", 11, 1], ["First issue out", 12, 1, 1]].map(([t, s, n, ms]) => `<div class="t">${t}</div><div class="bar${ms ? " ms" : ""}" style="grid-column:${s + 1} / span ${n};--i:${s}"></div>`).join("")}
     </div>
     <p>At a glance, the team can see:</p>
     ${ul(["what each piece of work is", "when it starts and finishes, and how long it takes", "where tasks overlap, like planning stories while the masthead is still being designed", "the date the whole first issue is due"])}
@@ -421,6 +449,8 @@ function quiz(el, options, items) {
   const [check, reset] = el.querySelectorAll(".check button"), score = el.querySelector(".score");
   check.onclick = () => {
     let right = 0;
+    el.querySelectorAll(".q").forEach((q) => q.classList.remove("right", "wrong"));
+    void el.offsetWidth; // restart the feedback animations on every check
     el.querySelectorAll(".q").forEach((q) => {
       const ok = q.querySelector("select").value === q.dataset.a;
       right += ok;
@@ -447,7 +477,11 @@ function show() {
   seen.add(p.id);
   page.innerHTML = `<div class="time"><span>Estimated time: ${p.time} minutes</span></div><h1>${p.title}</h1>${p.html()}
     <div class="pager"><button type="button" data-go="${i - 1}" ${i === 0 ? "disabled" : ""}>‹ Previous</button><button type="button" data-go="${i + 1}" ${i === PAGES.length - 1 ? "disabled" : ""}>Next ›</button></div>`;
+  [...page.children].forEach((c, n) => c.style.setProperty("--n", Math.min(n, 8)));
   if (p.init) p.init(page);
+  // the Gantt bars grow along the timeline once the chart scrolls into view
+  const g = page.querySelector(".gantt");
+  if (g) new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { g.classList.add("go"); o.disconnect(); } }, { threshold: .4 }).observe(g);
   page.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => (location.hash = PAGES[+b.dataset.go].id)));
   toc.querySelectorAll("a").forEach((a) => {
     a.toggleAttribute("aria-current", a.dataset.id === p.id);
