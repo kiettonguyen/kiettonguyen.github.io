@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Module 1: Scoping a project — Kiet Nguyen 阮</title>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand: #1E6B66;
+      --brand-dark: #154F4B;
+      --brand-tint: #E3EFED;
+      --amber: #B8721C;
+      --amber-tint: #FBF1E3;
+      --ink: #26302F;
+      --muted: #5E6B69;
+      --line: #D9E0DF;
+      --panel: #F3F5F5;
+      --bg: #FFFFFF;
+      --good: #2E7D4F;
+      --bad: #B3412E;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 "Source Sans 3", system-ui, sans-serif; }
+    a { color: var(--brand); }
+    button { font: inherit; }
+
+    /* ---------- LMS shell ---------- */
+    .shell { display: grid; grid-template-columns: 64px 250px 1fr; min-height: 100vh; }
+    .rail { background: var(--brand-dark); display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 16px 0; }
+    .rail .mark { width: 40px; height: 40px; border-radius: 10px; background: #fff; color: var(--brand-dark); display: grid; place-items: center; font-weight: 700; font-size: 15px; }
+    .rail span { display: block; width: 26px; height: 26px; border-radius: 6px; background: rgba(255, 255, 255, .16); }
+    .side { border-right: 1px solid var(--line); padding: 20px 16px; font-size: 15px; }
+    .side h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+    .side ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+    .side a { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: 8px; color: var(--ink); text-decoration: none; }
+    .side a:hover { background: var(--panel); }
+    .side a[aria-current="page"] { background: var(--brand-tint); color: var(--brand-dark); font-weight: 600; }
+    .side .tick { flex: none; width: 18px; height: 18px; margin-top: 3px; border-radius: 50%; border: 2px solid var(--line); }
+    .side a.seen .tick { border-color: var(--brand); background: var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E") center / 14px no-repeat; }
+    .side .course { font-weight: 700; color: var(--brand-dark); margin: 0 0 18px; line-height: 1.3; }
+    .main { min-width: 0; }
+    .top { display: flex; align-items: center; gap: 8px; padding: 16px 32px; border-bottom: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+    .top b { color: var(--ink); font-weight: 600; }
+    .menu { display: none; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 6px 10px; margin-right: 6px; cursor: pointer; }
+    .page { max-width: 880px; margin: 0 auto; padding: 28px 32px 48px; }
+    .time { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+    .time span { background: var(--panel); border-radius: 6px; padding: 3px 10px; font-size: 14px; color: var(--muted); }
+    .pager { display: flex; justify-content: space-between; border-top: 1px solid var(--line); margin-top: 48px; padding-top: 16px; }
+    .pager button { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+    .pager button:disabled { visibility: hidden; }
+
+    /* ---------- page content ---------- */
+    h1 { font-size: 32px; line-height: 1.2; font-weight: 600; color: var(--brand-dark); margin: 0 0 24px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    h3 { font-size: 21px; font-weight: 600; color: var(--brand); margin: 40px 0 8px; }
+    h4 { font-size: 17px; font-weight: 700; margin: 0 0 6px; }
+    p { margin: 0 0 12px; }
+    ul { margin: 0 0 12px; padding-left: 22px; }
+    li { margin: 4px 0; }
+    .lead { display: flex; align-items: center; gap: 16px; background: var(--brand-tint); border-left: 5px solid var(--brand); border-radius: 0 10px 10px 0; padding: 16px 22px; margin: 0 0 20px; }
+    .lead svg { flex: none; width: 36px; height: 36px; color: var(--brand); }
+    .lead h2 { margin: 0; font-size: 24px; font-weight: 600; color: var(--brand-dark); }
+    .box { background: var(--panel); border-radius: 10px; padding: 20px 24px; margin: 16px 0; }
+    .quote { background: var(--brand-tint); border-radius: 10px; padding: 20px 24px; margin: 16px 0; }
+    .note { background: var(--amber-tint); border-radius: 10px; padding: 16px 20px; font-size: 15px; }
+    .note b { color: var(--amber); }
+    .card { border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 4px 14px rgba(20, 40, 40, .06); padding: 22px 26px; margin: 24px 0; }
+    .two { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; align-items: start; }
+    .cols2 { columns: 2; column-gap: 32px; }
+    .reflect { background: var(--amber-tint); border-radius: 10px; padding: 20px 24px; margin-top: 40px; }
+    .reflect h3 { margin-top: 0; color: var(--amber); }
+    .purpose { display: grid; grid-template-columns: 64px 1fr; gap: 6px 20px; align-items: start; margin: 22px 0; }
+    .purpose svg { width: 56px; height: 56px; color: var(--brand); }
+    .purpose h4 { color: var(--brand); }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+    .steps div { background: var(--panel); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 600; text-align: center; }
+    .steps svg { width: 40px; height: 40px; color: var(--brand); }
+    .steps i { font-style: normal; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 13px; margin-right: 6px; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { background: var(--panel); font-weight: 600; }
+    td ul { margin: 0; }
+
+    /* accordions */
+    details { border: 1px solid var(--line); border-radius: 10px; margin: 12px 0; background: #fff; }
+    summary { cursor: pointer; padding: 12px 16px; font-weight: 600; background: var(--panel); border-radius: 10px; list-style: none; display: flex; gap: 10px; align-items: center; }
+    summary::-webkit-details-marker { display: none; }
+    summary::before { content: "+"; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 16px; line-height: 1; }
+    details[open] summary::before { content: "–"; }
+    details[open] summary { border-radius: 10px 10px 0 0; }
+    details > div { padding: 16px 18px; }
+
+    /* pyramid */
+    .pyramid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; margin: 16px 0; }
+    .tiers { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .tiers button { border: 0; color: #fff; padding: 10px 0; cursor: pointer; font-weight: 600; border-radius: 4px; }
+    .tiers button[aria-pressed="true"] { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+    /* RACI + Gantt */
+    .raci { display: grid; grid-template-columns: 36px 140px 1fr; gap: 8px 12px; align-items: center; margin: 12px 0; }
+    .raci b { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: #fff; }
+    .gantt { display: grid; grid-template-columns: 190px repeat(12, 1fr); font-size: 13px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 16px 0; }
+    .gantt > div { padding: 7px 8px; border-bottom: 1px solid var(--line); }
+    .gantt .h { background: var(--panel); font-weight: 600; text-align: center; padding: 7px 0; }
+    .gantt .t { grid-column: 1; }
+    .gantt .bar { background: var(--brand); border-radius: 6px; margin: 6px 0; padding: 0; height: 18px; align-self: center; border-bottom: 0; }
+    .gantt .bar.ms { background: var(--amber); }
+
+    /* activities */
+    .activity { border: 2px solid var(--amber); border-radius: 12px; padding: 22px 24px; margin: 32px 0; }
+    .activity > .tag { display: inline-block; background: var(--amber); color: #fff; font-weight: 600; font-size: 14px; border-radius: 6px; padding: 2px 10px; margin-bottom: 10px; }
+    .q { display: grid; grid-template-columns: 1fr 210px; gap: 8px 16px; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+    .q select { font: inherit; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+    .q.right select { border-color: var(--good); background: #EAF5EE; }
+    .q.wrong select { border-color: var(--bad); background: #FBECE9; }
+    .q .why { grid-column: 1 / -1; font-size: 14px; color: var(--muted); display: none; }
+    .q.wrong .why, .q.right .why { display: block; }
+    .check { margin-top: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .check button { background: var(--brand); color: #fff; border: 0; border-radius: 8px; padding: 10px 18px; cursor: pointer; font-weight: 600; }
+    .check button.ghost { background: none; color: var(--brand); border: 1px solid var(--brand); }
+    .score { font-weight: 600; }
+    .lab-back { position: fixed; right: 16px; bottom: 16px; background: #1F1B17; color: #EFE9DF; padding: 9px 14px; border-radius: 99px; font-size: 13px; text-decoration: none; }
+
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 1fr; }
+      .rail { display: none; }
+      .side { display: none; border-right: 0; border-bottom: 1px solid var(--line); }
+      .side.open { display: block; }
+      .menu { display: inline-block; }
+      .top, .page { padding-left: 16px; padding-right: 16px; }
+      .two, .pyramid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .cols2 { columns: 1; }
+      .q { grid-template-columns: 1fr; }
+      .gantt { grid-template-columns: 120px repeat(12, 1fr); font-size: 11px; }
+      .raci { grid-template-columns: 36px 1fr; }
+      .raci span:nth-child(3n) { grid-column: 2; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav class="rail" aria-hidden="true"><div class="mark">PW</div><span></span><span></span><span></span><span></span></nav>
+    <aside class="side" id="side">
+      <p class="course">Project work and financial compliance</p>
+      <h2>Module 1: Scoping a project</h2>
+      <ol id="toc"></ol>
+    </aside>
+    <div class="main">
+      <div class="top"><button class="menu" id="menu" aria-expanded="false" aria-controls="side">☰ Pages</button>Project work and financial compliance › Module 1 › <b id="crumb"></b></div>
+      <main class="page" id="page" tabindex="-1"></main>
+    </div>
+  </div>
+  <a class="lab-back" href="../../">lab · module prototype · kietn.com</a>
+
+<script>
+// ---------- icons (drawn for this module) ----------
+const I = {
+  brain: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7c-3-3-9-2-10 3-4 1-5 6-2 9-2 3 0 8 4 8 1 4 6 6 8 3z"/><path d="M20 7c3-3 9-2 10 3 4 1 5 6 2 9 2 3 0 8-4 8-1 4-6 6-8 3z"/><path d="M20 7v23M13 15c2 0 3 1 3 3M27 15c-2 0-3 1-3 3M14 23c2-1 4 0 4 2M26 23c-2-1-4 0-4 2"/></svg>',
+  hourglass: '<svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8h24M16 48h24M19 8c0 12 18 14 18 20S19 36 19 48M37 8c0 12-18 14-18 20s18 8 18 20"/><path d="M23 42c2-3 8-3 10 0z" fill="currentColor"/></svg>',
+  coin: '<svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="28" cy="28" r="18"/><circle cx="28" cy="28" r="10"/><path d="M28 23v10M25 25.5c1-2 6-2 6 0s-6 1.5-6 4 5 2 6 0" stroke-linecap="round"/></svg>',
+  box: '<svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"><path d="M10 18l18-8 18 8v22l-18 8-18-8z"/><path d="M10 18l18 8 18-8M28 26v22M19 14l18 8"/></svg>',
+  target: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="18" cy="22" r="13"/><circle cx="18" cy="22" r="7"/><circle cx="18" cy="22" r="1.6" fill="currentColor"/><path d="M18 22L34 6M28 6h6v6"/></svg>',
+  list: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="5" width="26" height="31" rx="3"/><path d="M12 13l2 2 4-4M12 21l2 2 4-4M12 29l2 2 4-4M21 13h7M21 21h7M21 29h7"/></svg>',
+  pencil: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h16M6 17h16M6 24h10"/><path d="M27 33l-6 1 1-6 11-11 5 5z"/></svg>',
+  cross: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h16l6 6v24H9z"/><path d="M25 5v6h6M15 17l10 10M25 17L15 27"/></svg>',
+  gauge: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="20" cy="22" r="14"/><path d="M20 22l7-8M20 8v3M8 22h3M29 22h3"/></svg>',
+  people: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="14" cy="14" r="5"/><circle cx="27" cy="15" r="4"/><path d="M5 32c1-6 5-9 9-9s8 3 9 9M23 23c5 0 10 2 11 8"/></svg>',
+  tools: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="8" width="28" height="24" rx="3"/><path d="M6 15h28M12 21h10M12 26h16"/></svg>',
+};
+const lead = (icon, title) => `<div class="lead">${I[icon]}<h2>${title}</h2></div>`;
+const reflect = (title, text) => `<div class="reflect"><h3>${title}</h3><p>${text}</p></div>`;
+
+// ---------- the running example ----------
+const SCOPE = {
+  goal: "Keep residents informed and connected with a monthly newsletter covering local news, events and council services.",
+  deliverables: ["The first three monthly issues: an 8-page print edition and a matching email edition", "A newsletter template and masthead the team can reuse", "A sign-up page on the council website for the email edition"],
+  tasks: ["Choose a name and design the masthead", "Plan the story list for the first three issues", "Write and edit the stories", "Lay out and proofread each issue", "Print and deliver to letterboxes", "Send the email edition to subscribers"],
+  exclusions: ["Translated editions (planned for a later phase)", "Paid advertising from local businesses", "A standalone newsletter app"],
+  constraints: ["<b>Budget:</b> $12,000 for design, printing and delivery of the first three issues", "<b>Deadline:</b> the first issue is in letterboxes by 1 March", "<b>Resource:</b> the communications team can give the newsletter 6 hours a week"],
+};
+const ul = (a) => "<ul>" + a.map((x) => `<li>${x}</li>`).join("") + "</ul>";
+const scenarioBox = `<div class="note"><b>Example scenario</b><p style="margin:6px 0 0">You work in the communications team at Riverbend City Council. The council wants to launch a monthly community newsletter, in print and by email, to keep residents up to date with local news, events and services.</p><p style="margin:8px 0 0">We'll follow this project through the whole module.</p></div>`;
+
+// ---------- pages ----------
+const PAGES = [
+{
+  id: "goals", title: "Organisational goals", time: 20,
+  html: () => `
+    ${lead("brain", "What are organisational goals?")}
+    <p>Organisational goals are the long-term outcomes an organisation is working towards. They give every project, team and role a reason to exist, and a way to decide what matters most.</p>
+    <h3>Start with the mission</h3>
+    <p>Most organisations sum up why they exist in a mission statement. Here's the one we'll use for Riverbend City Council:</p>
+    <div class="quote"><p>"Riverbend City Council works alongside our community to make Riverbend a welcoming, connected and sustainable place to live, work and visit.</p><p style="margin:0">We listen first, act openly, and look after the services and spaces our residents rely on, now and for the generations to come."</p></div>
+    <h3>From mission to goals</h3>
+    <p>To live out that mission, the council has set itself these goals:</p>
+    <div class="cols2">${ul(["Keep residents informed and involved in decisions", "Strengthen connections between neighbours and community groups", "Support local businesses to grow", "Make council services easy to find and use", "Care for parks, waterways and green spaces", "Spend ratepayers' money responsibly"])}</div>
+    <h3>Lining your project up with the goals</h3>
+    <p>A project that clearly serves the organisation's goals is much easier to get approved, funded and supported. The organisational strategy pyramid is a handy way to see how a single project connects all the way up to the mission.</p>
+    <p>Select each level of the pyramid to see what it means.</p>
+    <div class="pyramid">
+      <div class="tiers" id="tiers"></div>
+      <div class="box" id="tierText" aria-live="polite"><p style="margin:0">Select a level to learn more. Start at the top and work down: each level should be able to point to the one above it.</p></div>
+    </div>
+    <h3>Example: the community newsletter</h3>
+    <p>Here's how the newsletter overlaps with Riverbend's mission and goals. If you can fill in a table like this, you can explain why your project deserves time and money.</p>
+    <table>
+      <tr><th style="width:120px"></th><th>How the newsletter overlaps</th></tr>
+      <tr><th>Mission</th><td>Helps make Riverbend "welcoming and connected" by sharing what's happening locally.</td></tr>
+      <tr><th>Goals</th><td>Keep residents informed and involved → every issue covers upcoming decisions and how to have a say<br>Strengthen connections → a regular page for community groups and events<br>Support local businesses → a "shop local" feature in each issue<br>Make services easy to find → a back page of key contacts and bin days</td></tr>
+    </table>
+  `,
+  init: (root) => {
+    const tiers = [
+      ["Mission", "Why the organisation exists. It rarely changes.", 34],
+      ["Vision", "What the organisation hopes the future looks like if it succeeds.", 48],
+      ["Goals", "The broad, long-term outcomes it's working towards.", 62],
+      ["Objectives", "Specific, measurable steps towards each goal, usually with a date attached.", 78],
+      ["Projects", "The work that delivers the objectives. This is where your project sits, so it should trace back up through every level above it.", 94],
+    ];
+    const box = root.querySelector("#tiers"), text = root.querySelector("#tierText");
+    tiers.forEach(([name, desc, w], i) => {
+      const b = document.createElement("button");
+      b.textContent = name; b.style.width = w + "%";
+      b.style.background = `color-mix(in srgb, var(--brand) ${100 - i * 14}%, #7FB3AE)`;
+      b.setAttribute("aria-pressed", "false");
+      b.onclick = () => {
+        box.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        text.innerHTML = `<h4>${name}</h4><p style="margin:0">${desc}</p>`;
+      };
+      box.append(b);
+    });
+  },
+},
+{
+  id: "policies", title: "Policies and procedures", time: 20,
+  html: () => `
+    ${lead("brain", "How do policies shape a project?")}
+    <p>Policies and procedures set the rules for how projects are planned, approved and delivered. Following them helps you:</p>
+    ${ul(["finish work on time and within budget", "use proven ways of working at every stage", "handle problems in a calm, consistent way", "stay within the law and your organisation's standards"])}
+    <h3>What to look for in a policy</h3>
+    <p>Policies can be long and full of formal language, so it helps to know what you're looking for before you start reading. Most project policies cover these seven areas:</p>
+    <div class="cols2">${ul(["lines of authority and approvals", "quality assurance", "people and resourcing", "budgets and finance", "risk management", "recordkeeping", "reporting"])}</div>
+    <h3>Case study: Riverbend's project management policy</h3>
+    <p>Below are short excerpts from Riverbend City Council's project management policy, with a plain-English note beside each one. Select each area to open it.</p>
+    ${[
+      ["Lines of authority and approvals", "Who can make decisions and sign off at each stage?", "Every project must have a Project Sponsor at Manager level or above, who holds the budget and approves the project at each stage gate.", "The sponsor owns the money and the big decisions. The project manager runs the day-to-day work but can't overrule the sponsor."],
+      ["Quality assurance", "How do we make sure the work meets the standard?", "All public-facing communication must be reviewed against the Council Style Guide and approved by the Communications Manager before release.", "Nothing goes out to residents without a style check and a manager's approval, so build review time into the plan."],
+      ["People and resourcing", "Who does the work, and how are they managed?", "The Project Manager is responsible for coordinating project staff and contractors, and for ensuring they follow relevant council policies, including procurement and workplace safety.", "If you bring in a designer or printer, you're responsible for making sure they follow council rules too."],
+      ["Budgets and finance", "How are costs approved, tracked and reported?", "Expenditure must be approved by an officer with the appropriate financial delegation. Purchases over $5,000 require three written quotes.", "Check who's allowed to approve spending, and get three quotes for big costs like printing."],
+      ["Risk management", "How are possible problems found and handled?", "A risk assessment must be completed before the project starts and reviewed at each stage gate, using the council's risk register.", "List what could go wrong (such as a late print run) at the start, and keep that list up to date."],
+      ["Recordkeeping", "Where are project documents kept?", "Documents created or received in the course of council business are public records and must be saved to the council's records system.", "Drafts, quotes and approvals all need to be saved in the official system, not just someone's inbox."],
+      ["Reporting", "How are progress and problems shared?", "The Project Manager will provide the Sponsor with a monthly status report covering progress, budget, risks and issues.", "Plan a short monthly update for your sponsor, and raise problems early."],
+    ].map(([t, q, ex, note], i) => `
+      <details><summary>${i + 1}. ${t}</summary><div>
+        <p style="color:var(--muted)">→ ${q}</p>
+        <div class="two"><blockquote style="margin:0;border-left:4px solid var(--brand);padding:4px 0 4px 16px;font-style:italic">${ex}</blockquote><div class="note">${note}</div></div>
+      </div></details>`).join("")}
+    <div class="activity"><span class="tag">Activity</span>
+      <h4>Which area does it cover?</h4>
+      <p>Here are four more excerpts from the policy. Choose the area each one belongs to, then check your answers.</p>
+      <div id="quiz"></div>
+    </div>
+  `,
+  init: (root) => quiz(root.querySelector("#quiz"), ["Lines of authority and approvals", "Quality assurance", "People and resourcing", "Budgets and finance", "Risk management", "Recordkeeping", "Reporting"], [
+    ["\"Minutes of all project steering meetings must be filed within five working days.\"", "Recordkeeping", "Meeting minutes are records, so this is about where and how they're kept."],
+    ["\"Any change to the approved budget of more than 10% must be endorsed by the Sponsor.\"", "Lines of authority and approvals", "It's about who has the power to approve a change, even though money is involved."],
+    ["\"Contractors working on council sites must complete a safety induction before starting work.\"", "People and resourcing", "This sets rules for the people working on the project."],
+    ["\"Where a risk is rated high, the Project Manager must notify the Sponsor within two days.\"", "Risk management", "It's about how a possible problem is escalated and handled."],
+  ]),
+},
+{
+  id: "scope", title: "Project scope", time: 15,
+  html: () => `
+    ${lead("brain", "What is project scope, and why does it matter?")}
+    <p>Before we define it, here's a situation you've probably been in:</p>
+    <div class="box"><p>You duck into the shops for a bottle of milk.</p><p>On the way past the bakery you grab some bread, because you're nearly out. Then there's a sale on coffee, so a bag of that goes under your arm too. Next to the coffee are biscuits, and you know you'll want something with your coffee.</p><p>By now you're juggling everything against your chest, so you go back for a basket. Half an hour later you're at the checkout with a full basket, a bill ten times what you planned, and no milk.</p><p style="margin:0">In a project, this is called <b>scope creep</b>: small, reasonable-sounding additions that slowly pull you away from what you set out to do.</p></div>
+    <h3>What is a project scope?</h3>
+    <p>A project scope sets the boundaries of a project. It spells out what the project will deliver, what it won't, and the limits it has to work within. Think of it as a shared map: everyone involved can look at it and agree on where the project starts and ends.</p>
+    <h3>Why it's worth the effort</h3>
+    <div class="purpose">${I.hourglass}<div><h4>Realistic timelines</h4><p>When you know exactly what has to be done, you can set a deadline you can actually meet, and you're less likely to blow past it.</p></div></div>
+    <div class="purpose">${I.coin}<div><h4>Accurate budgets</h4><p>You can't price work you haven't defined. A clear scope lets you set a sensible budget at the start and notice early if spending starts to drift.</p></div></div>
+    <div class="purpose">${I.box}<div><h4>A project that actually finishes</h4><p>Without a scope, every "could we just add…" request gets a yes, and the finish line keeps moving. A scope gives you something to point to when you need to say "not this time".</p></div></div>
+  `,
+},
+{
+  id: "define", title: "Defining the project scope", time: 20,
+  html: () => `
+    ${lead("brain", "How do you write a project scope?")}
+    <div class="two"><div>
+      <p>Defining a scope can feel hard because you're describing work that hasn't happened yet. Breaking it into five parts makes it much more manageable.</p>
+      <div class="steps">${[["target", "Goal"], ["list", "Deliverables"], ["pencil", "Tasks"], ["cross", "Exclusions"], ["gauge", "Constraints"]].map(([ic, t], i) => `<div>${I[ic]}<span><i>${i + 1}</i>${t}</span></div>`).join("")}</div>
+    </div>${scenarioBox}</div>
+    <h3>Gather what you need first</h3>
+    <p>Before you start, pull together any documents that tell you what the project needs to achieve. Not every project will have all of these:</p>
+    ${ul(["the project brief or request", "a business case", "notes from stakeholders about what they need", "relevant policies and procedures", "reports or lessons from similar past projects"])}
+    <h3>The five parts, applied to the newsletter</h3>
+    <p>Open each part to see what it means and how it applies to Riverbend's newsletter.</p>
+    ${[
+      ["target", "Goal", "<p>The goal is the reason the project exists. It's easy to assume everyone already knows it, but writing it down gives every later decision something to check against.</p>", `<p>${SCOPE.goal}</p>`],
+      ["list", "Deliverables", "<p>Deliverables are the finished things the project will hand over. If someone asked \"what did you make?\", these are the answer.</p>", ul(SCOPE.deliverables)],
+      ["pencil", "Tasks", "<p>Tasks are the pieces of work needed to produce the deliverables. Breaking the work down this way shows what needs doing, and later, who should do it.</p>", ul(SCOPE.tasks)],
+      ["cross", "Exclusions", "<p>Exclusions are the things you've decided not to do. Writing them down can feel strange, but it's one of the best defences against scope creep. Remember the milk run: a note saying \"no snacks\" would have saved you.</p>", ul(SCOPE.exclusions)],
+      ["gauge", "Constraints", "<p>Constraints are the real-world limits the project has to fit inside, usually budget, time and people.</p>", ul(SCOPE.constraints)],
+    ].map(([ic, t, what, ex], i) => `<details><summary>${i + 1}. ${t}</summary><div class="two"><div style="display:flex;gap:16px"><span style="flex:none;width:44px;color:var(--brand)">${I[ic]}</span><div>${what}</div></div><div class="box" style="margin:0"><h4>${t} for the newsletter</h4>${ex}</div></div></details>`).join("")}
+    <h3>Putting it all together</h3>
+    <p>Here's everything in a single project scope statement. Once it's written up like this, every stakeholder is working from the same page.</p>
+    <table>
+      <tr><th colspan="2" style="text-align:center">Project scope statement</th></tr>
+      <tr><th style="width:160px">Project name</th><td>Riverbend community newsletter</td></tr>
+      <tr><th>Description</th><td>A monthly community newsletter, in print and by email</td></tr>
+      <tr><th>Deadline</th><td>First issue in letterboxes by 1 March</td></tr>
+      <tr><th>Project manager</th><td>Priya Raman, Communications Coordinator</td></tr>
+      <tr><th>Goal</th><td>${SCOPE.goal}</td></tr>
+      <tr><th>Deliverables</th><td>${ul(SCOPE.deliverables)}</td></tr>
+      <tr><th>Tasks (in scope)</th><td>${ul(SCOPE.tasks)}</td></tr>
+      <tr><th>Out of scope</th><td>${ul(SCOPE.exclusions)}</td></tr>
+      <tr><th>Constraints</th><td>${ul(SCOPE.constraints)}</td></tr>
+    </table>
+    <div class="activity"><span class="tag">Activity</span>
+      <h4>Sort the scope</h4>
+      <p>The council's parks team is planning a new community garden. Their notes are a bit of a jumble. Decide which part of the scope each note belongs to, then check your answers.</p>
+      <div id="quiz"></div>
+    </div>
+    ${reflect("Reflecting on your own practice", "Think about a project you've worked on. Was there a written scope? Which of the five parts were clear, and which ones caused confusion later?")}
+  `,
+  init: (root) => quiz(root.querySelector("#quiz"), ["Goal", "Deliverable", "Task", "Exclusion", "Constraint"], [
+    ["Give residents in the east ward a shared space to grow food and meet neighbours", "Goal", "This is why the project exists."],
+    ["Twelve raised garden beds and a lockable tool shed", "Deliverable", "These are the finished things the project hands over."],
+    ["Get three quotes for the raised beds", "Task", "It's a piece of work needed to produce a deliverable."],
+    ["Running gardening workshops (the library will do this separately)", "Exclusion", "It's been deliberately left out of this project."],
+    ["The garden must open before the end of spring", "Constraint", "It's a time limit the project has to fit inside."],
+    ["Total budget of $40,000", "Constraint", "It's a budget limit the project has to fit inside."],
+  ]),
+},
+{
+  id: "tools", title: "Project management tools", time: 15,
+  html: () => `
+    ${lead("tools", "Which tools help you manage the work?")}
+    <p>Project management tools help teams, and individuals, plan, organise and track their work. Two of the most useful are the RACI chart and the Gantt chart.</p>
+    <h3>RACI charts</h3>
+    <p>A RACI chart sets out who does what. For every task, each person gets one of four roles, which clears up the "I thought you were doing that" moments.</p>
+    <div class="raci">
+      <b style="background:#1E6B66">R</b><strong>Responsible</strong><span>Who does the work?</span>
+      <b style="background:#B8721C">A</b><strong>Accountable</strong><span>Who owns the result and signs it off?</span>
+      <b style="background:#6E8F5E">C</b><strong>Consulted</strong><span>Whose input do we need before it's done?</span>
+      <b style="background:#7A8CA6">I</b><strong>Informed</strong><span>Who needs to be kept up to date?</span>
+    </div>
+    <p>A RACI chart is most useful once you've listed your tasks in the scope, because it turns each task into clear responsibilities.</p>
+    <div class="card">
+      <h4>Back to the newsletter</h4>
+      <p>Let's take one task from the scope, <b>"Write and edit the stories"</b>, and plot the roles:</p>
+      <table>
+        <tr><th>Person</th><th>Role</th><th>Why</th></tr>
+        <tr><td>Communications officer</td><td><b>R</b>esponsible</td><td>Writes and edits the stories</td></tr>
+        <tr><td>Communications manager</td><td><b>A</b>ccountable</td><td>Approves every issue before it goes out (remember the policy?)</td></tr>
+        <tr><td>Events and community teams</td><td><b>C</b>onsulted</td><td>Supply details and check facts about their programs</td></tr>
+        <tr><td>Customer service team</td><td><b>I</b>nformed</td><td>Need to know what's coming so they can answer residents' questions</td></tr>
+      </table>
+      <p style="margin:0">Notice there's exactly one person accountable. If two people "own" a task, nobody does.</p>
+    </div>
+    <div class="activity"><span class="tag">Activity</span>
+      <h4>Your turn: plot a RACI</h4>
+      <p>Now try the task <b>"Print and deliver to letterboxes"</b>. Choose a role for each person, then check your answers.</p>
+      <div id="quiz"></div>
+    </div>
+    <h3>Gantt charts</h3>
+    <p>Once you know who's doing what, you need to know when. A Gantt chart shows each task as a bar across a timeline, so you can see when work starts and ends, and where tasks overlap or depend on each other.</p>
+    <p>Here's the plan for the newsletter's first issue, in weeks from 6 January:</p>
+    <div class="gantt" role="img" aria-label="Gantt chart of the first issue, from week 1 to week 12">
+      <div class="h t">Task</div>${Array.from({ length: 12 }, (_, i) => `<div class="h">${i + 1}</div>`).join("")}
+      ${[["Name and masthead", 1, 3], ["Plan stories", 2, 3], ["Write and edit", 4, 4], ["Lay out and proofread", 7, 3], ["Print and deliver", 10, 2], ["Email edition", 11, 1], ["First issue out", 12, 1, 1]].map(([t, s, n, ms]) => `<div class="t">${t}</div><div class="bar${ms ? " ms" : ""}" style="grid-column:${s + 1} / span ${n}"></div>`).join("")}
+    </div>
+    <p>At a glance, the team can see:</p>
+    ${ul(["what each piece of work is", "when it starts and finishes, and how long it takes", "where tasks overlap, like planning stories while the masthead is still being designed", "the date the whole first issue is due"])}
+    ${reflect("Reflecting on your own practice", "Which tools has your team used to plan projects? Did some work better for certain kinds of work than others?")}
+  `,
+  init: (root) => quiz(root.querySelector("#quiz"), ["Responsible", "Accountable", "Consulted", "Informed"], [
+    ["Communications coordinator, who books the printer and the delivery run", "Responsible", "They're doing the work."],
+    ["Communications manager, who approves the print order", "Accountable", "They own the result and sign it off."],
+    ["Finance team, who check the printing quote meets the three-quote rule", "Consulted", "Their input is needed before the order goes ahead."],
+    ["Councillors, who like to know when the newsletter will land", "Informed", "They need updates, but don't do or approve the work."],
+  ]),
+},
+{
+  id: "resources", title: "Project resources", time: 20,
+  html: () => `
+    ${lead("people", "What resources will your project need?")}
+    <p>Project resources are the people, materials, money and time you need to produce your deliverables. For the newsletter, they could include:</p>
+    ${ul(["<b>People:</b> a writer, a designer, a proofreader and a project coordinator", "<b>Materials:</b> design software, a photo library, a printer and a mailing list tool", "<b>Money:</b> budget for design, printing and letterbox delivery", "<b>Time:</b> the team's available hours and the issue deadlines"])}
+    <p>When resources aren't planned, projects slip: issues go out late, quality drops and the team gets stretched.</p>
+    <div class="card"><p>Imagine the council's only designer goes on leave in the same fortnight the first issue needs laying out. With no one to cover, the issue is rushed and misses the print slot.</p><p>If the team had mapped its resources ahead of time, it could have:</p>${ul(["booked a freelance designer as backup", "moved the layout dates to avoid the leave", "used a ready-made template to cut the layout time"])}</div>
+    <h3>How to work out your resources</h3>
+    <p>The first step is knowing your tasks, and luckily you've already written them down in your project scope.</p>
+    <div class="steps" style="grid-template-columns:repeat(3,1fr);align-items:stretch">
+      <div style="align-items:flex-start;text-align:left;font-weight:400">${I.pencil}<h4>Tasks</h4>${ul(SCOPE.tasks)}</div>
+      <div style="align-items:flex-start;text-align:left;font-weight:400">${I.cross}<h4>Exclusions</h4>${ul(SCOPE.exclusions)}</div>
+      <div style="align-items:flex-start;text-align:left;font-weight:400">${I.gauge}<h4>Constraints</h4>${ul(SCOPE.constraints)}</div>
+    </div>
+    <p>Use these to work out the resources you need, the ones you don't, and the ones to keep an eye on.</p>
+    <div class="two"><div>
+      <details open><summary>1. Resources you need</summary><div><p>Taking the task "Lay out and proofread each issue":</p><table><tr><th>People</th><td>Designer, proofreader</td></tr><tr><th>Materials</th><td>Design software, newsletter template, photo library</td></tr><tr><th>Money</th><td>Freelance backup if the designer is away</td></tr><tr><th>Time</th><td>About 15 hours per issue</td></tr></table></div></details>
+      <details><summary>2. Resources you don't need</summary><div><p>Check your exclusions so you don't plan for things that aren't happening. For this project there's no need to budget for:</p>${ul(["translators", "an advertising sales person", "app developers"])}<p style="margin:0">They're all out of scope.</p></div></details>
+      <details><summary>3. Resources to watch</summary><div><p>Your constraints tell you where things are tight:</p><p><b>Budget ($12,000):</b> compare quotes for design, printing and delivery against the cap.</p><p><b>Deadline (1 March):</b> make sure the print booking leaves room for a late proof.</p><p style="margin:0"><b>Team time (6 hours a week):</b> be honest about what fits, and outsource if it doesn't.</p></div></details>
+    </div><div class="note">Notice how easily the resources fall out of the scope. That's why everyone should keep referring back to the <b>project scope</b>. If there's ever a question about what's in or out, the scope settles it.</div></div>
+    ${reflect("Reflecting on your own practice", "On past projects, were your resources easy to identify? Did you use your deliverables, exclusions and constraints to work them out?")}
+  `,
+},
+];
+
+// ---------- a small reusable "choose the answer" activity ----------
+function quiz(el, options, items) {
+  const opts = '<option value="">Choose…</option>' + options.map((o) => `<option>${o}</option>`).join("");
+  el.innerHTML = items.map(([q, a, why], i) => `<div class="q" data-a="${a}"><label for="q${i}">${q}</label><select id="q${i}">${opts}</select><p class="why">${why}</p></div>`).join("") +
+    '<div class="check"><button type="button">Check answers</button><button type="button" class="ghost">Try again</button><span class="score" aria-live="polite"></span></div>';
+  const [check, reset] = el.querySelectorAll(".check button"), score = el.querySelector(".score");
+  check.onclick = () => {
+    let right = 0;
+    el.querySelectorAll(".q").forEach((q) => {
+      const ok = q.querySelector("select").value === q.dataset.a;
+      right += ok;
+      q.classList.toggle("right", ok);
+      q.classList.toggle("wrong", !ok);
+      q.querySelector(".why").textContent = (ok ? "Correct. " : `Not quite: it's ${q.dataset.a}. `) + q.querySelector(".why").dataset.why;
+    });
+    score.textContent = `${right} of ${items.length} correct`;
+  };
+  reset.onclick = () => {
+    el.querySelectorAll(".q").forEach((q) => { q.classList.remove("right", "wrong"); q.querySelector("select").value = ""; });
+    score.textContent = "";
+  };
+  el.querySelectorAll(".why").forEach((w, i) => (w.dataset.why = items[i][2]));
+}
+
+// ---------- routing ----------
+const toc = document.getElementById("toc"), page = document.getElementById("page"), crumb = document.getElementById("crumb");
+const seen = new Set();
+toc.innerHTML = PAGES.map((p) => `<li><a href="#${p.id}" data-id="${p.id}"><span class="tick"></span><span>${p.title}</span></a></li>`).join("");
+function show() {
+  const i = Math.max(0, PAGES.findIndex((p) => "#" + p.id === location.hash));
+  const p = PAGES[i];
+  seen.add(p.id);
+  page.innerHTML = `<div class="time"><span>Estimated time: ${p.time} minutes</span></div><h1>${p.title}</h1>${p.html()}
+    <div class="pager"><button type="button" data-go="${i - 1}" ${i === 0 ? "disabled" : ""}>‹ Previous</button><button type="button" data-go="${i + 1}" ${i === PAGES.length - 1 ? "disabled" : ""}>Next ›</button></div>`;
+  if (p.init) p.init(page);
+  page.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => (location.hash = PAGES[+b.dataset.go].id)));
+  toc.querySelectorAll("a").forEach((a) => {
+    a.toggleAttribute("aria-current", a.dataset.id === p.id);
+    if (a.dataset.id === p.id) a.setAttribute("aria-current", "page");
+    a.classList.toggle("seen", seen.has(a.dataset.id));
+  });
+  crumb.textContent = p.title;
+  document.title = `${p.title} — Module 1 — Kiet Nguyen 阮`;
+  window.scrollTo(0, 0);
+  page.focus({ preventScroll: true });
+  side.classList.remove("open");
+}
+const side = document.getElementById("side"), menu = document.getElementById("menu");
+menu.onclick = () => { const open = side.classList.toggle("open"); menu.setAttribute("aria-expanded", open); };
+window.addEventListener("hashchange", show);
+show();
+</script>
+</body>
+</html>
