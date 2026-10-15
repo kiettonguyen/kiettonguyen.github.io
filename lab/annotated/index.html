@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Project scope module — Kiet Nguyen 阮</title>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #EFE9DF;
+      --dot: rgba(59, 52, 45, .2);
+      --ink: #3B342D;
+      --muted: #6B6157;
+      --accent: #A0573D;
+      --rule: rgba(59, 52, 45, .18);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--paper); }
+    body {
+      margin: 0; color: var(--ink); font: 400 15px/1.6 "Zen Kaku Gothic New", system-ui, sans-serif;
+      background-image: radial-gradient(var(--dot) 1.08px, transparent 1.35px); background-size: 24px 24px;
+    }
+    a { color: inherit; }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+    header { padding: 28px 0; display: flex; align-items: center; gap: 12px; }
+    header .seal { font: 600 30px/1 "Klee One", serif; }
+    header .name { font-weight: 500; font-size: 14px; line-height: 1.3; }
+    header .name small { display: block; color: var(--accent); font-size: 11px; font-weight: 400; }
+    .fig { color: var(--accent); font-size: 12px; letter-spacing: .02em; }
+    .back { font-size: 12px; color: var(--muted); text-decoration: none; }
+    .back:hover { color: var(--accent); }
+
+    /* title block: one line, then the facts */
+    .intro { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 48px; align-items: end; padding: 40px 0 28px; border-bottom: 1px solid var(--rule); }
+    h1 { font-size: 30px; font-weight: 300; line-height: 1.25; margin: 6px 0 10px; }
+    .intro p { margin: 0; font-size: 17px; font-weight: 300; max-width: 30em; }
+    dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin: 0; font-size: 13px; }
+    dt { color: var(--muted); }
+    dd { margin: 0; }
+
+    /* the annotated figure */
+    .plate { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 0 64px; margin: 36px 0 12px; }
+    .frame { border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 18px 50px rgba(59, 52, 45, .12); }
+    .frame .bar { display: flex; gap: 6px; align-items: center; padding: 10px 14px; background: #F7F4EF; border-bottom: 1px solid var(--rule); font-size: 12px; color: var(--muted); }
+    .frame .bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--rule); }
+    .frame .bar span { margin-left: 10px; }
+    .frame iframe { display: block; width: 100%; height: 900px; border: 0; }
+    .notes { position: relative; }
+    .note { position: absolute; left: 0; width: 100%; font-size: 13px; line-height: 1.5; transition: top .3s ease, opacity .3s ease; }
+    .note b { display: block; font-weight: 500; font-size: 14px; color: var(--ink); margin-bottom: 2px; }
+    .note .n { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 10px; font-weight: 500; margin-bottom: 4px; }
+    .note p { margin: 0; color: var(--muted); }
+    svg.leaders { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+    svg.leaders path { fill: none; stroke: var(--accent); stroke-width: 1.2; }
+    svg.leaders circle.pin { fill: var(--accent); }
+    svg.leaders text { fill: #fff; font: 600 11px "Zen Kaku Gothic New", sans-serif; text-anchor: middle; dominant-baseline: central; }
+    svg.leaders circle.ring { fill: none; stroke: var(--accent); stroke-width: 1; opacity: .5; }
+    .caption { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; color: var(--muted); margin: 14px 0 0; max-width: calc(100% - 334px); }
+    .caption a { color: var(--accent); }
+    .away { display: none; position: absolute; top: 56px; left: 50%; transform: translateX(-50%); z-index: 2; background: var(--ink); color: var(--paper); border: 0; border-radius: 99px; padding: 8px 14px; font: inherit; font-size: 12px; cursor: pointer; }
+    .plate.off .away { display: block; }
+    .plate.off .notes, .plate.off svg.leaders { opacity: 0; }
+
+    /* the short story, under the figure */
+    .story { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding: 48px 0 24px; border-top: 1px solid var(--rule); margin-top: 48px; }
+    .story h2 { font-size: 12px; font-weight: 400; color: var(--accent); margin: 0 0 6px; }
+    .story p { margin: 0; }
+    footer { padding: 64px 0 40px; font-size: 12px; color: var(--muted); }
+
+    @media (max-width: 960px) {
+      .wrap { padding: 0 16px; }
+      .intro, .story { grid-template-columns: 1fr; }
+      .plate { grid-template-columns: 1fr; }
+      .notes { counter-reset: none; margin-top: 20px; display: flex; flex-direction: column; gap: 14px; }
+      .note { position: static; }
+      svg.leaders path { display: none; }
+      .caption { max-width: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { .note { transition: none; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header><span class="seal" aria-hidden="true">阮</span><span class="name">Kiet Nguyen<small>fig. 00 · 阮, the lute</small></span></header>
+    <a class="back" href="../../#work">← fig. 02 · all work</a>
+
+    <section class="intro">
+      <div>
+        <span class="fig">fig. 2.6 · 2025</span>
+        <h1>Project scope module</h1>
+        <p>A course module that teaches staff to scope a project before they start it.</p>
+      </div>
+      <dl>
+        <dt>Client</dt><dd>An Australian university</dd>
+        <dt>Course</dt><dd>Project work and financial compliance</dd>
+        <dt>Role</dt><dd>Learning design, writing, build</dd>
+        <dt>Platform</dt><dd>Canvas LMS</dd>
+      </dl>
+    </section>
+
+    <figure class="plate" id="plate" style="margin-left:0;margin-right:0">
+      <div>
+        <div class="frame">
+          <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>Module 1 · Defining the project scope</span></div>
+          <iframe id="mod" src="../module/?embed#define" title="The project scope module. Try it: open sections, answer the activity, move between pages." scrolling="no"></iframe>
+        </div>
+        <figcaption class="caption"><span><span class="fig">fig. 2.6a</span> · the module, live. Click around: it works.</span><a href="../module/" target="_blank" rel="noopener">open full screen ↗</a></figcaption>
+      </div>
+      <div class="notes" id="notes" aria-label="Design notes"></div>
+      <svg class="leaders" id="leaders" aria-hidden="true"></svg>
+      <button class="away" id="away" type="button">← back to the annotated page</button>
+    </figure>
+
+    <section class="story">
+      <div><h2>Brief</h2><p>Staff were starting projects with no agreed scope. The course needed a module that made scoping practical, not theoretical.</p></div>
+      <div><h2>Approach</h2><p>One realistic example runs through every page. Each idea is shown in use, then practised on a new case.</p></div>
+      <div><h2>Note</h2><p>Recreated with a new scenario and visuals, to protect the client's content.</p></div>
+    </section>
+
+    <footer>© <span id="y"></span> Kiet Nguyen · end of figures</footer>
+  </div>
+
+<script>
+document.getElementById("y").textContent = new Date().getFullYear();
+
+// what each note points at inside the module (a selector on the "Defining the project scope" page)
+const NOTES = [
+  [".note", "One example, start to finish", "The same council newsletter runs through all six pages. Learners never reset to a new context."],
+  [".steps", "Big task, small steps", "Scoping is split into five parts, each taught on its own before they're combined."],
+  ["details", "Idea left, example right", "Every part pairs the concept with the newsletter version, side by side."],
+  ["table", "A template they keep", "Everything lands in one scope statement, laid out so learners can reuse it at work."],
+  [".activity", "Transfer, not recall", "The activity swaps in a new project, a community garden, so learners apply the parts rather than repeat them."],
+];
+
+const plate = document.getElementById("plate"), frame = document.getElementById("mod");
+const notesEl = document.getElementById("notes"), svg = document.getElementById("leaders");
+notesEl.innerHTML = NOTES.map(([, t, p], i) => `<div class="note"><span class="n">${i + 1}</span><b>${t}</b><p>${p}</p></div>`).join("");
+const noteEls = [...notesEl.children];
+
+function doc() { try { return frame.contentDocument; } catch (e) { return null; } }
+
+function layout() {
+  const d = doc();
+  if (!d || !d.body) return;
+  // the frame grows to fit its page, so the module scrolls with this page instead of inside a box
+  const h = d.body.scrollHeight;
+  if (Math.abs(frame.offsetHeight - h) > 2) frame.style.height = h + "px";
+  const onDefine = d.defaultView.location.hash === "#define";
+  plate.classList.toggle("off", !onDefine);
+  if (!onDefine) return;
+
+  const box = plate.getBoundingClientRect(), f = frame.getBoundingClientRect();
+  const stacked = getComputedStyle(notesEl).position !== "relative" || window.innerWidth <= 960;
+  const notesBox = notesEl.getBoundingClientRect();
+  let next = 0, paths = "";
+  NOTES.forEach(([sel], i) => {
+    const el = d.querySelector("#page " + sel);
+    const note = noteEls[i];
+    if (!el) { note.style.opacity = 0; return; }
+    const r = el.getBoundingClientRect();
+    // the pin sits just inside the right edge of the thing it describes
+    const px = f.left - box.left + Math.min(r.right, d.documentElement.clientWidth) - 18;
+    const py = f.top - box.top + r.top + 18;
+    let ny = py - 10;
+    if (!stacked) {
+      ny = Math.max(ny, next);
+      note.style.top = ny + "px";
+      next = ny + note.offsetHeight + 18;
+      const nx = notesBox.left - box.left - 10, ty = ny + 10;
+      const mid = (px + nx) / 2;
+      paths += `<path d="M${px + 10} ${py} C ${mid} ${py}, ${mid} ${ty}, ${nx} ${ty}" marker-start="url(#tip)"/>`;
+    }
+    paths += `<circle class="ring" cx="${px}" cy="${py}" r="14"/><circle class="pin" cx="${px}" cy="${py}" r="10"/><text x="${px}" y="${py}">${i + 1}</text>`;
+  });
+  svg.innerHTML = `<defs><marker id="tip" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M10 1 L1 5 L10 9" fill="none" stroke="#A0573D" stroke-width="1.4"/></marker></defs>` + paths;
+}
+
+let raf = 0;
+const relayout = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(layout); };
+frame.addEventListener("load", () => {
+  const d = doc();
+  if (!d) return;
+  // inside the portfolio the module drops its lab badge
+  const badge = d.querySelector(".lab-back"); if (badge) badge.remove();
+  new d.defaultView.ResizeObserver(relayout).observe(d.body);
+  d.defaultView.addEventListener("hashchange", () => {
+    setTimeout(relayout, 60);
+    // a new module page starts at its top, so bring the top of the figure back into view
+    const t = frame.getBoundingClientRect().top;
+    if (t < 0) window.scrollBy({ top: t - 24, behavior: "smooth" });
+  });
+  d.addEventListener("toggle", relayout, true);
+  // the module's page sections rise in, so lay out again once they've settled
+  setTimeout(relayout, 600);
+  relayout();
+});
+window.addEventListener("resize", relayout);
+document.getElementById("away").onclick = () => { frame.contentWindow.location.hash = "define"; };
+</script>
+</body>
+</html>
