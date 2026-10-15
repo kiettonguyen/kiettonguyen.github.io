@@ -1,0 +1,71 @@
+/* Product-first project pages (lab). The work itself is the figure; text is kept to a line or two. */
+:root {
+  --paper: #EFE9DF;
+  --dot: rgba(59, 52, 45, .2);
+  --ink: #3B342D;
+  --muted: #6B6157;
+  --accent: #A0573D;
+  --rule: rgba(59, 52, 45, .18);
+}
+* { box-sizing: border-box; }
+html { background: var(--paper); }
+body {
+  margin: 0; color: var(--ink); font: 400 15px/1.6 "Zen Kaku Gothic New", system-ui, sans-serif;
+  background-image: radial-gradient(var(--dot) 1.08px, transparent 1.35px); background-size: 24px 24px;
+}
+a { color: inherit; }
+button { font: inherit; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+header { padding: 28px 0; display: flex; align-items: center; gap: 12px; }
+header a { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+header .seal { font: 600 30px/1 "Klee One", serif; }
+header .name { font-weight: 500; font-size: 14px; line-height: 1.3; }
+header .name small { display: block; color: var(--accent); font-size: 11px; font-weight: 400; }
+.fig { color: var(--accent); font-size: 12px; letter-spacing: .02em; }
+.back { font-size: 12px; color: var(--muted); text-decoration: none; }
+.back:hover { color: var(--accent); }
+
+/* title: one line, then the facts */
+.intro { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 48px; align-items: end; padding: 40px 0 28px; border-bottom: 1px solid var(--rule); }
+h1 { font-size: 30px; font-weight: 300; line-height: 1.25; margin: 6px 0 10px; }
+.intro p { margin: 0; font-size: 17px; font-weight: 300; max-width: 30em; }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin: 0; font-size: 13px; }
+dt { color: var(--muted); }
+dd { margin: 0; }
+
+/* the product, framed */
+.plate { margin: 36px 0 0; }
+.frame { border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 18px 50px rgba(59, 52, 45, .12); }
+.frame .bar { display: flex; gap: 6px; align-items: center; padding: 10px 14px; background: #F7F4EF; border-bottom: 1px solid var(--rule); font-size: 12px; color: var(--muted); }
+.frame .bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--rule); flex: none; }
+.frame .bar span { margin-left: 10px; }
+.frame video, .frame img { display: block; width: 100%; height: auto; }
+figcaption { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; font-size: 12px; color: var(--muted); margin: 14px 0 0; }
+figcaption a { color: var(--accent); }
+
+/* tabs under or above a product, to switch what it shows */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.tabs button { border: 1px solid var(--rule); background: rgba(255, 255, 255, .5); color: var(--ink); border-radius: 99px; padding: 6px 14px; font-size: 13px; cursor: pointer; transition: background-color .2s ease, color .2s ease; }
+.tabs button:hover { color: var(--accent); }
+.tabs button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* smaller supporting figures */
+.more { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px; margin: 64px 0 0; }
+.more figure { margin: 0; }
+.more .frame { box-shadow: none; }
+
+/* the short story */
+.story { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding: 40px 0 24px; border-top: 1px solid var(--rule); margin-top: 56px; }
+.story h2 { font-size: 12px; font-weight: 400; color: var(--accent); margin: 0 0 6px; }
+.story p { margin: 0; }
+.next { display: flex; justify-content: space-between; align-items: baseline; padding: 32px 0; border-top: 1px solid var(--rule); text-decoration: none; }
+.next span { font-size: 12px; color: var(--muted); }
+.next strong { font-weight: 400; font-size: 18px; }
+.next:hover strong { color: var(--accent); }
+footer { padding: 40px 0; font-size: 12px; color: var(--muted); }
+
+@media (max-width: 860px) {
+  .wrap { padding: 0 16px; }
+  .intro, .story { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }

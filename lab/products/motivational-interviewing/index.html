@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Motivational Interviewing — Kiet Nguyen 阮</title>
+  <link rel="icon" href="../../../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../products.css">
+  <style>
+    /* a Rise-style course, rebuilt so it can be clicked; the clips are recordings of the real module */
+    .rise { display: grid; grid-template-columns: 250px 1fr; height: 640px; font-family: Lato, sans-serif; color: #313537; background: #fff; }
+    .rise aside { background: linear-gradient(#3E62AE, #34539A); color: #fff; overflow: auto; }
+    .rise aside h2 { font: 900 22px/1.15 Lato, sans-serif; margin: 22px 18px 6px; }
+    .rise .pct { margin: 0 18px 18px; font-size: 10px; font-weight: 700; letter-spacing: .06em; }
+    .rise .pct div { height: 3px; background: rgba(255, 255, 255, .3); margin-top: 6px; }
+    .rise .pct div i { display: block; height: 100%; background: #fff; transition: width .4s ease; }
+    .rise aside h3 { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; margin: 16px 18px 4px; font-weight: 700; opacity: .85; }
+    .rise aside button { display: flex; width: 100%; gap: 10px; align-items: center; text-align: left; background: none; border: 0; color: #fff; padding: 8px 18px; font: 400 12px Lato, sans-serif; cursor: pointer; }
+    .rise aside button:hover { background: rgba(255, 255, 255, .08); }
+    .rise aside button[aria-current="true"] { background: rgba(0, 0, 0, .18); box-shadow: inset 3px 0 #fff; }
+    .rise aside button span { flex: 1; }
+    .rise aside button i { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, .6); flex: none; }
+    .rise aside button.done i { background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%233E62AE' stroke-width='2'/%3E%3C/svg%3E") center / 12px no-repeat; border-color: #fff; }
+    .rise main { overflow: auto; padding: 36px 8% 48px; }
+    .rise main .lesson { font-size: 11px; color: #6B7276; margin: 0 0 4px; }
+    .rise main h4 { font: 900 28px/1.2 Lato, sans-serif; margin: 0 0 18px; }
+    .rise main p { font-size: 15px; line-height: 1.7; }
+    .rise main video { width: 100%; border-radius: 6px; border: 1px solid #E3E6E8; }
+    .rtabs { border: 1px solid #E3E6E8; margin: 20px 0; }
+    .rtabs [role="tablist"] { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid #E3E6E8; }
+    .rtabs [role="tab"] { background: none; border: 0; padding: 14px 8px; font: 700 10px/1.3 Lato, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #313537; cursor: pointer; border-bottom: 3px solid transparent; }
+    .rtabs [role="tab"][aria-selected="true"] { color: #3E62AE; border-bottom-color: #3E62AE; }
+    .rtabs [role="tabpanel"] { padding: 20px 24px; font-size: 14px; }
+    .rtabs [role="tabpanel"] b { display: block; margin-bottom: 6px; }
+    .kc { border: 1px solid #E3E6E8; border-radius: 6px; padding: 22px 24px; margin: 20px 0; }
+    .kc label { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid #E3E6E8; border-radius: 6px; margin: 8px 0; cursor: pointer; font-size: 14px; }
+    .kc label.right { border-color: #2E7D4F; background: #EAF5EE; }
+    .kc label.wrong { border-color: #B3412E; background: #FBECE9; }
+    .kc button { background: #3E62AE; color: #fff; border: 0; border-radius: 4px; padding: 10px 18px; font: 700 12px Lato, sans-serif; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; margin-top: 8px; }
+    .kc .fb { font-size: 14px; margin-top: 10px; }
+    .elsewhere { border: 1px dashed #C9CED2; border-radius: 6px; padding: 28px; text-align: center; color: #6B7276; font-size: 14px; }
+    .rise .next-lesson { display: block; margin: 36px auto 0; background: none; border: 0; border-top: 1px solid #E3E6E8; width: 100%; padding-top: 18px; font: 700 12px Lato, sans-serif; color: #3E62AE; cursor: pointer; text-decoration: underline; }
+    @media (max-width: 860px) { .rise { grid-template-columns: 1fr; height: auto; } .rise aside { max-height: 240px; } .rtabs [role="tablist"] { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header><a href="../../../"><span class="seal" aria-hidden="true">阮</span><span class="name">Kiet Nguyen<small>fig. 00 · 阮, the lute</small></span></a></header>
+    <a class="back" href="../">← lab · product pages</a>
+
+    <section class="intro">
+      <div>
+        <span class="fig">fig. 2.2 · 2023</span>
+        <h1>Motivational Interviewing</h1>
+        <p>An e-learning course that teaches support workers the core skills of motivational interviewing.</p>
+      </div>
+      <dl>
+        <dt>Learners</dt><dd>Support workers, carers, mental health workers</dd>
+        <dt>Role</dt><dd>Learning design, illustration, animation</dd>
+        <dt>Built in</dt><dd>Articulate Rise, Illustrator, Vyond</dd>
+      </dl>
+    </section>
+
+    <figure class="plate">
+      <div class="frame">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>Motivational Interviewing · Articulate Rise</span></div>
+        <div class="rise" id="rise">
+          <aside><h2>Motivational Interviewing</h2><div class="pct"><span id="pct">0% COMPLETE</span><div><i id="pctBar" style="width:0"></i></div></div><nav id="lessons" aria-label="Lessons"></nav></aside>
+          <main id="lesson" tabindex="-1"></main>
+        </div>
+      </div>
+      <figcaption><span><span class="fig">fig. 2.2a</span> · the course. Pick a lesson, switch the tabs, take the knowledge check.</span><a href="https://www.youtube.com/watch?v=HkLfDeUG1Hw" target="_blank" rel="noopener">full walkthrough ↗</a></figcaption>
+    </figure>
+
+    <section class="story">
+      <div><h2>Brief</h2><p>Teach a counselling technique to people who aren't counsellors.</p></div>
+      <div><h2>Approach</h2><p>Plain words, one idea per block. Animated scenes show the conversations, so learners see the skill before they name it.</p></div>
+      <div><h2>Checks</h2><p>Short, low-stakes quizzes that build confidence rather than catch people out.</p></div>
+    </section>
+
+    <a class="next" href="../mamaskangaroo/"><span>next</span><strong>Mamas Kangaroo →</strong></a>
+    <footer>© <span class="y"></span> Kiet Nguyen · lab draft</footer>
+  </div>
+<script>
+document.querySelector(".y").textContent = new Date().getFullYear();
+const A = "../../../assets/motivational-interviewing/";
+const clip = (n, label) => `<video src="${A}${n}.mp4" poster="${A}${n}-poster.jpg" autoplay muted loop playsinline aria-label="${label}"></video>`;
+const elsewhere = '<div class="elsewhere">This lesson is in the full walkthrough video.<br><a href="https://www.youtube.com/watch?v=HkLfDeUG1Hw" target="_blank" rel="noopener">Watch it ↗</a></div>';
+const PRINCIPLES = [
+  ["Express empathy", "Listen to understand, not to fix.", "Accepting how the client sees things, without judging, makes it safe for them to talk honestly about change."],
+  ["Develop discrepancy", "Show the gap gently.", "Help the client notice the distance between where they are and where they want to be. The reason to change comes from them."],
+  ["Roll with resistance", "Don't argue.", "When a client pushes back, step alongside them. Arguing for change usually makes people argue against it."],
+  ["Support self-efficacy", "Belief makes change possible.", "Self-efficacy is how much a person believes they can make a change. Use reflective listening to support their strengths and recognise their progress."],
+];
+const LESSONS = [
+  ["Motivational interviewing", "Motivational interviewing scenario", () => elsewhere],
+  ["Motivational interviewing", "What is motivational interviewing?", () => `
+    <p>Motivational interviewing is a way of talking with people that helps them find their own reasons to change. It rests on four principles.</p>
+    <div class="rtabs"><div role="tablist" aria-label="The four principles">${PRINCIPLES.map(([t], i) => `<button role="tab" type="button" aria-selected="${i === 3}" data-t="${i}">${t}</button>`).join("")}</div><div role="tabpanel" id="tp"></div></div>
+    ${clip("01", "Scrolling through this lesson in the real course")}`],
+  ["Motivational listening techniques", "Open-ended questions", () => elsewhere],
+  ["Motivational listening techniques", "Affirmations", () => `<p>Affirmations recognise a client's strengths and efforts. They build the confidence that change needs.</p>${clip("02", "The affirmations lesson in the real course")}`],
+  ["Motivational listening techniques", "Reflective listening", () => elsewhere],
+  ["Motivational listening techniques", "Summaries", () => elsewhere],
+  ["Let's apply this knowledge", "Knowledge check", () => `
+    <div class="kc"><p><b>A client says: "I know I should cut back, but it's the only thing that helps me relax."</b></p><p>Which reply is a reflection?</p>
+      ${[["You should really try to cut back.", 0], ["So it helps you unwind, and part of you wants to cut back too.", 1], ["Have you thought about going to the gym instead?", 0]].map(([t, ok], i) => `<label data-ok="${ok}"><input type="radio" name="kc"> ${t}</label>`).join("")}
+      <button type="button" id="submit">Submit</button><p class="fb" id="fb" aria-live="polite"></p></div>
+    ${clip("03", "The knowledge check in the real course")}`],
+];
+const nav = document.getElementById("lessons"), main = document.getElementById("lesson");
+const done = new Set();
+let group = "";
+nav.innerHTML = LESSONS.map(([g, t], i) => (g !== group ? `<h3>${(group = g)}</h3>` : "") + `<button type="button" data-i="${i}"><span>${t}</span><i></i></button>`).join("");
+function open(i) {
+  const [, title, body] = LESSONS[i];
+  done.add(i);
+  main.innerHTML = `<p class="lesson">Lesson ${i + 1} of ${LESSONS.length}</p><h4>${title}</h4>${body()}${i < LESSONS.length - 1 ? `<button type="button" class="next-lesson" data-i="${i + 1}">Lesson ${i + 2}: ${LESSONS[i + 1][1]}</button>` : ""}`;
+  main.scrollTop = 0;
+  nav.querySelectorAll("button").forEach((b) => { b.setAttribute("aria-current", +b.dataset.i === i); b.classList.toggle("done", done.has(+b.dataset.i)); });
+  const pct = Math.round((done.size / LESSONS.length) * 100);
+  document.getElementById("pct").textContent = `${pct}% COMPLETE`;
+  document.getElementById("pctBar").style.width = pct + "%";
+  const tabs = main.querySelectorAll('[role="tab"]');
+  const pick = (n) => { tabs.forEach((t) => t.setAttribute("aria-selected", +t.dataset.t === n)); const [, b, p] = PRINCIPLES[n]; main.querySelector("#tp").innerHTML = `<b>${b}</b>${p}`; };
+  tabs.forEach((t) => (t.onclick = () => pick(+t.dataset.t)));
+  if (tabs.length) pick(3);
+  const submit = main.querySelector("#submit");
+  if (submit) submit.onclick = () => {
+    const chosen = main.querySelector(".kc input:checked");
+    if (!chosen) return;
+    main.querySelectorAll(".kc label").forEach((l) => l.classList.remove("right", "wrong"));
+    const l = chosen.closest("label"), ok = l.dataset.ok === "1";
+    l.classList.add(ok ? "right" : "wrong");
+    main.querySelector("#fb").textContent = ok ? "Correct. It mirrors both sides of what the client said." : "Not quite. That's advice or a suggestion. A reflection says back what you heard.";
+  };
+  const nx = main.querySelector(".next-lesson");
+  if (nx) nx.onclick = () => open(+nx.dataset.i);
+}
+nav.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) open(+b.dataset.i); });
+open(1);
+</script>
+</body>
+</html>

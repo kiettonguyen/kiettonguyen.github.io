@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Mamas Kangaroo — Kiet Nguyen 阮</title>
+  <link rel="icon" href="../../../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../products.css">
+  <style>
+    .controls { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; }
+    .screen { position: relative; aspect-ratio: 16 / 9; background: #F6F1EC; }
+    .screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: opacity .35s ease; }
+    .more .frame img { aspect-ratio: 4 / 3; object-fit: cover; object-position: top; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header><a href="../../../"><span class="seal" aria-hidden="true">阮</span><span class="name">Kiet Nguyen<small>fig. 00 · 阮, the lute</small></span></a></header>
+    <a class="back" href="../">← lab · product pages</a>
+
+    <section class="intro">
+      <div>
+        <span class="fig">fig. 2.3 · 2021</span>
+        <h1>Mamas Kangaroo</h1>
+        <p>A brand and online store for expectant mothers, built to get them from browsing to checkout without fuss.</p>
+      </div>
+      <dl>
+        <dt>Client</dt><dd>Mamas Kangaroo, a start-up</dd>
+        <dt>Role</dt><dd>Brand, UX/UI, store build, SEO and ads</dd>
+        <dt>Built in</dt><dd>Shopify</dd>
+      </dl>
+    </section>
+
+    <figure class="plate">
+      <div class="controls">
+        <div class="tabs" role="group" aria-label="Page"><button type="button" data-page="home" aria-pressed="true">Home</button><button type="button" data-page="product" aria-pressed="false">Product page</button></div>
+        <div class="tabs" role="group" aria-label="Stage"><button type="button" data-stage="final" aria-pressed="true">Final</button><button type="button" data-stage="wire" aria-pressed="false">Wireframe</button></div>
+      </div>
+      <div class="frame">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span id="url">Mamas Kangaroo · Home</span></div>
+        <div class="screen"><video id="clip" autoplay muted loop playsinline></video></div>
+      </div>
+      <figcaption><span><span class="fig">fig. 2.3a</span> · the store. Switch pages, then flip between the wireframe and the finished design.</span></figcaption>
+    </figure>
+
+    <div class="more">
+      <figure><div class="frame"><img src="../../../assets/mamaskangaroo/02.png" alt="Site map: home leads to products, blog, contact and cart; products and cart lead to checkout" loading="lazy"></div><figcaption><span><span class="fig">fig. 2.3b</span> · site map. Every page leads to checkout.</span></figcaption></figure>
+      <figure><div class="frame"><img src="../../../assets/mamaskangaroo/03.png" alt="Home page wireframe" loading="lazy"></div><figcaption><span><span class="fig">fig. 2.3c</span> · home wireframe</span></figcaption></figure>
+      <figure><div class="frame"><img src="../../../assets/mamaskangaroo/04.png" alt="Product list wireframe" loading="lazy"></div><figcaption><span><span class="fig">fig. 2.3d</span> · product list wireframe</span></figcaption></figure>
+    </div>
+
+    <section class="story">
+      <div><h2>Brief</h2><p>A one-stop shop for mums-to-be, and a place for advice during lockdowns.</p></div>
+      <div><h2>Approach</h2><p>Only the pages that matter. A short path from any page to checkout, in a soft, motherly visual style.</p></div>
+      <div><h2>Beyond the build</h2><p>SEO and Google Ads to bring people to the store.</p></div>
+    </section>
+
+    <a class="next" href="../living-museum-of-the-west/"><span>next</span><strong>Living Museum of the West →</strong></a>
+    <footer>© <span class="y"></span> Kiet Nguyen · lab draft</footer>
+  </div>
+<script>
+document.querySelector(".y").textContent = new Date().getFullYear();
+const A = "../../../assets/mamaskangaroo/";
+const CLIPS = { home: { final: "06", wire: "07" }, product: { final: "09", wire: "08" } };
+const state = { page: "home", stage: "final" };
+const clip = document.getElementById("clip");
+function render() {
+  const n = CLIPS[state.page][state.stage];
+  clip.style.opacity = 0;
+  setTimeout(() => {
+    clip.src = A + n + ".mp4"; clip.poster = A + n + "-poster.jpg";
+    clip.setAttribute("aria-label", `${state.page === "home" ? "Home page" : "Product page"}, ${state.stage === "final" ? "finished design" : "wireframe"}`);
+    clip.play().catch(() => {});
+    clip.style.opacity = 1;
+  }, 150);
+  document.getElementById("url").textContent = `Mamas Kangaroo · ${state.page === "home" ? "Home" : "Birth bundle"}${state.stage === "wire" ? " · wireframe" : ""}`;
+  document.querySelectorAll("[data-page]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.page === state.page));
+  document.querySelectorAll("[data-stage]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.stage === state.stage));
+}
+document.querySelectorAll("[data-page]").forEach((b) => (b.onclick = () => { state.page = b.dataset.page; render(); }));
+document.querySelectorAll("[data-stage]").forEach((b) => (b.onclick = () => { state.stage = b.dataset.stage; render(); }));
+render();
+</script>
+</body>
+</html>

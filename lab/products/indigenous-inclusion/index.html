@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Indigenous Inclusion — Kiet Nguyen 阮</title>
+  <link rel="icon" href="../../../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../products.css">
+  <style>
+    /* a Storyline-style player, rebuilt: the clips are real recordings of the module */
+    .player { background: #29292B; border-radius: 12px; overflow: hidden; color: #E9E9EA; box-shadow: 0 18px 50px rgba(59, 52, 45, .18); position: relative; }
+    .player .top, .player .bottom { display: flex; align-items: center; gap: 14px; padding: 10px 16px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+    .player .top b { font-weight: 400; flex: 1; }
+    .player button { background: none; border: 0; color: inherit; cursor: pointer; padding: 4px 6px; border-radius: 6px; font-size: 12px; letter-spacing: .06em; }
+    .player button:hover { background: rgba(255, 255, 255, .1); }
+    .stage { position: relative; margin: 0 56px; aspect-ratio: 16 / 9; background: #fff; overflow: hidden; }
+    /* the recordings include the old player around the slide; crop to just the slide */
+    .stage video { position: absolute; left: -11%; top: -6.8%; width: 122%; height: 113.9%; object-fit: fill; }
+    .stage .card { position: absolute; inset: 0; display: grid; place-items: center; padding: 8%; text-align: center; font: 600 clamp(15px, 2.4vw, 26px)/1.35 Poppins, sans-serif; color: #263E73; }
+    .stage .card.dark { background: #2E4677; color: #fff; }
+    .stage .card small { display: block; font: 400 12px "Zen Kaku Gothic New", sans-serif; color: #7B88A6; margin-top: 10px; letter-spacing: .04em; }
+    .player .bottom { justify-content: space-between; }
+    .player .bottom .count { opacity: .7; }
+    .menu { position: absolute; top: 38px; left: 0; bottom: 42px; width: 260px; background: #1F1F21; overflow: auto; padding: 8px 0; transform: translateX(-100%); transition: transform .3s ease; z-index: 2; font-size: 13px; text-transform: none; letter-spacing: 0; }
+    .player.open .menu { transform: none; }
+    .menu h3 { margin: 10px 16px 4px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; opacity: .6; font-weight: 400; }
+    .menu button { display: flex; width: 100%; text-align: left; padding: 6px 16px; border-radius: 0; letter-spacing: 0; font-size: 13px; gap: 8px; }
+    .menu button i { width: 6px; height: 6px; border-radius: 50%; margin-top: 8px; flex: none; }
+    .menu button[aria-current="true"] { background: rgba(255, 255, 255, .12); }
+    @media (max-width: 860px) { .stage { margin: 0; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header><a href="../../../"><span class="seal" aria-hidden="true">阮</span><span class="name">Kiet Nguyen<small>fig. 00 · 阮, the lute</small></span></a></header>
+    <a class="back" href="../">← lab · product pages</a>
+
+    <section class="intro">
+      <div>
+        <span class="fig">fig. 2.1 · 2023</span>
+        <h1>Indigenous Inclusion</h1>
+        <p>A story-led e-learning module on the history, culture and experience of Aboriginal Australians.</p>
+      </div>
+      <dl>
+        <dt>Type</dt><dd>Self-paced e-learning</dd>
+        <dt>Role</dt><dd>Learning design, illustration, motion</dd>
+        <dt>Built in</dt><dd>Articulate Storyline</dd>
+        <dt>With</dt><dd>An Aboriginal Australian subject matter expert</dd>
+      </dl>
+    </section>
+
+    <figure class="plate">
+      <div class="player" id="player">
+        <div class="top"><button type="button" id="menuBtn" aria-expanded="false" aria-controls="menu">☰</button><b>Indigenous Inclusion</b><span>Resources</span></div>
+        <nav class="menu" id="menu" aria-label="Slides"></nav>
+        <div class="stage" id="stage" aria-live="polite"></div>
+        <div class="bottom"><span>🔈 ⚙</span><span class="count" id="count"></span><span><button type="button" id="prev" aria-label="Previous slide">‹</button><button type="button" id="next" aria-label="Next slide">›</button></span></div>
+      </div>
+      <figcaption><span><span class="fig">fig. 2.1a</span> · the module. Open the menu (☰) or step through with ‹ ›. Recorded slides play; the rest show their titles.</span><a href="https://www.youtube.com/watch?v=luMdhMKW2H0" target="_blank" rel="noopener">full walkthrough ↗</a></figcaption>
+    </figure>
+
+    <section class="story">
+      <div><h2>Brief</h2><p>Turn an old slide deck into e-learning that people with no background knowledge actually finish.</p></div>
+      <div><h2>Approach</h2><p>Story first. Animated scenes, including an isometric map of land, water and sky, carry the history.</p></div>
+      <div><h2>Care</h2><p>Every page was shaped with an Aboriginal subject matter expert, for accurate and respectful representation.</p></div>
+    </section>
+
+    <a class="next" href="../motivational-interviewing/"><span>next</span><strong>Motivational Interviewing →</strong></a>
+    <footer>© <span class="y"></span> Kiet Nguyen · lab draft</footer>
+  </div>
+<script>
+document.querySelector(".y").textContent = new Date().getFullYear();
+// the slide list follows the module's real structure map; three slides have recordings
+const A = "../../../assets/indigenous-inclusion/";
+const PARTS = [
+  ["Start", "#C9C9C9", ["Title", "Acknowledgement of Country", "Learning objectives"]],
+  ["Part 1 · Who we are", "#F3E04A", ["Introduction", "Terminologies", "Local terms", "Our identity"]],
+  ["Part 2 · History", "#C7DB45", [["Systems", "02"], ["Timeline start", "04"], "1787", "1789", "1790–1930", "1910–1960", "1960–now", "Indigenous population", "Kevin Rudd speech"]],
+  ["Part 3 · Racism", "#3CC6CF", ["Let's talk about racism", "Systemic racism", "Racism debate"]],
+  ["Part 4 · At work", "#F29AD8", ["Statistics", ["Why employ Aboriginal and Torres Strait Islander people?", "03"], "What can your organisation do?", "Develop a RAP", "Retention strategies"]],
+];
+const slides = [];
+PARTS.forEach(([part, colour, items]) => items.forEach((it) => {
+  const [title, clip] = Array.isArray(it) ? it : [it, null];
+  slides.push({ part, colour, title, clip });
+}));
+const player = document.getElementById("player"), stage = document.getElementById("stage"), menu = document.getElementById("menu");
+menu.innerHTML = PARTS.map(([part]) => `<h3>${part}</h3>` + slides.map((s, i) => s.part === part ? `<button type="button" data-i="${i}"><i style="background:${s.colour}"></i>${s.title}${s.clip ? " ▸" : ""}</button>` : "").join("")).join("");
+let at = slides.findIndex((s) => s.clip === "02");
+function show(i) {
+  at = Math.max(0, Math.min(slides.length - 1, i));
+  const s = slides[at];
+  stage.innerHTML = s.clip
+    ? `<video src="${A}${s.clip}.mp4" poster="${A}${s.clip}-poster.jpg" autoplay muted loop playsinline aria-label="${s.title}, recorded from the module"></video>`
+    : `<div class="card${s.title.match(/^Part|Timeline/) ? " dark" : ""}"><span>${s.title}<small>${s.part}</small></span></div>`;
+  document.getElementById("count").textContent = `${at + 1} / ${slides.length}`;
+  menu.querySelectorAll("button").forEach((b) => b.setAttribute("aria-current", +b.dataset.i === at));
+}
+menu.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { show(+b.dataset.i); toggle(false); } });
+const btn = document.getElementById("menuBtn");
+function toggle(open) { player.classList.toggle("open", open); btn.setAttribute("aria-expanded", open); }
+btn.onclick = () => toggle(!player.classList.contains("open"));
+document.getElementById("prev").onclick = () => show(at - 1);
+document.getElementById("next").onclick = () => show(at + 1);
+show(at);
+</script>
+</body>
+</html>

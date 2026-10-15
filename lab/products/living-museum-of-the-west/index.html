@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Living Museum of the West — Kiet Nguyen 阮</title>
+  <link rel="icon" href="../../../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../products.css">
+  <style>
+    /* a clickable prototype made from the team's page designs */
+    .site { max-height: 720px; overflow: auto; background: #fff; scroll-behavior: smooth; }
+    .page { position: relative; }
+    .page img { display: block; width: 100%; }
+    .hot { position: absolute; border: 0; background: transparent; cursor: pointer; border-radius: 20px; }
+    .hot:hover, .hot:focus-visible { outline: 2px solid #D9532B; outline-offset: 2px; }
+    .crumb { display: flex; gap: 10px; align-items: center; }
+    .crumb button { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font-size: 12px; }
+    .crumb button[hidden] { display: none; }
+    .logo { max-width: 420px; }
+    .more .frame video { aspect-ratio: auto; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header><a href="../../../"><span class="seal" aria-hidden="true">阮</span><span class="name">Kiet Nguyen<small>fig. 00 · 阮, the lute</small></span></a></header>
+    <a class="back" href="../">← lab · product pages</a>
+
+    <section class="intro">
+      <div>
+        <span class="fig">fig. 2.4 · 2021</span>
+        <h1>Living Museum of the West</h1>
+        <p>A brand and website refresh for a Melbourne ecomuseum, so researchers and first-time visitors both find their way.</p>
+      </div>
+      <dl>
+        <dt>Client</dt><dd>Living Museum of the West, Maribyrnong</dd>
+        <dt>Team</dt><dd>Five designers</dd>
+        <dt>My part</dt><dd>Reusable components; menu, navigation and footer prototypes</dd>
+        <dt>Output</dt><dd>Desktop and mobile site, brand refresh</dd>
+      </dl>
+    </section>
+
+    <figure class="plate">
+      <div class="tabs" role="group" aria-label="Pages" id="tabs"></div>
+      <div class="frame">
+        <div class="bar"><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i><span class="crumb"><button type="button" id="up" hidden>← Projects</button><span id="where">Projects</span></span></div>
+        <div class="site" id="site"><div class="page" id="page"></div></div>
+      </div>
+      <figcaption><span><span class="fig">fig. 2.4a</span> · the site. Click "Read More" on a project, or use the tabs.</span><span><a href="https://www.youtube.com/watch?v=GURWAT-_vqU" target="_blank" rel="noopener">desktop walkthrough ↗</a> · <a href="https://www.youtube.com/watch?v=LWNiWBBJUT0" target="_blank" rel="noopener">mobile walkthrough ↗</a></span></figcaption>
+    </figure>
+
+    <div class="more">
+      <figure><div class="frame"><video class="logo" src="../../../assets/living-museum-of-the-west/01.mp4" poster="../../../assets/living-museum-of-the-west/01-poster.jpg" autoplay muted loop playsinline aria-label="Living Museum logo animation"></video></div><figcaption><span><span class="fig">fig. 2.4b</span> · the refreshed logo</span></figcaption></figure>
+      <figure><div class="frame"><img src="../../../assets/living-museum-of-the-west/02.png" alt="Style guide colour swatches" loading="lazy"></div><figcaption><span><span class="fig">fig. 2.4c</span> · colours, swatched from the museum's entrance map</span></figcaption></figure>
+      <figure><div class="frame"><img src="../../../assets/living-museum-of-the-west/04.png" alt="Initial wireframes" loading="lazy"></div><figcaption><span><span class="fig">fig. 2.4d</span> · first wireframes</span></figcaption></figure>
+    </div>
+
+    <section class="story">
+      <div><h2>Brief</h2><p>Refresh the museum's brand and website, desktop and mobile, as a modern take on a community archive.</p></div>
+      <div><h2>Two kinds of visitor</h2><p>Purposeful users who know what they want, and wanderers who came to explore. The structure serves both.</p></div>
+      <div><h2>Less scrolling</h2><p>A grid breaks long pages into blocks, each with an image, so nobody scrolls forever.</p></div>
+    </section>
+
+    <a class="next" href="../melbourne-hack-2021/"><span>next</span><strong>Melbourne Hack 2021 →</strong></a>
+    <footer>© <span class="y"></span> Kiet Nguyen · lab draft</footer>
+  </div>
+<script>
+document.querySelector(".y").textContent = new Date().getFullYear();
+const A = "../../../assets/living-museum-of-the-west/";
+// hotspots are in % of the overview image (941 × 857): the three "Read More" buttons
+const PAGES = {
+  projects: { title: "Projects", img: "05.png", alt: "Projects overview: history and community, art, and student projects", hot: [["history", 7.3, 70.1, 10.7, 3.4], ["art", 36.9, 70.1, 10.7, 3.4], ["student", 66.5, 70.1, 10.7, 3.4]] },
+  history: { title: "History and community projects", img: "07.png", alt: "History and community projects page" },
+  art: { title: "Art projects", img: "06.png", alt: "Art projects page" },
+  student: { title: "Student projects", img: "08.png", alt: "Student projects page" },
+};
+const page = document.getElementById("page"), site = document.getElementById("site");
+const tabs = document.getElementById("tabs");
+tabs.innerHTML = Object.entries(PAGES).map(([k, p]) => `<button type="button" data-k="${k}">${p.title}</button>`).join("");
+function go(k) {
+  const p = PAGES[k];
+  page.innerHTML = `<img src="${A}${p.img}" alt="${p.alt}">` + (p.hot || []).map(([to, x, y, w, h]) => `<button class="hot" type="button" data-to="${to}" aria-label="Read more: ${PAGES[to].title}" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%"></button>`).join("");
+  site.scrollTop = 0;
+  document.getElementById("where").textContent = p.title;
+  document.getElementById("up").hidden = k === "projects";
+  tabs.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.k === k));
+}
+page.addEventListener("click", (e) => { const b = e.target.closest(".hot"); if (b) go(b.dataset.to); });
+tabs.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) go(b.dataset.k); });
+document.getElementById("up").onclick = () => go("projects");
+go("projects");
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Project scope module — Kiet Nguyen 阮</title>
+  <link rel="icon" href="../../../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../products.css">
+  <style>.frame iframe { display: block; width: 100%; height: 900px; border: 0; }</style>
+</head>
+<body>
+  <div class="wrap">
+    <header><a href="../../../"><span class="seal" aria-hidden="true">阮</span><span class="name">Kiet Nguyen<small>fig. 00 · 阮, the lute</small></span></a></header>
+    <a class="back" href="../">← lab · product pages</a>
+
+    <section class="intro">
+      <div>
+        <span class="fig">fig. 2.6 · 2025</span>
+        <h1>Project scope module</h1>
+        <p>A course module that teaches staff to scope a project before they start it.</p>
+      </div>
+      <dl>
+        <dt>Client</dt><dd>An Australian university</dd>
+        <dt>Course</dt><dd>Project work and financial compliance</dd>
+        <dt>Role</dt><dd>Learning design, writing, build</dd>
+        <dt>Platform</dt><dd>Canvas LMS</dd>
+      </dl>
+    </section>
+
+    <figure class="plate">
+      <div class="frame">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>Module 1 · Scoping a project</span></div>
+        <iframe id="mod" src="../../module/?embed#scope" title="The project scope module. Move between pages, open sections and try the activities." scrolling="no"></iframe>
+      </div>
+      <figcaption><span><span class="fig">fig. 2.6a</span> · the module, live. Every page and activity works.</span><a href="../../module/" target="_blank" rel="noopener">open full screen ↗</a></figcaption>
+    </figure>
+
+    <section class="story">
+      <div><h2>Brief</h2><p>Staff were starting projects with no agreed scope. The module had to make scoping practical.</p></div>
+      <div><h2>Approach</h2><p>One realistic example runs through every page. Each idea is shown in use, then practised on a new case.</p></div>
+      <div><h2>Note</h2><p>Recreated with a new scenario and visuals, to protect the client's content.</p></div>
+    </section>
+
+    <a class="next" href="../indigenous-inclusion/"><span>back to the start</span><strong>Indigenous Inclusion →</strong></a>
+    <footer>© <span class="y"></span> Kiet Nguyen · lab draft</footer>
+  </div>
+<script>
+document.querySelector(".y").textContent = new Date().getFullYear();
+// the frame grows to fit each module page, so the page scrolls as one
+const frame = document.getElementById("mod");
+const fit = () => { try { const h = frame.contentDocument.body.scrollHeight; if (h) frame.style.height = h + "px"; } catch (e) {} };
+frame.addEventListener("load", () => {
+  const w = frame.contentWindow;
+  new w.ResizeObserver(fit).observe(frame.contentDocument.body);
+  w.addEventListener("hashchange", () => {
+    setTimeout(fit, 60);
+    const t = frame.getBoundingClientRect().top;
+    if (t < 0) window.scrollBy({ top: t - 24, behavior: "smooth" });
+  });
+  fit();
+});
+</script>
+</body>
+</html>
