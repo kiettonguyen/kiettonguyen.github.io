@@ -330,3 +330,26 @@ lightbox.addEventListener("click", () => (lightbox.hidden = true));
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") lightbox.hidden = true;
 });
+
+// Phones: the work groups and 3.2 to 3.4 swipe sideways. Each row gets a small position bar and a
+// "swipe" hint, and can be scrolled with the keyboard. On wider screens the bar is hidden by CSS.
+document.querySelectorAll(".swipe-cols").forEach((cols, i) => {
+  cols.setAttribute("tabindex", "0");
+  cols.setAttribute("role", "region");
+  cols.setAttribute("aria-label", (i === 0 ? "Selected work" : "Skills, tools and contact") + ". Scroll sideways for more.");
+  const hint = document.createElement("p");
+  hint.className = "swipe";
+  hint.setAttribute("aria-hidden", "true");
+  hint.innerHTML = '<span class="track"><i></i></span><span>swipe for more →</span>';
+  cols.after(hint);
+  const bar = hint.querySelector("i");
+  const update = () => {
+    const max = cols.scrollWidth - cols.clientWidth;
+    const p = max > 0 ? cols.scrollLeft / max : 0;
+    bar.style.transform = `translateX(${p * 200}%)`;
+    cols.classList.toggle("end", p > 0.98);
+  };
+  cols.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
+  update();
+});
