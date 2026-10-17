@@ -238,6 +238,7 @@ def page(i, p):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
   <title>{e(p['title'])} — Kiet Nguyen 阮</title>
   <meta name="description" content="{e(p['lead'])}">
   <link rel="canonical" href="https://kietn.com/work/{p['slug']}/">
