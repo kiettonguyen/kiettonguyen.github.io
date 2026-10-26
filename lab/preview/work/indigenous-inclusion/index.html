@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Indigenous Inclusion Storyline — Kiet Nguyen</title>
+  <meta name="description" content="A story-led e-learning module on the history, culture and experience of Aboriginal Australians, made in Articulate Storyline for people with no background knowledge.">
+  <link rel="canonical" href="https://kietn.com/work/indigenous-inclusion/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kiet Nguyen">
+  <meta property="og:url" content="https://kietn.com/work/indigenous-inclusion/">
+  <meta property="og:title" content="Indigenous Inclusion Storyline — Kiet Nguyen">
+  <meta property="og:description" content="A story-led e-learning module on the history, culture and experience of Aboriginal Australians, made in Articulate Storyline for people with no background knowledge.">
+  <meta property="og:image" content="https://kietn.com/assets/og/indigenous-inclusion.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../../shared/board.css?v=52">
+  <link rel="stylesheet" href="../../style.css?v=52">
+  <link rel="stylesheet" href="../../shared/products.css?v=52">
+  <style>
+    /* the Storyline player, rebuilt around recordings of the real module. The menu follows the
+       module's structure map; the slides that were recorded can be played. */
+    .player { position: relative; overflow: hidden; color: #E6E6E8; background: #29292B; }
+    .player button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    .player :focus-visible { outline-color: #F2F2F2; border-radius: 2px; }
+    .player .top, .player .bottom { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 10px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+    .player .top b { font-weight: 400; }
+    .player .icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 2px; }
+    .player .icon:hover { background: rgba(255, 255, 255, .1); }
+    .player .icon svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+    .player .icon svg.solid { fill: currentColor; stroke: none; }
+    .player .icon[disabled] { opacity: .35; cursor: default; background: none; }
+    .player .bottom .where { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #B9B9BE; }
+    .player .bottom .where b { color: #E6E6E8; font-weight: 400; }
+    /* the slide, 16:9, with the dark player showing either side like Storyline's */
+    .stage { position: relative; margin: 0 7%; aspect-ratio: 16 / 9; overflow: hidden; background: #fff; }
+    /* each recording includes the old player around the slide; this crops to the slide alone */
+    .stage video { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); max-width: none; object-fit: fill; }
+    /* the slide list slides out over the left of the player */
+    .menu { display: block; position: absolute; z-index: 2; top: 44px; bottom: 44px; left: 0; width: min(300px, 86%); overflow: auto; padding: 6px 0 14px; background: #1E1E20; font-size: 13px; letter-spacing: 0; text-transform: none; }
+    .menu[hidden] { display: none; }
+    .menu .part { display: flex; align-items: center; gap: 8px; margin: 12px 16px 4px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9D9DA3; }
+    .menu .part i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+    .menu ol { list-style: none; }
+    .menu li > * { display: flex; justify-content: space-between; gap: 10px; width: 100%; padding: 5px 16px 5px 32px; text-align: left; line-height: 1.4; }
+    .menu li > span { color: #929298; }
+    .menu li > button { color: #F2F2F2; }
+    .menu li > button:hover { background: rgba(255, 255, 255, .08); }
+    .menu li > button[aria-current="true"] { background: rgba(255, 255, 255, .14); }
+    .menu li > button svg { width: 9px; height: 9px; fill: currentColor; flex: none; margin-top: 5px; }
+    .menu .note { margin: 14px 16px 0; font-size: 12px; line-height: 1.5; color: #9D9DA3; }
+    @media (max-width: 640px) {
+      .stage { margin: 0; }
+      .player .top b { display: none; }
+    }
+  </style>
+</head>
+<body class="case-study product-page" style="--fig: '2.2'">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="toolbar">
+    <a href="../../" class="logo" aria-label="Kiet Nguyen, home"><svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><filter id="pen" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.2" numOctaves="2" seed="21"/><feDisplacementMap in="SourceGraphic" scale="1.1" xChannelSelector="R" yChannelSelector="G"/></filter><g class="steam"><path pathLength="1" d="M16.5 3 C 13.5 -1, 19.5 -4, 16.5 -8 S 18.5 -13, 16.5 -16"/><path pathLength="1" d="M23.5 3 C 20.5 -1, 26.5 -4, 23.5 -8 S 25.5 -13, 23.5 -16"/></g><text x="20" y="21" text-anchor="middle" dominant-baseline="central" filter="url(#pen)">阮</text></svg><span class="logo-text"><span class="logo-name">Kiet Nguyen</span><span class="logo-fig" aria-hidden="true">fig. 00 · <span lang="zh">阮</span>, the lute</span></span></a>
+    <a class="tea" href="../../#contact">let's get tea ↓</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="ph drift">
+      <div>
+        <a class="back" href="../../#work">← fig. 02 · all work</a>
+        <p class="cs-year">2023</p>
+        <h1>Indigenous Inclusion Storyline</h1>
+        <p class="ph-lead">A story-led e-learning module on the history, culture and experience of Aboriginal Australians.</p>
+      </div>
+      <dl class="ph-facts">
+        <dt>Type</dt><dd>Self-paced e-learning</dd>
+        <dt>My part</dt><dd>Learning design, illustration, motion</dd>
+        <dt>Built in</dt><dd>Articulate Storyline</dd>
+        <dt>With</dt><dd>An Aboriginal Australian subject matter expert</dd>
+      </dl>
+    </section>
+
+    <figure class="pp">
+      <div class="product player" id="player">
+        <div class="top">
+          <button class="icon" type="button" id="menuBtn" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12"/></svg><span class="vh">Slide menu</span></button>
+          <b>Indigenous Inclusion</b>
+        </div>
+        <nav class="menu" id="menu" aria-label="Slides in the module" hidden></nav>
+        <div class="stage" id="stage"></div>
+        <div class="bottom">
+          <button class="icon" type="button" id="playBtn"></button>
+          <span class="where" id="where"></span>
+          <button class="icon" type="button" id="prev"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg><span class="vh">Previous recorded slide</span></button>
+          <button class="icon" type="button" id="next"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg><span class="vh">Next recorded slide</span></button>
+        </div>
+        <p class="vh" aria-live="polite" id="said"></p>
+      </div>
+      <figcaption class="pp-cap"><span><span class="fig">fig. 2.2a</span> · the module player, rebuilt around recordings of the real slides. Open the menu to see the whole module.</span><a href="https://www.youtube.com/watch?v=luMdhMKW2H0" target="_blank" rel="noopener">full walkthrough ↗<span class="vh"> (opens in a new tab)</span></a></figcaption>
+    </figure>
+
+    <section class="story" aria-label="In short">
+      <div><h2>Brief</h2><p>Give an older PowerPoint new life as e-learning, for people with no background knowledge of the topic.</p></div>
+      <div><h2>Approach</h2><p>Story first, with animation carrying the history. Shaped throughout with an Aboriginal subject matter expert.</p></div>
+      <div class="todo"><h2>Result</h2><p>Preview only: your result line goes here.</p></div>
+    </section>
+
+    <article class="cs-body">
+      <h2 class="cs-h">My Role</h2>
+      <p>I was assigned this project to create a piece of e-Learning and create a fresh perspective/outlook on an older PowerPoint.</p>
+      <p>I was acutely aware of the importance of accurate representation and cultural authenticity. To ensure a respectful and genuine portrayal of the topic, I actively sought the guidance and collaboration of a subject matter expert who is an Aboriginal Australian. This collaborative engagement was foundational in shaping the content and approach of the e-Learning module.</p>
+      <figure class="cs-media wide plate"><img src="/assets/indigenous-inclusion/01.png" alt="Storyline structure map for the module" width="1582" height="987" loading="lazy" data-zoom></figure>
+      <h2 class="cs-h">Storytelling through imagery and motion effects</h2>
+      <p>This e-Learning module emphasises a story-driven approach, leveraging animations and moving visual effects to engage and immerse learners. The stories shared within this module highlight the historical context, cultural practices, and the ongoing journey of Aboriginal Australians, providing a platform for empathy, reflection, and learning.</p>
+      <p>I thought of ways to animate and showcase what the sophisticated systems that the Aboriginal Australians had would look like. I created an isometric illustration of land, water and the skies to portray this.</p>
+      <figure class="cs-media wide"><video src="/assets/indigenous-inclusion/02.mp4" poster="/assets/indigenous-inclusion/02-poster.jpg" width="800" height="419" muted loop playsinline preload="none" data-autoplay aria-label="Animated module slides"></video></figure>
+      <h2 class="cs-h">Inspiring reconciliation</h2>
+      <p>By sharing personal stories, cultural insights, and showcasing the impact of historical events, the module seeks to sensitise learners and ignite a desire for positive change.</p>
+      <p>Through this immersive approach, the module aims to empower learners to take meaningful steps towards reconciliation and inclusion in today&#x27;s society.</p>
+      <figure class="cs-media wide"><video src="/assets/indigenous-inclusion/03.mp4" poster="/assets/indigenous-inclusion/03-poster.jpg" width="800" height="419" muted loop playsinline preload="none" data-autoplay aria-label="Module transition animation"></video></figure>
+      <h2 class="cs-h">A brief look into their history</h2>
+      <p>Creating a dynamic timeline that emphasises Aboriginal Australian history, exploring the history and experiences of Aboriginal Australians, aiming to raise awareness and foster a deeper understanding of their culture, struggles, and aspirations.</p>
+      <figure class="cs-media wide"><video src="/assets/indigenous-inclusion/04.mp4" poster="/assets/indigenous-inclusion/04-poster.jpg" width="600" height="314" muted loop playsinline preload="none" data-autoplay aria-label="Timeline introduction animation"></video></figure>
+      <h2 class="cs-h">Demo</h2>
+      <figure class="cs-media wide yt"><iframe src="https://www.youtube-nocookie.com/embed/luMdhMKW2H0" title="Indigenous Inclusion Storyline demo" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe><figcaption>Indigenous Inclusion Storyline demo</figcaption></figure>
+    </article>
+
+    <a class="next-project" href="../motivational-interviewing/">
+      <span>Next project</span>
+      <strong>Motivational Interviewing →</strong>
+    </a>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span class="year"></span> Kiet Nguyen <span class="end">· end of figures</span></p>
+    <a href="https://www.linkedin.com/in/kietngu" target="_blank" rel="noopener">LinkedIn ↗<span class="vh"> (opens in a new tab)</span></a>
+  </footer>
+
+  <div class="lightbox" hidden><img alt=""></div>
+  <script src="../../script.js?v=52"></script>
+  <script>
+    // The player. Every slide from the module's structure map is in the menu; the three that were
+    // recorded play, and the arrows step between them.
+    (function () {
+      const A = "/assets/indigenous-inclusion/";
+      // crop: where the slide sits inside each recording (the rest is the old player)
+      const CROP = {
+        "02": { x: "-10.98%", y: "-6.79%", w: "121.95%", h: "113.86%" },
+        "03": { x: "-10.98%", y: "-6.79%", w: "121.95%", h: "113.86%" },
+        "04": { x: "-10.98%", y: "-6.5%", w: "121.95%", h: "113.36%" },
+      };
+      const PARTS = [
+        ["Start", "#D9D9D9", ["Title", "Acknowledgement of Country", "Learning objectives"]],
+        ["Part 1", "#F7E64B", ["Divider", "Introduction", "Terminologies", "Local terms", "Our identity"]],
+        ["Part 2", "#CBE13F", ["Divider", ["Systems", "02", "Aboriginal people observed and studied the world to develop sophisticated systems"], ["Timeline start", "04", "A brief timeline of Aboriginal history"], "1787", "1789", "1790 to 1930", "1910 to 1960", "1960 to now", "Indigenous population", "Kevin Rudd speech"]],
+        ["Part 3", "#22C6CD", ["Divider", "Let's talk about racism", "Systemic racism", "Racism debate"]],
+        ["Part 4", "#F59ADB", ["Divider", "Statistics", ["Why employ Aboriginal and Torres Strait Islander people?", "03", "Why should we employ Aboriginal and Torres Strait Islander people?"], "What can your organisation do?", "Develop a RAP", "Retention strategies"]],
+      ];
+      const slides = [];
+      PARTS.forEach(([part, colour, items]) => items.forEach((it) => {
+        const [title, clip, said] = Array.isArray(it) ? it : [it === "Divider" ? "Divider page" : it];
+        slides.push({ part, colour, title, clip, said });
+      }));
+      const recorded = slides.map((s, i) => (s.clip ? i : -1)).filter((i) => i >= 0);
+      const player = document.getElementById("player"), stage = document.getElementById("stage"), menu = document.getElementById("menu");
+      const menuBtn = document.getElementById("menuBtn"), playBtn = document.getElementById("playBtn");
+      const prev = document.getElementById("prev"), next = document.getElementById("next");
+      const where = document.getElementById("where"), said = document.getElementById("said");
+      const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const PLAY = '<svg class="solid" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5l9 5.5-9 5.5z"/></svg>';
+      const PAUSE = '<svg class="solid" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>';
+      const TRI = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg>';
+
+      menu.innerHTML = PARTS.map(([part, colour]) =>
+        `<p class="part"><i style="background:${colour}"></i>${part}</p><ol>` +
+        slides.map((s, i) => s.part !== part ? "" : `<li>${s.clip ? `<button type="button" data-i="${i}"><span>${s.title}</span>${TRI}</button>` : `<span>${s.title}</span>`}</li>`).join("") +
+        "</ol>").join("") +
+        `<p class="note">${slides.length} slides. The three marked ▸ were recorded; the full walkthrough video shows the rest.</p>`;
+
+      let at = recorded[0], video = null, wanted = !calm, seen = false;
+      function syncPlay() {
+        const playing = video && !video.paused;
+        playBtn.innerHTML = (playing ? PAUSE : PLAY) + `<span class="vh">${playing ? "Pause" : "Play"} the recording</span>`;
+      }
+      function show(i, announce) {
+        at = i;
+        const s = slides[i], c = CROP[s.clip];
+        stage.innerHTML = `<video src="${A}${s.clip}.mp4" poster="${A}${s.clip}-poster.jpg" muted loop playsinline preload="metadata" style="--x:${c.x};--y:${c.y};--w:${c.w};--h:${c.h}" aria-label="${s.said}. Recorded from the module."></video>`;
+        video = stage.querySelector("video");
+        video.addEventListener("play", syncPlay);
+        video.addEventListener("pause", syncPlay);
+        video.addEventListener("click", () => playBtn.click());
+        if (wanted && seen) video.play().catch(() => {});
+        syncPlay();
+        where.innerHTML = `${i + 1} / ${slides.length} · <b>${s.title}</b>`;
+        const k = recorded.indexOf(i);
+        prev.disabled = k === 0;
+        next.disabled = k === recorded.length - 1;
+        menu.querySelectorAll("button").forEach((b) => b.setAttribute("aria-current", +b.dataset.i === i));
+        if (announce) said.textContent = `Slide ${i + 1} of ${slides.length}: ${s.title}` + (/[?.!]$/.test(s.title) ? "" : ".");
+      }
+      function openMenu(open) {
+        menu.hidden = !open;
+        menuBtn.setAttribute("aria-expanded", open);
+        if (open) (menu.querySelector('[aria-current="true"]') || menu.querySelector("button")).focus();
+      }
+      menuBtn.addEventListener("click", () => openMenu(menu.hidden));
+      menu.addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        show(+b.dataset.i, true);
+        openMenu(false);
+        menuBtn.focus();
+      });
+      player.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !menu.hidden) { openMenu(false); menuBtn.focus(); }
+      });
+      prev.addEventListener("click", () => show(recorded[recorded.indexOf(at) - 1], true));
+      next.addEventListener("click", () => show(recorded[recorded.indexOf(at) + 1], true));
+      playBtn.addEventListener("click", () => {
+        if (!video) return;
+        wanted = video.paused;
+        if (wanted) video.play().catch(() => {}); else video.pause();
+      });
+      // like every clip on the site, it only plays while it's on screen
+      new IntersectionObserver(([en]) => {
+        seen = en.isIntersecting;
+        if (!video) return;
+        if (seen && wanted) video.play().catch(() => {}); else video.pause();
+      }).observe(stage);
+      show(at, false);
+    })();
+  </script>
+</body>
+</html>

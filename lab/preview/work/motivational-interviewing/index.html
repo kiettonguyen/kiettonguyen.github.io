@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Motivational Interviewing — Kiet Nguyen</title>
+  <meta name="description" content="An e-learning course in Articulate Rise that teaches support workers, carers and mental health workers the core skills of motivational interviewing.">
+  <link rel="canonical" href="https://kietn.com/work/motivational-interviewing/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kiet Nguyen">
+  <meta property="og:url" content="https://kietn.com/work/motivational-interviewing/">
+  <meta property="og:title" content="Motivational Interviewing — Kiet Nguyen">
+  <meta property="og:description" content="An e-learning course in Articulate Rise that teaches support workers, carers and mental health workers the core skills of motivational interviewing.">
+  <meta property="og:image" content="https://kietn.com/assets/og/motivational-interviewing.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../../shared/board.css?v=52">
+  <link rel="stylesheet" href="../../style.css?v=52">
+  <link rel="stylesheet" href="../../shared/products.css?v=52">
+  <style>
+    /* The course in Articulate Rise, rebuilt. The lesson list is the real one; lessons that were
+       recorded play the recording, and the knowledge check is rebuilt from it so it can be tried. */
+    .rise { display: grid; grid-template-columns: 250px minmax(0, 1fr); font: 400 15px/1.6 Lato, sans-serif; color: #313537; background: #fff; }
+    .rise button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    .rise :focus-visible { outline: 2px solid #3E62AE; outline-offset: 2px; border-radius: 2px; }
+    .rise .side { padding-bottom: 18px; color: #fff; background: linear-gradient(#4166B0, #34539A); }
+    .rise .side :focus-visible { outline-color: #fff; outline-offset: -3px; }
+    .rise .course { margin: 22px 18px 6px; font: 900 21px/1.15 Lato, sans-serif; }
+    .rise .pct { margin: 0 18px 14px; font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+    .rise .pct div { height: 3px; margin-top: 6px; background: rgba(255, 255, 255, .3); }
+    .rise .pct i { display: block; height: 100%; background: #fff; transition: width .4s ease; }
+    .rise .toggle { display: none; }
+    .rise .group { margin: 14px 18px 4px; font-size: 9.5px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; opacity: .9; }
+    .rise .lessons { display: block; }
+    .rise .side ol { list-style: none; }
+    .rise .side li button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 18px; text-align: left; color: #fff; font-size: 12.5px; line-height: 1.35; }
+    .rise .side li button:hover { background: rgba(255, 255, 255, .1); }
+    .rise .side li button[aria-current="true"] { background: rgba(0, 0, 0, .2); box-shadow: inset 3px 0 #fff; }
+    .rise .side li button span { flex: 1; }
+    .rise .side li button i { width: 15px; height: 15px; flex: none; border: 1.5px solid rgba(255, 255, 255, .65); border-radius: 50%; }
+    .rise .side li button.done i { border-color: #fff; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%233E62AE' stroke-width='2'/%3E%3C/svg%3E") center / 12px no-repeat; }
+    .rise .main { min-width: 0; }
+    .rise .main:focus { outline: none; }
+    /* a recorded lesson: the clip is cropped to Rise's content area (no browser, no sidebar) */
+    .rec { position: relative; aspect-ratio: 680 / 408; overflow: hidden; background: #fff; }
+    .rec video { position: absolute; left: -16.18%; top: -7.35%; width: 117.65%; height: 110.29%; max-width: none; object-fit: fill; }
+    .rec-note { display: flex; justify-content: space-between; gap: 12px; padding: 8px 14px; font-size: 12px; color: #6B7276; border-top: 1px solid #E3E6E8; }
+    .rec-note button { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; color: #313537; }
+    .lesson { max-width: 620px; margin: 0 auto; padding: 34px 24px 40px; }
+    .lesson .of { font-size: 11px; color: #6B7276; }
+    .lesson .title { margin: 2px 0 10px; font: 900 27px/1.2 Lato, sans-serif; color: #313537; }
+    .lesson .title:focus { outline: none; }
+    .author { display: flex; align-items: center; gap: 8px; padding-bottom: 14px; margin-bottom: 22px; font-size: 12px; border-bottom: 1px solid #E3E6E8; }
+    .author i { display: grid; place-items: center; width: 24px; height: 24px; font: 700 9px/1 Lato, sans-serif; font-style: normal; color: #fff; background: #A9573D; border-radius: 50%; }
+    .elsewhere { padding: 24px; text-align: center; color: #5C6266; background: #F4F5F6; }
+    .elsewhere a { color: #3E62AE; }
+    /* knowledge check cards, like Rise's */
+    .kc { margin: 22px 0; padding: 26px 26px 22px; background: #fff; box-shadow: 0 2px 12px rgba(0, 0, 0, .1); }
+    .kc fieldset { border: 0; }
+    .kc legend { margin-bottom: 14px; font-size: 15px; line-height: 1.6; }
+    .kc label { display: flex; align-items: center; gap: 14px; padding: 9px 12px; margin: 2px -12px; font-size: 14px; cursor: pointer; }
+    .kc label:hover { background: #F4F5F6; }
+    .kc input { width: 18px; height: 18px; accent-color: #3E62AE; flex: none; }
+    .kc .mark { width: 18px; flex: none; font-size: 13px; font-weight: 700; text-align: center; }
+    .kc .mark.ok { color: #2E7D4F; }
+    .kc .mark.no { color: #8C939A; }
+    .kc label.chosen { outline: 1.5px solid #6B7276; outline-offset: -1px; }
+    .kc .submit { display: block; min-width: 110px; margin: 18px auto 0; padding: 9px 18px; font-size: 11px; font-weight: 700; letter-spacing: .1em; color: #fff; background: #3E62AE; border-radius: 99px; }
+    .kc .submit[disabled] { background: #C9CDD1; cursor: default; }
+    .kc .submit[hidden] { display: none; }
+    .kc .fb { margin-top: 18px; padding: 18px; text-align: center; background: #F4F5F6; }
+    .kc .fb b { display: block; margin-bottom: 4px; font-size: 13px; }
+    .kc .fb p { font-size: 14px; color: #4F5559; }
+    .kc .again { display: block; margin: 12px auto 0; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #313537; }
+    .kc-note { font-size: 12px; color: #6B7276; text-align: center; }
+    .next-lesson { display: block; width: 100%; padding: 14px; font-size: 12px; font-weight: 700; color: #313537; text-align: center; border-top: 1px solid #E3E6E8 !important; }
+    .next-lesson:hover { text-decoration: underline; }
+    @media (max-width: 760px) {
+      .rise { grid-template-columns: minmax(0, 1fr); }
+      .rise .side { padding-bottom: 8px; }
+      .rise .toggle { display: flex; justify-content: space-between; align-items: center; width: calc(100% - 36px); margin: 0 18px 8px; padding: 8px 0; font-size: 12px; font-weight: 700; border-top: 1px solid rgba(255, 255, 255, .3) !important; }
+      .rise .toggle::after { content: "▾"; }
+      .rise .toggle[aria-expanded="true"]::after { content: "▴"; }
+      .rise .lessons[hidden] { display: none; }
+      .lesson { padding: 26px 18px 30px; }
+      .kc { padding: 20px 18px 18px; }
+    }
+    @media (min-width: 761px) { .rise .lessons[hidden] { display: block; } }
+  </style>
+</head>
+<body class="case-study product-page" style="--fig: '2.3'">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="toolbar">
+    <a href="../../" class="logo" aria-label="Kiet Nguyen, home"><svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><filter id="pen" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.2" numOctaves="2" seed="21"/><feDisplacementMap in="SourceGraphic" scale="1.1" xChannelSelector="R" yChannelSelector="G"/></filter><g class="steam"><path pathLength="1" d="M16.5 3 C 13.5 -1, 19.5 -4, 16.5 -8 S 18.5 -13, 16.5 -16"/><path pathLength="1" d="M23.5 3 C 20.5 -1, 26.5 -4, 23.5 -8 S 25.5 -13, 23.5 -16"/></g><text x="20" y="21" text-anchor="middle" dominant-baseline="central" filter="url(#pen)">阮</text></svg><span class="logo-text"><span class="logo-name">Kiet Nguyen</span><span class="logo-fig" aria-hidden="true">fig. 00 · <span lang="zh">阮</span>, the lute</span></span></a>
+    <a class="tea" href="../../#contact">let's get tea ↓</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="ph drift">
+      <div>
+        <a class="back" href="../../#work">← fig. 02 · all work</a>
+        <p class="cs-year">2023</p>
+        <h1>Motivational Interviewing</h1>
+        <p class="ph-lead">An e-learning course that teaches support workers the core skills of motivational interviewing.</p>
+      </div>
+      <dl class="ph-facts">
+        <dt>Learners</dt><dd>Support workers, carers, mental health workers</dd>
+        <dt>My part</dt><dd>Learning design, illustration, animation</dd>
+        <dt>Built in</dt><dd>Articulate Rise, Illustrator, Vyond</dd>
+      </dl>
+    </section>
+
+    <figure class="pp">
+      <div class="product pp-frame rise" id="rise">
+        <div class="side">
+          <p class="course">Motivational Interviewing</p>
+          <div class="pct"><span id="pct">0% complete</span><div aria-hidden="true"><i id="pctBar" style="width:0"></i></div></div>
+          <button class="toggle" type="button" id="toggle" aria-expanded="false" aria-controls="lessons">Lessons</button>
+          <nav class="lessons" id="lessons" aria-label="Lessons"></nav>
+        </div>
+        <div class="main" id="lesson" tabindex="-1"></div>
+      </div>
+      <figcaption class="pp-cap"><span><span class="fig">fig. 2.3a</span> · the course in Rise, rebuilt around recordings of the real lessons. The knowledge check works.</span><a href="https://www.youtube.com/watch?v=HkLfDeUG1Hw" target="_blank" rel="noopener">full walkthrough ↗<span class="vh"> (opens in a new tab)</span></a></figcaption>
+    </figure>
+
+    <section class="story" aria-label="In short">
+      <div><h2>Brief</h2><p>Teach a counselling approach to people who aren't counsellors: support workers, carers and mental health workers.</p></div>
+      <div><h2>Approach</h2><p>Complex terms broken into simple parts, animated scenes of real conversations, and short quizzes that build confidence.</p></div>
+      <div class="todo"><h2>Result</h2><p>Preview only: your result line goes here.</p></div>
+    </section>
+
+    <article class="cs-body">
+      <p>I built this e-Learning using Articulate Rise, with imagery personally developed using Adobe Illustrator and animated GIFs produced in Vyond.</p>
+      <h2 class="cs-h">Fostering accessibility</h2>
+      <p>This e-Learning caters to professionals seeking to enhance their communication skills and effectively support clients in making positive behavioural changes, ultimately promoting a more client-focused and collaborative approach in their respective fields.</p>
+      <p>Typically these professionals exist outside of the realm of psychologists and therapists. They may include support workers, carers and mental health workers. In this case, ensuring that complex terms and concepts are broken down into simpler parts is important.</p>
+      <figure class="cs-media wide"><video src="/assets/motivational-interviewing/01.mp4" poster="/assets/motivational-interviewing/01-poster.jpg" width="800" height="450" muted loop playsinline preload="none" data-autoplay aria-label="Scrolling through the Rise module"></video></figure>
+      <h2 class="cs-h">Creating relatable scenarios</h2>
+      <p>Using Vyond to create animated GIFs adds an extra layer of dimension to the e-Learning, bringing character emotions and real-world scenarios to life.</p>
+      <figure class="cs-media wide"><video src="/assets/motivational-interviewing/02.mp4" poster="/assets/motivational-interviewing/02-poster.jpg" width="800" height="450" muted loop playsinline preload="none" data-autoplay aria-label="Affirmations section of the module"></video></figure>
+      <h2 class="cs-h">Quizzing</h2>
+      <p>These quizzes serve as effective reinforcement tools, allowing learners to review and reinforce their understanding of key concepts in a non-intimidating manner.</p>
+      <p>By keeping the quizzes simple and approachable, we strike a balance that encourages engagement and boosts confidence without overwhelming the learner.</p>
+      <figure class="cs-media wide"><video src="/assets/motivational-interviewing/03.mp4" poster="/assets/motivational-interviewing/03-poster.jpg" width="800" height="450" muted loop playsinline preload="none" data-autoplay aria-label="Knowledge check quiz"></video></figure>
+      <h2 class="cs-h">Demo</h2>
+      <figure class="cs-media wide yt"><iframe src="https://www.youtube-nocookie.com/embed/HkLfDeUG1Hw" title="Motivational Interviewing e-Learning demo" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe><figcaption>Motivational Interviewing e-Learning demo</figcaption></figure>
+    </article>
+
+    <a class="next-project" href="../mamaskangaroo/">
+      <span>Next project</span>
+      <strong>Mamas Kangaroo →</strong>
+    </a>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span class="year"></span> Kiet Nguyen <span class="end">· end of figures</span></p>
+    <a href="https://www.linkedin.com/in/kietngu" target="_blank" rel="noopener">LinkedIn ↗<span class="vh"> (opens in a new tab)</span></a>
+  </footer>
+
+  <div class="lightbox" hidden><img alt=""></div>
+  <script src="../../script.js?v=52"></script>
+  <script>
+    (function () {
+      const A = "/assets/motivational-interviewing/";
+      const WALK = "https://www.youtube.com/watch?v=HkLfDeUG1Hw";
+      const OPTIONS = ["Open-Ended Questions", "Affirmations", "Reflective Listening", "Summaries"];
+      // the two knowledge check questions visible in the recording, word for word
+      const QUIZ = [
+        ["“You seem to be a very resilient and courageous person to have been dealing with this on your own. Dealing with losing a loved one is never an easy thing to do and I really appreciate you for opening up about this.”", "Affirmations",
+          "Affirming clients either by complimenting them or making statements of appreciation can help to build client self-efficacy."],
+        ["“Hello, how are you? I understand that you’re experiencing some concerns with drugs, can you please tell me more about that?”", "Open-Ended Questions",
+          "These questions are great for allowing a deeper discussion between the client and their therapist as it encourages clients to think and open up more rather than simply answering a yes or a no, closing the conversation as whole."],
+      ];
+      const LESSONS = [
+        ["Motivational Interviewing", "Motivational Interviewing Scenario"],
+        ["Motivational Interviewing", "What is Motivational Interviewing?", { clip: "01", label: "The end of this lesson, scrolling into Open-Ended Questions" }],
+        ["Motivational Listening Techniques", "Open-Ended Questions", { clip: "01", from: 1, label: "Open-Ended Questions: what they are, with an animated example" }],
+        ["Motivational Listening Techniques", "Affirmations", { clip: "02", label: "Affirmations: a four-step animated example and a summary" }],
+        ["Motivational Listening Techniques", "Reflective Listening"],
+        ["Motivational Listening Techniques", "Summaries"],
+        ["Let's Apply This Knowledge", "Knowledge Check", { quiz: true }],
+      ];
+      const rise = document.getElementById("rise"), nav = document.getElementById("lessons"), main = document.getElementById("lesson");
+      const toggle = document.getElementById("toggle");
+      const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const done = new Set();
+      let group = "";
+      nav.innerHTML = LESSONS.map(([g, t], i) => (g !== group ? `${group ? "</ol>" : ""}<p class="group">${(group = g)}</p><ol>` : "") +
+        `<li><button type="button" data-i="${i}"><span>${t}</span><i aria-hidden="true"></i></button></li>`).join("") + "</ol>";
+
+      function header(i) {
+        return `<p class="of">Lesson ${i + 1} of ${LESSONS.length}</p><p class="title" tabindex="-1">${LESSONS[i][1]}</p><p class="author"><i aria-hidden="true">KN</i>Kiet Nguyen</p>`;
+      }
+      function quizCard(q, n) {
+        const [quote, answer, why] = q;
+        return `<div class="kc" data-n="${n}"><fieldset><legend>${quote}</legend>${OPTIONS.map((o) =>
+          `<label><input type="radio" name="kc${n}" value="${o}"><span class="mark" aria-hidden="true"></span>${o}</label>`).join("")}</fieldset>
+          <button type="button" class="submit" disabled>SUBMIT</button><div class="fb" hidden aria-live="polite"></div></div>`;
+      }
+      function open(i, focus) {
+        const [, , kind = {}] = LESSONS[i];
+        done.add(i);
+        let body = "";
+        if (kind.clip) {
+          body = `<div class="rec"><video src="${A}${kind.clip}.mp4" poster="${A}${kind.clip}-poster.jpg" muted loop playsinline preload="metadata" aria-label="${kind.label}. A recording of the real lesson."></video></div>
+            <div class="rec-note"><span>Recorded from the real course</span><button type="button" class="pp-play"></button></div>`;
+        } else if (kind.quiz) {
+          body = `<div class="lesson">${header(i)}<p>Let’s look at 4 quotes from the scenario that we introduce motivational interviewing from. These are examples of some of the techniques we’ve learnt throughout this module. Select the correct technique for each quote.</p>
+            ${QUIZ.map(quizCard).join("")}<p class="kc-note">Two of the four quotes, rebuilt from the recording.</p></div>`;
+        } else {
+          body = `<div class="lesson">${header(i)}<p class="elsewhere">This lesson wasn’t recorded. <a href="${WALK}" target="_blank" rel="noopener">The full walkthrough video<span class="vh"> (opens in a new tab)</span></a> covers it.</p></div>`;
+        }
+        const next = LESSONS[i + 1];
+        main.innerHTML = body + (next ? `<button type="button" class="next-lesson" data-i="${i + 1}">Lesson ${i + 2} – ${next[1]}</button>` : "");
+        nav.querySelectorAll("button").forEach((b) => {
+          b.setAttribute("aria-current", +b.dataset.i === i);
+          b.classList.toggle("done", done.has(+b.dataset.i));
+        });
+        const pct = Math.round((done.size / LESSONS.length) * 100);
+        document.getElementById("pct").textContent = `${pct}% complete`;
+        document.getElementById("pctBar").style.width = pct + "%";
+        if (kind.clip) setUpClip(kind.from || 0);
+        main.querySelectorAll(".kc").forEach(setUpQuiz);
+        const nx = main.querySelector(".next-lesson");
+        if (nx) nx.addEventListener("click", () => open(+nx.dataset.i, true));
+        if (focus) (main.querySelector(".title") || main).focus({ preventScroll: true });
+      }
+
+      // a recorded lesson plays while it's on screen, with a pause switch
+      let video = null, wanted = !calm, seen = false;
+      const PLAY = '<svg viewBox="0 0 10 10" aria-hidden="true" width="9" height="9"><path d="M2 1l7 4-7 4z" fill="currentColor"/></svg>';
+      const PAUSE = '<svg viewBox="0 0 10 10" aria-hidden="true" width="9" height="9"><path d="M1.5 1h2.5v8H1.5zM6 1h2.5v8H6z" fill="currentColor"/></svg>';
+      function setUpClip(from) {
+        video = main.querySelector("video");
+        const btn = main.querySelector(".pp-play");
+        const sync = () => { const on = !video.paused; btn.innerHTML = `${on ? PAUSE : PLAY} ${on ? "pause" : "play"}<span class="vh"> the recording</span>`; };
+        btn.addEventListener("click", () => { wanted = video.paused; if (wanted) video.play().catch(() => {}); else video.pause(); });
+        video.addEventListener("click", () => btn.click());
+        video.addEventListener("play", sync);
+        video.addEventListener("pause", sync);
+        if (from) video.addEventListener("loadedmetadata", () => { video.currentTime = from; }, { once: true });
+        if (wanted && seen) video.play().catch(() => {});
+        sync();
+      }
+      new IntersectionObserver(([en]) => {
+        seen = en.isIntersecting;
+        if (!video || !video.isConnected) return;
+        if (seen && wanted) video.play().catch(() => {}); else video.pause();
+      }).observe(rise);
+
+      // a knowledge check card behaves like Rise's: pick, submit, see why, take again
+      function setUpQuiz(card) {
+        const [, answer, why] = QUIZ[+card.dataset.n];
+        const submit = card.querySelector(".submit"), fb = card.querySelector(".fb");
+        const radios = [...card.querySelectorAll("input")];
+        radios.forEach((r) => r.addEventListener("change", () => { submit.disabled = false; }));
+        submit.addEventListener("click", () => {
+          const pick = radios.find((r) => r.checked);
+          if (!pick) return;
+          const ok = pick.value === answer;
+          radios.forEach((r) => {
+            r.disabled = true;
+            const mark = r.parentElement.querySelector(".mark");
+            mark.textContent = r.value === answer ? "✓" : "✕";
+            mark.className = "mark " + (r.value === answer ? "ok" : "no");
+            r.parentElement.classList.toggle("chosen", r === pick);
+          });
+          submit.hidden = true;
+          fb.hidden = false;
+          fb.innerHTML = `<b>${ok ? "Correct" : "Incorrect"}</b><p>${ok ? "" : `It’s ${answer}. `}${why}</p><button type="button" class="again">Take again</button>`;
+          fb.querySelector(".again").addEventListener("click", () => {
+            radios.forEach((r) => { r.disabled = false; r.checked = false; r.parentElement.classList.remove("chosen"); const m = r.parentElement.querySelector(".mark"); m.textContent = ""; m.className = "mark"; });
+            submit.hidden = false;
+            submit.disabled = true;
+            fb.hidden = true;
+            radios[0].focus();
+          });
+        });
+      }
+
+      nav.addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        open(+b.dataset.i, true);
+        if (matchMedia("(max-width: 760px)").matches) { nav.hidden = true; toggle.setAttribute("aria-expanded", "false"); }
+      });
+      // on a phone the lesson list folds away under a button
+      const narrow = matchMedia("(max-width: 760px)");
+      const fold = () => { nav.hidden = narrow.matches; toggle.setAttribute("aria-expanded", String(!narrow.matches)); };
+      narrow.addEventListener("change", fold);
+      fold();
+      toggle.addEventListener("click", () => { const show = nav.hidden; nav.hidden = !show; toggle.setAttribute("aria-expanded", String(show)); });
+      open(3, false);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Scoping a project · Module 1</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* Module 1 of "Project work and financial compliance", rebuilt for Riverbend City Council's
+       newsletter. Visual language: a planning sheet. Scoping is drawing a boundary around work,
+       so every page is a numbered drawing sheet with a title block, a map-style legend and
+       survey marks: blue for what's in, red for the boundary and what's out, yellow for limits. */
+    :root {
+      --paper: #F3F4EF;
+      --sheet: #FBFBF8;
+      --ink: #17232A;
+      --ink-2: #4B5961;
+      --hair: rgba(23, 35, 42, .16);
+      --grid: rgba(31, 86, 163, .055);
+      --plan: #1F56A3;
+      --plan-tint: #E4ECF7;
+      --boundary: #B23520;
+      --boundary-tint: #F8E3DE;
+      --flag: #F2BE3A;
+      --flag-tint: #FCF0CF;
+      --field: #24693F;
+      --field-tint: #E2F1E7;
+      --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+      --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+      --side: 248px;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font: 400 17px/1.6 var(--body);
+      background-color: var(--paper);
+      /* drafting paper: a fine blue grid with a heavier line every five squares */
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        linear-gradient(rgba(31, 86, 163, .05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31, 86, 163, .05) 1px, transparent 1px);
+      background-size: 16px 16px, 16px 16px, 80px 80px, 80px 80px;
+    }
+    a { color: var(--plan); text-underline-offset: 3px; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    :focus-visible { outline: 2px solid var(--plan); outline-offset: 2px; }
+    .vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .label { font: 500 12px/1.4 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+
+    /* ---------- the course frame (the LMS around the content) ---------- */
+    .skip { position: absolute; left: 12px; top: 8px; z-index: 50; padding: 8px 12px; background: var(--ink); color: var(--paper); transform: translateY(-200%); }
+    .skip:focus { transform: none; }
+    .bar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 16px; min-height: 52px; padding: 8px 20px; background: var(--ink); color: var(--paper); }
+    .bar .course { font: 600 18px/1.1 var(--display); letter-spacing: .02em; text-transform: uppercase; flex: 1; min-width: 0; }
+    .bar .course small { display: block; font: 400 11px/1.4 var(--mono); letter-spacing: .06em; opacity: .75; }
+    .bar .menu { display: none; border: 1px solid rgba(243, 244, 239, .5); background: none; color: var(--paper); padding: 6px 10px; font: 500 12px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+    .bar :focus-visible { outline-color: var(--flag); }
+    /* progress drawn as a map scale bar: one segment per sheet, filled once visited */
+    .scale { display: flex; align-items: center; gap: 10px; font: 400 11px/1 var(--mono); letter-spacing: .05em; white-space: nowrap; }
+    .scale ol { display: flex; list-style: none; margin: 0; padding: 0; border: 1px solid var(--paper); }
+    .scale li { width: 22px; height: 8px; }
+    .scale li + li { border-left: 1px solid var(--paper); }
+    .scale li.seen { background: var(--paper); }
+    .scale li.now { background: var(--flag); }
+
+    /* the sheet index runs the full height of the page, as one column of the frame */
+    .frame { display: grid; grid-template-columns: var(--side) minmax(0, 1fr); align-items: start; min-height: calc(100vh - 52px);
+      background: linear-gradient(90deg, var(--sheet) calc(var(--side) - 1.5px), var(--ink) calc(var(--side) - 1.5px) var(--side), transparent var(--side)); }
+    .sheets { position: sticky; top: 52px; max-height: calc(100vh - 52px); overflow: auto; padding: 24px 18px 32px 20px; }
+    .sheets h2 { margin: 6px 0 18px; font: 700 26px/1.05 var(--display); text-transform: uppercase; letter-spacing: .01em; }
+    .sheets ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+    .sheets a { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 2px 8px; padding: 9px 10px; color: var(--ink); text-decoration: none; border: 1.5px solid transparent; }
+    .sheets a:hover { border-color: var(--ink); }
+    .sheets a .no { font: 500 13px/1.5 var(--mono); }
+    .sheets a .nm { font-weight: 700; font-size: 15px; line-height: 1.35; }
+    .sheets a .tm { grid-column: 2; font: 400 12px/1.4 var(--mono); color: var(--ink-2); }
+    .sheets a .tm::before { content: "□ "; }
+    .sheets a.seen .tm::before { content: "■ "; color: var(--field); }
+    .sheets a[aria-current="page"] { background: var(--ink); color: var(--paper); }
+    .sheets a[aria-current="page"] .tm { color: rgba(243, 244, 239, .8); }
+    .sheets a[aria-current="page"].seen .tm::before { color: var(--flag); }
+    .sheets a:focus-visible { outline-offset: -4px; }
+    .sheets .key { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--hair); display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--ink-2); }
+    .sheets .key span { display: flex; gap: 8px; align-items: center; }
+    .sheets .key i { width: 22px; height: 10px; flex: none; }
+
+    main { min-width: 0; padding: 28px clamp(16px, 4vw, 56px) 64px; }
+    main:focus { outline: none; }
+    /* the sheet is a container: its parts respond to the room the sheet has, whether the index sits
+       beside it or not */
+    .page { max-width: 860px; margin: 0 auto; container: page / inline-size; }
+
+    /* title block, like the corner of a drawing sheet */
+    .tblock { display: grid; grid-template-columns: 110px minmax(0, 1fr) 128px 168px; border: 1.5px solid var(--ink); background: var(--sheet); margin-bottom: 36px; }
+    .tblock > div { padding: 10px 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; min-width: 0; }
+    .tblock > div + div { border-left: 1.5px solid var(--ink); }
+    .tblock b { font: 700 28px/1 var(--display); }
+    .tblock .tb-meta b { font-size: 21px; line-height: 1.1; }
+    .tblock h1 { margin: 0; font: 700 clamp(30px, 6cqi, 46px)/1 var(--display); text-transform: uppercase; letter-spacing: .005em; text-wrap: balance; hyphens: auto; }
+    .tblock h1:focus { outline: none; }
+
+    /* key question: what this sheet answers */
+    .kq { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 4px 14px; margin: 0 0 22px; }
+    .kq::before { content: ""; width: 14px; height: 14px; margin-top: 7px; background: var(--boundary); grid-row: span 2; }
+    .kq p { margin: 0; font: 600 clamp(24px, 3vw, 31px)/1.12 var(--display); text-wrap: balance; }
+    .lede { font-size: 19px; max-width: 62ch; margin: 0 0 8px; }
+
+    h2.sec { display: flex; align-items: baseline; gap: 12px; margin: 52px 0 12px; padding-top: 10px; border-top: 1.5px solid var(--ink); font: 700 25px/1.15 var(--display); text-transform: uppercase; letter-spacing: .01em; text-wrap: balance; }
+    h2.sec .n { font: 500 13px/1 var(--mono); color: var(--ink-2); letter-spacing: .04em; }
+    h3 { font: 700 18px/1.3 var(--body); margin: 0 0 6px; }
+    p { margin: 0 0 14px; max-width: 66ch; }
+    ul, ol { margin: 0 0 14px; padding-left: 22px; }
+    li { margin: 4px 0; }
+    strong { font-weight: 700; }
+    .two { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+    .cols2 { columns: 2; column-gap: 32px; }
+    .cols2 li { break-inside: avoid; }
+
+    /* the running example, pinned to the sheet like a survey tag */
+    .sitenote { position: relative; border: 1.5px solid var(--ink); background: var(--sheet); padding: 34px 18px 16px; }
+    .sitenote > .label { position: absolute; top: -1.5px; left: -1.5px; padding: 5px 10px; background: var(--flag); color: var(--ink); border: 1.5px solid var(--ink); }
+    .sitenote p { margin: 0 0 10px; font-size: 16px; }
+    .sitenote p:last-child { margin: 0; }
+
+    /* a document extract: a quoted clause with its reference */
+    .extract { margin: 14px 0 18px; padding: 16px 20px; background: var(--sheet); border: 1px solid var(--hair); border-left: 4px solid var(--ink); }
+    .extract .label { display: block; margin-bottom: 6px; }
+    .extract p { font-style: italic; margin: 0 0 8px; }
+    .extract p:last-child { margin: 0; }
+    .plain { background: linear-gradient(transparent 58%, var(--flag-tint) 58%); }
+
+    /* legend: the five parts of a scope (and other sets) as map symbols */
+    .legend { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1.5px solid var(--ink); background: var(--sheet); margin: 16px 0 22px; }
+    .legend > div { padding: 14px 12px 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+    .legend > div + div { border-left: 1px solid var(--hair); }
+    .legend svg { width: 40px; height: 40px; }
+    .legend b { font: 700 19px/1.1 var(--display); text-transform: uppercase; }
+    .legend small { font-size: 14px; line-height: 1.4; color: var(--ink-2); }
+    .sym { color: var(--ink); }
+
+    /* expandable legend entries */
+    details.entry { border: 1.5px solid var(--ink); background: var(--sheet); margin: -1.5px 0 0; }
+    details.entry:first-of-type { margin-top: 14px; }
+    details.entry summary { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 16px; cursor: pointer; list-style: none; }
+    details.entry summary::-webkit-details-marker { display: none; }
+    details.entry summary svg { width: 34px; height: 34px; }
+    details.entry summary b { font: 700 21px/1.15 var(--display); text-transform: uppercase; }
+    details.entry summary small { display: block; font-size: 14px; color: var(--ink-2); font-weight: 400; }
+    details.entry summary::after { content: "+"; font: 500 22px/1 var(--mono); width: 30px; height: 30px; display: grid; place-items: center; border: 1.5px solid var(--ink); }
+    details.entry[open] summary::after { content: "−"; background: var(--ink); color: var(--paper); }
+    details.entry summary:hover b { text-decoration: underline; text-underline-offset: 4px; }
+    details.entry summary:focus-visible { outline-offset: -4px; }
+    details.entry > .body { padding: 4px 16px 18px 70px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+    details.entry > .body.one { grid-template-columns: minmax(0, 1fr); }
+    .applied { border-top: 3px solid var(--plan); padding-top: 10px; }
+    .applied .label { color: var(--plan); display: block; margin-bottom: 6px; }
+    .applied ul { margin: 0; }
+    details.entry { interpolate-size: allow-keywords; }
+    details.entry::details-content { height: 0; overflow: clip; transition: height .28s ease, content-visibility .28s allow-discrete; }
+    details.entry[open]::details-content { height: auto; }
+
+    /* tables, drawn with ruling pen weights */
+    .tablewrap { overflow-x: auto; margin: 14px 0 20px; }
+    table { width: 100%; border-collapse: collapse; background: var(--sheet); font-size: 15px; }
+    th, td { border: 1px solid var(--ink); padding: 9px 12px; text-align: left; vertical-align: top; }
+    thead th { font: 600 15px/1.2 var(--display); text-transform: uppercase; letter-spacing: .03em; background: var(--ink); color: var(--paper); }
+    tbody th { font-weight: 700; width: 30%; }
+    td ul { margin: 0; padding-left: 18px; }
+
+    /* the scope statement, set out like an approved planning permit */
+    .permit { position: relative; border: 1.5px solid var(--ink); background: var(--sheet); margin: 16px 0 24px; }
+    .permit header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 16px; padding: 12px 16px; border-bottom: 1.5px solid var(--ink); }
+    .permit header b { font: 700 24px/1.1 var(--display); text-transform: uppercase; }
+    .permit dl { margin: 0; display: grid; grid-template-columns: 170px minmax(0, 1fr); }
+    .permit dt, .permit dd { margin: 0; padding: 10px 16px; border-bottom: 1px solid var(--hair); }
+    .permit dt { font: 500 12px/1.5 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); padding-top: 13px; }
+    .permit dd ul { margin: 0; padding-left: 18px; }
+    .permit dt.out, .permit dt.out + dd { background: repeating-linear-gradient(-45deg, transparent 0 7px, rgba(178, 53, 32, .07) 7px 9px); }
+    .permit dt.lim, .permit dt.lim + dd { background: var(--flag-tint); }
+    .permit .signoff { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .stamp { flex: none; width: 128px; margin: -6px 0 -10px; transform: rotate(-7deg); color: var(--boundary); opacity: .9; }
+
+    /* field tasks: the activities */
+    .task { position: relative; margin: 40px 0; border: 2px solid var(--ink); background: var(--sheet); }
+    .task > header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 2px solid var(--ink);
+      background: repeating-linear-gradient(-45deg, var(--sheet) 0 8px, var(--plan-tint) 8px 10px); }
+    .task > header .label { color: var(--ink); background: var(--sheet); padding: 2px 6px; }
+    .task > .inner { padding: 18px 20px 20px; }
+    .task h3 { font: 700 24px/1.1 var(--display); text-transform: uppercase; margin-bottom: 8px; }
+    .q { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 8px 16px; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--hair); }
+    .q label { font-size: 16px; }
+    .q select { width: 100%; min-height: 40px; padding: 6px 10px; border: 1.5px solid var(--ink); border-radius: 0; background: var(--sheet); }
+    .q .why { grid-column: 1 / -1; margin: 0; font-size: 15px; display: none; }
+    .q.right .why, .q.wrong .why { display: block; }
+    .q.right .why { color: var(--field); }
+    .q.wrong .why { color: var(--boundary); }
+    .q.right select { border-color: var(--field); box-shadow: inset 4px 0 var(--field); }
+    .q.wrong select { border-color: var(--boundary); box-shadow: inset 4px 0 var(--boundary); }
+    .btns { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
+    .btn { min-height: 44px; padding: 10px 18px; border: 1.5px solid var(--ink); background: var(--ink); color: var(--paper); font-weight: 700; cursor: pointer; border-radius: 0; }
+    .btn:hover { background: var(--plan); border-color: var(--plan); }
+    .btn.ghost { background: transparent; color: var(--ink); }
+    .btn.ghost:hover { background: var(--plan-tint); }
+    .btn[disabled] { opacity: .45; cursor: default; }
+    .score { font: 500 14px/1.4 var(--mono); }
+
+    /* hold the line: the scope creep simulator */
+    .htl { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+    .memo { border: 1.5px solid var(--ink); background: #fff; }
+    .memo .head { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 2px 10px; padding: 12px 14px; border-bottom: 1px solid var(--hair); font-size: 14px; }
+    .memo .head span { font: 500 11px/1.9 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); }
+    .memo .text { padding: 14px 14px 4px; font-size: 18px; line-height: 1.45; }
+    .memo .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px 14px 14px; }
+    .memo .choices .btn { padding: 10px 8px; font-size: 15px; }
+    .memo .choices .add { background: var(--plan); border-color: var(--plan); }
+    .memo .choices .decline { background: var(--sheet); color: var(--ink); }
+    .memo .choices .decline:hover { background: var(--boundary-tint); }
+    .memo .choices .log { background: var(--flag); color: var(--ink); border-color: var(--ink); }
+    .memo .choices .btn[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 2px; }
+    .verdict { margin-top: 12px; padding: 12px 14px; border-left: 5px solid var(--ink); background: var(--sheet); font-size: 16px; }
+    .verdict.good { border-color: var(--field); background: var(--field-tint); }
+    .verdict.bad { border-color: var(--boundary); background: var(--boundary-tint); }
+    .verdict b { display: block; margin-bottom: 2px; }
+    .gauges { border: 1.5px solid var(--ink); background: var(--sheet); padding: 12px 14px; display: flex; flex-direction: column; gap: 14px; }
+    .gauge .top { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+    .gauge .top b { font: 500 13px/1.4 var(--mono); }
+    .gauge .track { position: relative; height: 12px; margin-top: 6px; border: 1.5px solid var(--ink); background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), var(--hair) calc(10% - 1px) 10%); }
+    .gauge .fill { position: absolute; inset: 0 auto 0 0; background: var(--plan); transition: width .45s ease; }
+    .gauge.over .fill { background: repeating-linear-gradient(-45deg, var(--boundary) 0 5px, #8e2a19 5px 9px); }
+    .gauge.over .top b { color: var(--boundary); }
+    .boundary { border: 2px dashed var(--boundary); padding: 10px 12px 12px; position: relative; margin-top: 4px; }
+    .boundary > .label { position: absolute; top: -10px; left: 10px; background: var(--sheet); padding: 0 6px; color: var(--boundary); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .chip { font-size: 13px; padding: 3px 8px; border: 1px solid var(--ink); background: #fff; }
+    .chip.in { border-color: var(--plan); background: var(--plan-tint); }
+    .chip.out { text-decoration: line-through; color: var(--ink-2); }
+    .chip.log { background: var(--flag-tint); }
+    .progress-line { font: 500 13px/1.4 var(--mono); color: var(--ink-2); margin-bottom: 8px; }
+
+    /* contour map of the strategy (the old pyramid, as a hill: mission at the summit) */
+    .hill { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: center; margin: 14px 0 20px; }
+    .hill svg { width: 100%; height: auto; display: block; }
+    .hill svg .ring { fill: transparent; stroke: var(--ink); stroke-width: 1.5; cursor: pointer; transition: fill .2s ease; }
+    .hill svg .ring:hover { fill: rgba(31, 86, 163, .08); }
+    .hill svg .ring.on { fill: rgba(242, 190, 58, .35); stroke-width: 2.5; }
+    .hill svg text { font: 600 15px var(--display); text-transform: uppercase; fill: var(--ink); pointer-events: none; letter-spacing: .03em; }
+    .hill .levels { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .hill .levels button { min-height: 40px; padding: 6px 12px; border: 1.5px solid var(--ink); background: var(--sheet); cursor: pointer; font-weight: 700; }
+    .hill .levels button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+    .hill .panel { border: 1.5px solid var(--ink); background: var(--sheet); padding: 14px 16px; min-height: 120px; }
+    .hill .panel b { font: 700 22px/1.1 var(--display); text-transform: uppercase; display: block; margin-bottom: 6px; }
+    .hill .panel p { margin: 0; }
+
+    /* the milk run: a floor plan of the shop with both routes drawn on it */
+    .mapwrap { max-width: 620px; margin: 18px 0 0; }
+    .map { border: 1.5px solid var(--ink); background: #fff; margin: 14px 0 6px; }
+    .map svg { display: block; width: 100%; height: auto; }
+    .map .shelf { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.5; }
+    .map .shelf-label { font: 600 13px var(--display); text-transform: uppercase; fill: var(--ink); letter-spacing: .04em; }
+    .map .planned { fill: none; stroke: var(--plan); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+    /* the actual route: a solid red line that draws itself along the path, cut into dashes by a
+       white line laid over it */
+    .map .actual { fill: none; stroke: var(--boundary); stroke-width: 3; stroke-linecap: butt; stroke-linejoin: round; }
+    .map .gaps { fill: none; stroke: #fff; stroke-width: 5; stroke-dasharray: 0 9 7 0; stroke-linejoin: round; }
+    .map .stop { fill: var(--boundary); }
+    .map .start { fill: var(--ink); }
+    .map .note { font: 500 11px var(--mono); fill: var(--ink-2); }
+    .map-key { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; margin: 8px 0 18px; }
+    .map-key span { display: flex; align-items: center; gap: 8px; }
+    .map-key i { display: inline-block; width: 28px; height: 0; border-top: 3.5px solid var(--plan); }
+    .map-key i.r { border-top: 3px dashed var(--boundary); }
+    .tally { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1.5px solid var(--ink); background: var(--sheet); margin: 0 0 22px; }
+    .tally > div { padding: 12px 14px; }
+    .tally > div + div { border-left: 1.5px solid var(--ink); }
+    .tally b { font: 700 30px/1 var(--display); display: block; }
+    .tally .plan-c { color: var(--plan); }
+    .tally .act-c { color: var(--boundary); }
+
+    /* anatomy of a scope: the boundary diagram */
+    .anatomy { border: 1.5px solid var(--ink); background: #fff; margin: 14px 0 22px; }
+    .anatomy svg { display: block; width: 100%; height: auto; }
+    .anatomy text { font-family: var(--body); font-size: 14px; fill: var(--ink); }
+    .anatomy .t { font: 700 15px var(--display); text-transform: uppercase; letter-spacing: .03em; }
+
+    /* why it matters: three marks */
+    .marks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1.5px solid var(--ink); background: var(--sheet); margin: 14px 0 22px; }
+    .marks > div { padding: 16px 16px 6px; }
+    .marks > div + div { border-left: 1px solid var(--hair); }
+    .marks svg { width: 40px; height: 40px; margin-bottom: 8px; }
+    .marks h3 { font: 700 20px/1.1 var(--display); text-transform: uppercase; }
+    .marks p { font-size: 15px; }
+
+    /* RACI matrix */
+    .raci-key { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 12px 0 18px; }
+    .raci-key div { border: 1.5px solid var(--ink); background: var(--sheet); padding: 10px 12px; font-size: 15px; }
+    .letter { display: inline-grid; place-items: center; width: 28px; height: 28px; font: 700 18px/1 var(--display); border: 1.5px solid var(--ink); margin-right: 6px; vertical-align: middle; }
+    .letter.R { background: var(--ink); color: var(--paper); }
+    .letter.A { background: var(--boundary); color: #fff; border-color: var(--boundary); }
+    .letter.C { background: var(--plan-tint); }
+    .letter.I { background: #fff; }
+    table.matrix td, table.matrix th { text-align: center; vertical-align: middle; }
+    table.matrix tbody th { text-align: left; font-weight: 400; width: auto; }
+    table.matrix tr.yours th { font-weight: 700; }
+    table.matrix tr.yours td { background: repeating-linear-gradient(-45deg, transparent 0 7px, rgba(31, 86, 163, .08) 7px 9px); font: 500 14px var(--mono); color: var(--ink-2); }
+
+    /* Gantt chart on graph paper */
+    .gantt { overflow-x: auto; margin: 14px 0 6px; }
+    .gantt table { min-width: 640px; table-layout: fixed; }
+    .gantt th, .gantt td { border-color: var(--hair); padding: 0; height: 34px; }
+    .gantt thead th { background: var(--sheet); color: var(--ink); font: 500 12px/1 var(--mono); text-align: center; border-bottom: 1.5px solid var(--ink); }
+    .gantt thead th:first-child, .gantt tbody th { width: 190px; text-align: left; padding: 0 10px; font: 400 14px/1.2 var(--body); }
+    .gantt td.on { background: repeating-linear-gradient(-45deg, var(--plan) 0 6px, #2b66ba 6px 9px); border-top: 7px solid var(--sheet); border-bottom: 7px solid var(--sheet); }
+    .gantt td.ms { position: relative; }
+    .gantt td.ms::after { content: ""; position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; background: var(--boundary); transform: translate(-50%, -50%) rotate(45deg); }
+
+    /* resources */
+    .res { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1.5px solid var(--ink); background: var(--sheet); margin: 14px 0 22px; }
+    .res > div { padding: 14px 14px 8px; }
+    .res > div + div { border-left: 1px solid var(--hair); }
+    .res svg { width: 34px; height: 34px; }
+    .res h3 { font: 700 20px/1.1 var(--display); text-transform: uppercase; margin: 6px 0; }
+    .res p { font-size: 15px; }
+    .incident { border: 1.5px solid var(--ink); background: #fff; margin: 14px 0 22px; display: grid; grid-template-columns: 120px minmax(0, 1fr); }
+    .incident .when { padding: 14px; border-right: 1.5px solid var(--ink); background: var(--boundary-tint); }
+    .incident .when b { font: 700 32px/1 var(--display); display: block; color: var(--boundary); }
+    .incident .what { padding: 14px 16px 4px; }
+    .overlays { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 14px 0 22px; }
+    .overlays > div { border: 1.5px solid var(--ink); background: var(--sheet); padding: 12px 14px 4px; font-size: 15px; }
+    .overlays > div.lim { background: var(--flag-tint); }
+    .overlays > div.out { background: repeating-linear-gradient(-45deg, var(--sheet) 0 7px, rgba(178, 53, 32, .07) 7px 9px); }
+    .overlays .label { display: block; margin-bottom: 6px; color: var(--ink); }
+
+    /* margin notes: reflection, saved in this browser only */
+    .margin { margin: 40px 0 10px; border-top: 1.5px solid var(--ink); padding-top: 14px; display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 16px; }
+    .margin h2 { font: 700 22px/1.1 var(--display); text-transform: uppercase; margin: 4px 0 0; }
+    .margin label { display: block; margin-bottom: 8px; }
+    .margin textarea { width: 100%; min-height: 104px; padding: 10px 12px; border: 1.5px solid var(--ink); border-radius: 0; resize: vertical; line-height: 1.5;
+      background: #fff repeating-linear-gradient(transparent 0 calc(1.5em - 1px), var(--plan-tint) calc(1.5em - 1px) 1.5em); background-position: 0 10px; }
+    .margin .saved { font: 400 12px/1.4 var(--mono); color: var(--ink-2); margin-top: 6px; min-height: 1.4em; }
+
+    .done { border: 2px solid var(--ink); background: var(--sheet); padding: 18px 20px; margin: 40px 0 0; position: relative; }
+    .done h2 { font: 700 26px/1.1 var(--display); text-transform: uppercase; margin: 0 0 10px; }
+    .done ol { margin: 0; }
+
+    /* previous / next sheet */
+    .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 56px; padding-top: 16px; border-top: 1.5px solid var(--ink); }
+    .pager a { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border: 1.5px solid var(--ink); background: var(--sheet); color: var(--ink); text-decoration: none; }
+    .pager a:hover { background: var(--ink); color: var(--paper); }
+    .pager a.next { text-align: right; grid-column: 2; }
+    .pager a span { font: 500 12px/1.4 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+    .pager a b { font: 700 20px/1.15 var(--display); text-transform: uppercase; }
+
+    /* gentle motion: sections settle in, routes draw themselves; all off for reduced motion */
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+    .page > * { animation: rise .4s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--n, 0) * 35ms); }
+    .map .actual.draw { stroke-dasharray: 1; animation: route 3.2s cubic-bezier(.45, .05, .4, 1) both; }
+    @keyframes route { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    @container page (max-width: 800px) {
+      .tblock { grid-template-columns: 90px minmax(0, 1fr); }
+      .tblock .tb-meta { border-top: 1.5px solid var(--ink); }
+      .tblock .tb-meta:nth-of-type(3) { border-left: 0; }
+      .gauge .top { flex-direction: column; gap: 0; }
+    }
+
+    @media (max-width: 900px) {
+      .frame { grid-template-columns: minmax(0, 1fr); background: none; min-height: 0; }
+      .bar .menu { display: inline-block; }
+      .sheets { display: none; position: static; max-height: none; border-bottom: 1.5px solid var(--ink); background: var(--sheet); }
+      .sheets.open { display: block; }
+      .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .legend > div { border-top: 1px solid var(--hair); }
+      .legend > div:nth-child(odd) { border-left: 0; }
+      .two, .hill, .htl { grid-template-columns: minmax(0, 1fr); }
+      .marks, .overlays { grid-template-columns: minmax(0, 1fr); }
+      .marks > div + div { border-left: 0; border-top: 1px solid var(--hair); }
+      .res { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .res > div:nth-child(3) { border-left: 0; }
+      .res > div:nth-child(n+3) { border-top: 1px solid var(--hair); }
+      .raci-key { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      details.entry > .body { grid-template-columns: minmax(0, 1fr); padding-left: 16px; }
+      .permit dl { grid-template-columns: minmax(0, 1fr); }
+      .permit dt { border-bottom: 0; padding-bottom: 0; }
+      .margin { grid-template-columns: minmax(0, 1fr); }
+      .q { grid-template-columns: minmax(0, 1fr); }
+      .cols2 { columns: 1; }
+      .scale ol { display: none; }
+    }
+    @media (max-width: 520px) {
+      body { font-size: 16px; }
+      .bar { gap: 10px; padding: 8px 14px; }
+      .bar .course { font-size: 15px; }
+      .bar .course small { display: none; }
+      .memo .choices { grid-template-columns: minmax(0, 1fr); }
+      .incident { grid-template-columns: minmax(0, 1fr); }
+      .incident .when { border-right: 0; border-bottom: 1.5px solid var(--ink); }
+      .tally b { font-size: 24px; }
+      .pager { grid-template-columns: minmax(0, 1fr); }
+      .pager a.next { grid-column: 1; }
+    }
+    @media (forced-colors: active) {
+      .gauge .fill, .gantt td.on { background: Highlight; }
+      .sheets a[aria-current="page"] { border-color: Highlight; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the lesson</a>
+  <header class="bar">
+    <button class="menu" id="menu" type="button" aria-expanded="false" aria-controls="sheets">Sheets</button>
+    <p class="course">Project work and financial compliance<small>Module 1 · Scoping a project</small></p>
+    <div class="scale" aria-hidden="true"><span id="scaleText">Sheet 1 of 6</span><ol id="scale"></ol></div>
+  </header>
+  <div class="frame">
+    <nav class="sheets" id="sheets" aria-label="Module 1 sheets">
+      <p class="label">Module 1</p>
+      <h2>Scoping a project</h2>
+      <ol id="toc"></ol>
+      <div class="key" aria-hidden="true">
+        <span><i style="background:var(--plan)"></i>In scope</span>
+        <span><i style="border:2px dashed var(--boundary)"></i>The boundary</span>
+        <span><i style="background:repeating-linear-gradient(-45deg,transparent 0 3px,var(--boundary) 3px 4px)"></i>Out of scope</span>
+        <span><i style="background:var(--flag)"></i>Limits</span>
+      </div>
+    </nav>
+    <main id="main" tabindex="-1">
+      <div class="page" id="page"></div>
+    </main>
+  </div>
+
+<script>
+// ---------- map symbols, drawn for this module (2px ink, square ends) ----------
+const S = {
+  goal: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 36V5"/><path d="M11 6h18l-4 6 4 6H11" fill="#B23520" stroke="#17232A"/><path d="M5 36h14"/></svg>',
+  deliverables: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="19" width="10" height="16" fill="#E4ECF7"/><rect x="15" y="9" width="10" height="26" fill="#E4ECF7"/><rect x="26" y="15" width="10" height="20" fill="#E4ECF7"/><path d="M2 35h36"/></svg>',
+  tasks: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="7" cy="31" r="3" fill="currentColor"/><path d="M9 29c6-8 4-15 12-17s8 8 14 2" stroke="#1F56A3" stroke-width="2.5" stroke-dasharray="4 3"/><path d="M30 9l6 5-7 2" stroke="#1F56A3" stroke-width="2.5"/></svg>',
+  exclusions: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><defs><pattern id="hx" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0v5" stroke="#B23520" stroke-width="2"/></pattern></defs><rect x="5" y="5" width="30" height="30" fill="url(#hx)"/><rect x="5" y="5" width="30" height="30" stroke="#B23520" stroke-dasharray="5 3"/></svg>',
+  constraints: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 34V10l3-4 3 4v24M27 34V10l3-4 3 4v24"/><rect x="4" y="15" width="32" height="5" fill="#F2BE3A"/><rect x="4" y="25" width="32" height="5" fill="#F2BE3A"/></svg>',
+  clock: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="20" cy="21" r="14"/><path d="M20 12v9l6 4M15 3h10"/></svg>',
+  coin: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><ellipse cx="20" cy="27" rx="14" ry="6" fill="#FCF0CF"/><path d="M6 27v-7c0-3.3 6.3-6 14-6s14 2.7 14 6v7"/><ellipse cx="20" cy="20" rx="14" ry="6" fill="#FCF0CF"/></svg>',
+  finish: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 37V4"/><path d="M9 5h24v16H9"/><path d="M9 5h6v4H9zM21 5h6v4h-6zM15 9h6v4h-6zM27 9h6v4h-6zM9 13h6v4H9zM21 13h6v4h-6zM15 17h6v4h-6zM27 17h6v4h-6z" fill="currentColor" stroke="none"/></svg>',
+  people: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="14" cy="13" r="5"/><circle cx="28" cy="14" r="4"/><path d="M4 34c0-7 4.5-11 10-11s10 4 10 11M22 23c6 0 11 3 12 10"/></svg>',
+  materials: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 14l14-7 14 7v16l-14 7-14-7z" fill="#E4ECF7"/><path d="M6 14l14 7 14-7M20 21v16"/></svg>',
+  doc: '<svg class="sym" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 4h17l7 7v25H8z"/><path d="M25 4v7h7M13 17h14M13 23h14M13 29h9"/></svg>',
+};
+const ul = (a) => "<ul>" + a.map((x) => `<li>${x}</li>`).join("") + "</ul>";
+const kq = (q) => `<div class="kq"><span class="label">Key question</span><p>${q}</p></div>`;
+const margin = (id, prompt) => `<section class="margin" aria-labelledby="m-${id}"><h2 id="m-${id}">Margin note</h2><div><label for="note-${id}">${prompt}</label><textarea id="note-${id}" data-note="${id}"></textarea><p class="saved" aria-live="polite"></p></div></section>`;
+
+// ---------- the running example ----------
+const SCOPE = {
+  goal: "Keep residents informed and connected with a monthly newsletter about local news, events and council services.",
+  deliverables: ["The first three monthly issues: an 8-page print edition and a matching email edition", "A newsletter template and masthead the team can reuse", "A sign-up page on the council website for the email edition"],
+  tasks: ["Choose a name and design the masthead", "Plan the story list for the first three issues", "Write and edit the stories", "Lay out and proofread each issue", "Print and deliver to letterboxes", "Send the email edition to subscribers"],
+  exclusions: ["Translated editions (planned for a later phase)", "Paid advertising from local businesses", "A standalone newsletter app"],
+  constraints: ["<strong>Budget:</strong> $12,000 for design, printing and delivery of the first three issues", "<strong>Deadline:</strong> the first issue is in letterboxes by 1 March", "<strong>People:</strong> the communications team can give the newsletter 6 hours a week"],
+};
+const sitenote = `<aside class="sitenote"><span class="label">Site note · running example</span><p>You're in the communications team at Riverbend City Council. The council wants a monthly community newsletter, in print and by email, to keep residents up to date with local news, events and services.</p><p>We follow this project through every sheet.</p></aside>`;
+
+// ---------- the six sheets ----------
+const PAGES = [
+{
+  id: "goals", no: "1.1", title: "Organisational goals", time: 20,
+  html: () => `
+    ${kq("What are organisational goals?")}
+    <p class="lede">The long-term outcomes an organisation is working towards. Every project, team and role should serve at least one of them.</p>
+
+    <h2 class="sec"><span class="n">1.1.1</span>Start with the mission</h2>
+    <p>Most organisations sum up why they exist in a mission statement. This is Riverbend City Council's:</p>
+    <div class="extract"><span class="label">Extract · Riverbend Council Plan</span><p>"Riverbend City Council works alongside our community to make Riverbend a welcoming, connected and sustainable place to live, work and visit.</p><p>We listen first, act openly, and look after the services and spaces our residents rely on, now and for the generations to come."</p></div>
+
+    <h2 class="sec"><span class="n">1.1.2</span>From mission to goals</h2>
+    <p>To live out that mission, the council has set six goals:</p>
+    <ol class="cols2">${["Keep residents informed and involved in decisions", "Strengthen connections between neighbours and community groups", "Support local businesses to grow", "Make council services easy to find and use", "Care for parks, waterways and green spaces", "Spend ratepayers' money responsibly"].map((g) => `<li>${g}</li>`).join("")}</ol>
+
+    <h2 class="sec"><span class="n">1.1.3</span>Line your project up</h2>
+    <p>A project that clearly serves the goals is easier to approve, fund and defend. Read the council's strategy like a hill on a contour map: the mission is the summit, and every project should be able to climb to it.</p>
+    <p>Choose a level to see what sits there.</p>
+    <div class="hill">
+      <div>
+        <div class="levels" role="group" aria-label="Strategy levels" id="levels"></div>
+        <div class="panel" id="levelPanel" aria-live="polite"><b>Start at the summit</b><p>Each level should point to the one above it. If your project can't, ask why it exists.</p></div>
+      </div>
+      <svg id="contours" viewBox="0 0 400 300" aria-hidden="true"></svg>
+    </div>
+
+    <h2 class="sec"><span class="n">1.1.4</span>Example: the newsletter</h2>
+    <p>Here's how the newsletter climbs to the council's mission. If you can fill in a table like this, you can explain why your project deserves time and money.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th scope="col">Council</th><th scope="col">How the newsletter serves it</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Mission</th><td>Makes Riverbend more "welcoming and connected" by sharing what's on locally.</td></tr>
+        <tr><th scope="row">Goal 1 · informed</th><td>Every issue covers upcoming decisions and how to have a say.</td></tr>
+        <tr><th scope="row">Goal 2 · connected</th><td>A regular page for community groups and events.</td></tr>
+        <tr><th scope="row">Goal 3 · local business</th><td>A "shop local" feature in each issue.</td></tr>
+        <tr><th scope="row">Goal 4 · easy services</th><td>A back page of key contacts and bin days.</td></tr>
+      </tbody>
+    </table></div>
+  `,
+  init: (root) => {
+    const LEVELS = [
+      ["Mission", "Why the organisation exists. It rarely changes."],
+      ["Vision", "What the organisation hopes the future looks like if it succeeds."],
+      ["Goals", "The broad, long-term outcomes it's working towards."],
+      ["Objectives", "Specific, measurable steps towards each goal, usually with a date attached."],
+      ["Projects", "The work that delivers the objectives. Your project sits here, so it should trace back up through every level above it."],
+    ];
+    // five contours: the summit ring is the mission, the widest ring the projects
+    const svg = root.querySelector("#contours");
+    const rings = LEVELS.map((l, i) => {
+      const rx = 52 + i * 34, ry = 26 + i * 25, cy = 72 + i * 22;
+      return `<ellipse class="ring" data-i="${i}" cx="200" cy="${cy}" rx="${rx}" ry="${ry}"/>`;
+    }).reverse().join("");
+    const labels = LEVELS.map(([n], i) => `<text x="200" y="${i === 0 ? 77 : 72 + i * 22 + 26 + i * 25 - 10}" text-anchor="middle">${n}</text>`).join("");
+    svg.innerHTML = `<path d="M200 22v-12" stroke="#17232A" stroke-width="2"/><path d="M200 10h18l-4 5 4 5h-18" fill="#B23520"/>${rings}${labels}`;
+    const panel = root.querySelector("#levelPanel"), levels = root.querySelector("#levels");
+    levels.innerHTML = LEVELS.map(([n], i) => `<button type="button" aria-pressed="false" data-i="${i}">${n}</button>`).join("");
+    const pick = (i) => {
+      levels.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", +b.dataset.i === i));
+      svg.querySelectorAll(".ring").forEach((r) => r.classList.toggle("on", +r.dataset.i === i));
+      panel.innerHTML = `<b>${LEVELS[i][0]}</b><p>${LEVELS[i][1]}</p>`;
+    };
+    levels.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) pick(+b.dataset.i); });
+    svg.addEventListener("click", (e) => { const r = e.target.closest(".ring"); if (r) pick(+r.dataset.i); });
+  },
+},
+{
+  id: "policies", no: "1.2", title: "Policies and procedures", time: 20,
+  html: () => `
+    ${kq("How do policies shape a project?")}
+    <p class="lede">Policies set the rules for how projects are approved, run and reported. Following them keeps the work on time, on budget and within the law.</p>
+
+    <h2 class="sec"><span class="n">1.2.1</span>What to look for</h2>
+    <p>Policies are long and formal, so know what you're looking for before you read. Most project policies cover seven areas:</p>
+    <ol class="cols2">${["Lines of authority and approvals", "Quality assurance", "People and resourcing", "Budgets and finance", "Risk management", "Recordkeeping", "Reporting"].map((a) => `<li>${a}</li>`).join("")}</ol>
+
+    <h2 class="sec"><span class="n">1.2.2</span>Case study: Riverbend's project policy</h2>
+    <p>Open each area to read the clause and what it means in plain English.</p>
+    ${[
+      ["Lines of authority and approvals", "Who can decide and sign off?", "3.1", "Every project must have a Project Sponsor at Manager level or above, who holds the budget and approves the project at each stage gate.", "The sponsor owns the money and the big decisions. The project manager runs the day-to-day work but can't overrule the sponsor."],
+      ["Quality assurance", "How is the work checked?", "4.2", "All public-facing communication must be reviewed against the Council Style Guide and approved by the Communications Manager before release.", "Nothing reaches residents without a style check and a manager's approval, so plan time for review."],
+      ["People and resourcing", "Who does the work?", "5.1", "The Project Manager is responsible for coordinating project staff and contractors, and for ensuring they follow relevant council policies, including procurement and workplace safety.", "If you bring in a designer or printer, you make sure they follow council rules too."],
+      ["Budgets and finance", "How is money approved and tracked?", "6.3", "Expenditure must be approved by an officer with the appropriate financial delegation. Purchases over $5,000 require three written quotes.", "Check who can approve spending, and get three quotes for big costs like printing."],
+      ["Risk management", "How are problems spotted early?", "7.1", "A risk assessment must be completed before the project starts and reviewed at each stage gate, using the council's risk register.", "List what could go wrong, like a late print run, before you start, and keep the list current."],
+      ["Recordkeeping", "Where do documents live?", "8.4", "Documents created or received in the course of council business are public records and must be saved to the council's records system.", "Drafts, quotes and approvals go in the official system, not someone's inbox."],
+      ["Reporting", "How is progress shared?", "9.2", "The Project Manager will provide the Sponsor with a monthly status report covering progress, budget, risks and issues.", "Send the sponsor a short monthly update, and raise problems early."],
+    ].map(([area, q, cl, clause, plain], i) => `
+      <details class="entry"><summary>${S.doc}<span><b>${String(i + 1).padStart(2, "0")} · ${area}</b><small>${q}</small></span></summary>
+        <div class="body"><div class="extract" style="margin:0"><span class="label">Clause ${cl}</span><p>"${clause}"</p></div><div><span class="label">In plain English</span><p class="plain" style="margin-top:6px">${plain}</p></div></div>
+      </details>`).join("")}
+
+    <section class="task" aria-labelledby="t1"><header><span class="label">Field task 1 of 4</span><span class="label">5 min</span></header><div class="inner">
+      <h3 id="t1">Which area does it cover?</h3>
+      <p>Four more clauses from the same policy. Choose the area each one belongs to, then check.</p>
+      <div id="quiz"></div>
+    </div></section>
+  `,
+  init: (root) => quiz(root.querySelector("#quiz"), ["Lines of authority and approvals", "Quality assurance", "People and resourcing", "Budgets and finance", "Risk management", "Recordkeeping", "Reporting"], [
+    ["\"Minutes of all project steering meetings must be filed within five working days.\"", "Recordkeeping", "Meeting minutes are records, so this is about where and when they're kept."],
+    ["\"Any change to the approved budget of more than 10% must be endorsed by the Sponsor.\"", "Lines of authority and approvals", "It's about who can approve a change, even though money is involved."],
+    ["\"Contractors working on council sites must complete a safety induction before starting work.\"", "People and resourcing", "It sets rules for the people doing the work."],
+    ["\"Where a risk is rated high, the Project Manager must notify the Sponsor within two days.\"", "Risk management", "It's about how a possible problem gets escalated."],
+  ]),
+},
+{
+  id: "scope", no: "1.3", title: "Project scope", time: 15,
+  html: () => `
+    ${kq("What is project scope, and why does it matter?")}
+    <p class="lede">Start with something you've probably done.</p>
+
+    <h2 class="sec"><span class="n">1.3.1</span>Field note: the milk run</h2>
+    <div>
+      <div>
+        <p>You pop into the shops for one thing: milk.</p>
+        <p>By the bakery you grab bread, since you're nearly out. Coffee is on sale, so a bag goes under your arm. Biscuits sit right next to the coffee. Now you're juggling, so you double back for a basket.</p>
+        <p>Half an hour later you're at the checkout with a full basket, a bill ten times what you planned, <strong>and no milk</strong>.</p>
+        <p>In a project, this is <strong>scope creep</strong>: small, reasonable additions that pull you away from what you set out to do.</p>
+      </div>
+      <figure class="mapwrap">
+        <div class="map"><svg viewBox="0 0 420 320" role="img" aria-labelledby="mapT mapD"><title id="mapT">Floor plan of the shop</title><desc id="mapD">The planned route goes from the entrance straight to the dairy fridge and out. The actual route wanders past the bakery, coffee, biscuits and baskets, then reaches the checkout without ever visiting the dairy fridge.</desc>
+          <rect class="shelf" x="20" y="20" width="110" height="46"/><text class="shelf-label" x="75" y="48" text-anchor="middle">Bakery</text>
+          <rect class="shelf" x="160" y="20" width="110" height="46"/><text class="shelf-label" x="215" y="48" text-anchor="middle">Coffee</text>
+          <rect class="shelf" x="300" y="20" width="100" height="46"/><text class="shelf-label" x="350" y="48" text-anchor="middle">Biscuits</text>
+          <rect class="shelf" x="300" y="128" width="100" height="62"/><text class="shelf-label" x="350" y="164" text-anchor="middle">Dairy · milk</text>
+          <rect class="shelf" x="20" y="128" width="110" height="62"/><text class="shelf-label" x="75" y="164" text-anchor="middle">Baskets</text>
+          <rect class="shelf" x="160" y="240" width="110" height="46"/><text class="shelf-label" x="215" y="268" text-anchor="middle">Checkout</text>
+          <path class="planned" d="M47 300 V212 H350 V194 M350 212 H230 V238"/>
+          <path class="actual" id="actualRoute" pathLength="1" d="M62 300 V222 H145 V97 H75 V70 M75 97 H215 V70 M215 97 H350 V70 M350 97 H145 V160 H134 M145 160 V222 H205 V238"/>
+          <path class="gaps" d="M62 300 V222 H145 V97 H75 V70 M75 97 H215 V70 M215 97 H350 V70 M350 97 H145 V160 H134 M145 160 V222 H205 V238"/>
+          <circle class="start" cx="54" cy="304" r="6"/><text class="note" x="70" y="312">Entrance</text>
+          <circle class="stop" cx="75" cy="70" r="5"/><circle class="stop" cx="215" cy="70" r="5"/><circle class="stop" cx="350" cy="70" r="5"/><circle class="stop" cx="134" cy="160" r="5"/>
+          <text class="note" x="318" y="206">milk</text>
+        </svg></div>
+        <figcaption class="map-key"><span><i></i>Planned: in, milk, out</span><span><i class="r"></i>Actual route</span></figcaption>
+      </figure>
+    </div>
+    <div class="tally"><div><span class="label">Planned</span><b class="plan-c">1 item · $3 · 5 min</b></div><div><span class="label">Actual</span><b class="act-c">4 items · $31 · 30 min · no milk</b></div></div>
+
+    <h2 class="sec"><span class="n">1.3.2</span>What a scope is</h2>
+    <p>A project scope draws the boundary of a project: what it will deliver, what it won't, and the limits it has to work within. Everyone can point to it and agree where the project starts and ends.</p>
+    <div class="anatomy"><svg viewBox="0 0 640 250" role="img" aria-labelledby="anaT anaD"><title id="anaT">Anatomy of a scope</title><desc id="anaD">A dashed boundary encloses the goal, the deliverables and the tasks. The exclusions sit outside the boundary. The constraints run along the boundary like a fence.</desc>
+      <defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0v7" stroke="#B23520" stroke-width="2" opacity=".35"/></pattern></defs>
+      <rect x="0" y="0" width="640" height="250" fill="url(#hatch)"/>
+      <rect x="30" y="30" width="420" height="190" fill="#fff" stroke="#B23520" stroke-width="2.5" stroke-dasharray="10 7"/>
+      <text class="t" x="44" y="56" fill="#B23520">The boundary</text>
+      <rect x="54" y="74" width="120" height="44" fill="#E4ECF7" stroke="#1F56A3" stroke-width="1.5"/><text x="114" y="101" text-anchor="middle">Goal</text>
+      <rect x="190" y="74" width="120" height="44" fill="#E4ECF7" stroke="#1F56A3" stroke-width="1.5"/><text x="250" y="101" text-anchor="middle">Deliverables</text>
+      <rect x="326" y="74" width="100" height="44" fill="#E4ECF7" stroke="#1F56A3" stroke-width="1.5"/><text x="376" y="101" text-anchor="middle">Tasks</text>
+      <rect x="54" y="150" width="372" height="42" fill="#FCF0CF" stroke="#17232A" stroke-width="1.5"/><text x="240" y="176" text-anchor="middle">Constraints: budget, time, people</text>
+      <rect x="480" y="74" width="136" height="118" fill="#fff" stroke="#17232A" stroke-width="1.5"/><text class="t" x="548" y="102" text-anchor="middle" fill="#B23520">Exclusions</text><text x="548" y="130" text-anchor="middle">what you</text><text x="548" y="150" text-anchor="middle">won't do</text>
+    </svg></div>
+
+    <h2 class="sec"><span class="n">1.3.3</span>Why it's worth the effort</h2>
+    <div class="marks">
+      <div>${S.clock}<h3>Real deadlines</h3><p>Know exactly what has to be done, and you can set a date you can actually meet.</p></div>
+      <div>${S.coin}<h3>Honest budgets</h3><p>You can't price work you haven't defined. A clear scope sets the budget and shows when spending drifts.</p></div>
+      <div>${S.finish}<h3>A finish line</h3><p>Without a scope, every "could we just add…" gets a yes and the end keeps moving. The scope is what you point to when the answer is "not this time".</p></div>
+    </div>
+  `,
+  init: (root) => {
+    const route = root.querySelector("#actualRoute");
+    if (route && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { route.classList.add("draw"); o.disconnect(); } }, { threshold: .5 }).observe(route.closest("svg"));
+    }
+  },
+},
+{
+  id: "define", no: "1.4", title: "Defining the project scope", time: 25,
+  html: () => `
+    ${kq("How do you write a project scope?")}
+    <div class="two">
+      <div><p class="lede">You're describing work that hasn't happened yet, which is why it feels hard. Split it into five parts and it gets manageable.</p></div>
+      ${sitenote}
+    </div>
+    <div class="legend">${[["goal", "Goal", "Why it exists"], ["deliverables", "Deliverables", "What gets handed over"], ["tasks", "Tasks", "The work that makes them"], ["exclusions", "Exclusions", "What you won't do"], ["constraints", "Constraints", "Limits to work within"]].map(([s, n, d]) => `<div>${S[s]}<b>${n}</b><small>${d}</small></div>`).join("")}</div>
+
+    <h2 class="sec"><span class="n">1.4.1</span>Gather what you need first</h2>
+    <p>Before writing, collect what tells you what the project has to achieve. Not every project has all of these:</p>
+    ${ul(["the project brief or request", "a business case", "stakeholders' notes on what they need", "relevant policies and procedures", "lessons from similar past projects"])}
+
+    <h2 class="sec"><span class="n">1.4.2</span>The five parts, on the newsletter</h2>
+    <p>Open each part to see what it means and how it applies to Riverbend's newsletter.</p>
+    ${[
+      ["goal", "Goal", "Why the project exists", "<p>The reason the project exists. Everyone assumes they know it. Writing it down gives every later decision something to check against.</p>", `<p style="margin:0">${SCOPE.goal}</p>`],
+      ["deliverables", "Deliverables", "What gets handed over", "<p>The finished things the project hands over. If someone asks \"what did you make?\", these are the answer.</p>", ul(SCOPE.deliverables)],
+      ["tasks", "Tasks", "The work that makes them", "<p>The pieces of work that produce the deliverables. Listing them shows what needs doing, and later, who should do it.</p>", ul(SCOPE.tasks)],
+      ["exclusions", "Exclusions", "What you won't do", "<p>What you've decided not to do. It feels odd to write down, but it's your best defence against scope creep. Remember the milk run: a note saying \"no snacks\" would have saved you.</p>", ul(SCOPE.exclusions)],
+      ["constraints", "Constraints", "Limits to work within", "<p>The real-world limits the project has to fit inside: usually budget, time and people.</p>", ul(SCOPE.constraints)],
+    ].map(([s, n, d, what, ex]) => `<details class="entry"><summary>${S[s]}<span><b>${n}</b><small>${d}</small></span></summary><div class="body"><div>${what}</div><div class="applied"><span class="label">On the newsletter</span>${ex}</div></div></details>`).join("")}
+
+    <section class="task" aria-labelledby="t2"><header><span class="label">Field task 2 of 4</span><span class="label">5 min</span></header><div class="inner">
+      <h3 id="t2">Sort the scope</h3>
+      <p>The parks team is planning a community garden, and their notes are a jumble. Decide which part of the scope each note belongs to.</p>
+      <div id="quiz"></div>
+    </div></section>
+
+    <h2 class="sec"><span class="n">1.4.3</span>Put it all together</h2>
+    <p>One page, signed off by the sponsor. From now on, every stakeholder works from this.</p>
+    <div class="permit">
+      <header><b>Scope statement</b><span class="label">Riverbend City Council · ref. COMMS-NL-01</span></header>
+      <dl>
+        <dt>Project</dt><dd>Riverbend community newsletter</dd>
+        <dt>Description</dt><dd>A monthly community newsletter, in print and by email</dd>
+        <dt>Project manager</dt><dd>Priya Raman, Communications Coordinator</dd>
+        <dt>Sponsor</dt><dd>Communications Manager</dd>
+        <dt>Goal</dt><dd>${SCOPE.goal}</dd>
+        <dt>Deliverables</dt><dd>${ul(SCOPE.deliverables)}</dd>
+        <dt>Tasks (in scope)</dt><dd>${ul(SCOPE.tasks)}</dd>
+        <dt class="out">Out of scope</dt><dd>${ul(SCOPE.exclusions)}</dd>
+        <dt class="lim">Constraints</dt><dd>${ul(SCOPE.constraints)}</dd>
+        <dt>Signed off</dt><dd class="signoff"><span>Communications Manager, project sponsor, 12 December</span><svg class="stamp" viewBox="0 0 140 70" aria-hidden="true"><rect x="3" y="3" width="134" height="64" fill="none" stroke="currentColor" stroke-width="3"/><rect x="9" y="9" width="122" height="52" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="70" y="38" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="24" fill="currentColor" letter-spacing="2">AGREED</text><text x="70" y="54" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor">12 DEC · SPONSOR</text></svg></dd>
+      </dl>
+    </div>
+
+    <section class="task" aria-labelledby="t3"><header><span class="label">Field task 3 of 4</span><span class="label">8 min</span></header><div class="inner">
+      <h3 id="t3">Hold the line</h3>
+      <p>It's week 6. The scope above is agreed, and requests are landing on your desk. For each one, decide: add it to the scope, decline it, or log it for the sponsor to decide later. Watch what each choice does to the budget, the team's hours and the date.</p>
+      <div id="htl"></div>
+    </div></section>
+
+    ${margin("define", "Think of a project you've worked on. Which of the five parts were clear, and which caused trouble later?")}
+  `,
+  init: (root) => {
+    quiz(root.querySelector("#quiz"), ["Goal", "Deliverable", "Task", "Exclusion", "Constraint"], [
+      ["Give residents in the east ward a shared space to grow food and meet neighbours", "Goal", "It's why the project exists."],
+      ["Twelve raised garden beds and a lockable tool shed", "Deliverable", "These are the finished things the project hands over."],
+      ["Get three quotes for the raised beds", "Task", "It's work needed to produce a deliverable."],
+      ["Running gardening workshops (the library will do this separately)", "Exclusion", "It's been deliberately left out of this project."],
+      ["The garden must open before the end of spring", "Constraint", "It's a time limit the project has to fit inside."],
+      ["Total budget of $40,000", "Constraint", "It's a budget limit the project has to fit inside."],
+    ]);
+    holdTheLine(root.querySelector("#htl"));
+  },
+},
+{
+  id: "tools", no: "1.5", title: "Project management tools", time: 15,
+  html: () => `
+    ${kq("Which tools turn a scope into a plan?")}
+    <p class="lede">Two do most of the work: a RACI chart for who does what, and a Gantt chart for when.</p>
+
+    <h2 class="sec"><span class="n">1.5.1</span>RACI charts</h2>
+    <p>For every task, each person gets one of four roles. That ends the "I thought you were doing that" moments.</p>
+    <div class="raci-key">
+      <div><span class="letter R">R</span><strong>Responsible</strong><br>Does the work</div>
+      <div><span class="letter A">A</span><strong>Accountable</strong><br>Owns the result, signs it off</div>
+      <div><span class="letter C">C</span><strong>Consulted</strong><br>Gives input before it's done</div>
+      <div><span class="letter I">I</span><strong>Informed</strong><br>Kept up to date</div>
+    </div>
+    <p>Here's the newsletter's chart, built from the tasks in the scope. Each row has exactly one <strong>A</strong>: if two people own a task, nobody does.</p>
+    <div class="tablewrap"><table class="matrix">
+      <thead><tr><th scope="col">Task</th>${RACI_PEOPLE.map((p) => `<th scope="col">${p}</th>`).join("")}</tr></thead>
+      <tbody>
+        ${RACI_ROWS.map(([task, roles]) => `<tr><th scope="row">${task}</th>${roles.map((r) => `<td>${r === "—" ? '<span aria-label="no role">—</span>' : `<span class="letter ${r}" aria-label="${RACI_NAMES[r]}">${r}</span>`}</td>`).join("")}</tr>`).join("")}
+        <tr class="yours"><th scope="row">Print and deliver to letterboxes</th>${RACI_PEOPLE.map(() => "<td>your turn</td>").join("")}</tr>
+      </tbody>
+    </table></div>
+
+    <section class="task" aria-labelledby="t4"><header><span class="label">Field task 4 of 4</span><span class="label">5 min</span></header><div class="inner">
+      <h3 id="t4">Fill in the last row</h3>
+      <p>"Print and deliver to letterboxes": what is each person's role?</p>
+      <div id="quiz"></div>
+    </div></section>
+
+    <h2 class="sec"><span class="n">1.5.2</span>Gantt charts</h2>
+    <p>A Gantt chart puts each task on a timeline, so you can see when work starts and ends, and where tasks overlap. Here's the first issue, in weeks from 6 January:</p>
+    <div class="gantt"><table>
+      <caption class="vh">First issue plan, weeks 1 to 12. Name and masthead weeks 1 to 3, plan stories weeks 2 to 4, write and edit weeks 4 to 7, lay out and proofread weeks 7 to 9, print and deliver weeks 10 and 11, email edition week 11, first issue out week 12.</caption>
+      <thead><tr><th scope="col">Task</th>${Array.from({ length: 12 }, (_, i) => `<th scope="col">${i + 1}</th>`).join("")}</tr></thead>
+      <tbody aria-hidden="true">
+        ${[["Name and masthead", 1, 3], ["Plan stories", 2, 3], ["Write and edit", 4, 4], ["Lay out and proofread", 7, 3], ["Print and deliver", 10, 2], ["Email edition", 11, 1], ["First issue out", 12, 1, true]].map(([t, s, n, ms]) => `<tr><th scope="row">${t}</th>${Array.from({ length: 12 }, (_, w) => { const on = w + 1 >= s && w + 1 < s + n; return `<td class="${on ? (ms ? "ms" : "on") : ""}"></td>`; }).join("")}</tr>`).join("")}
+      </tbody>
+    </table></div>
+    <p>At a glance, the team can see what each task is, when it starts and ends, where tasks overlap (stories get planned while the masthead is still being designed), and the date everything builds to.</p>
+
+    ${margin("tools", "Which planning tools has your team used? Which ones actually got looked at after week one?")}
+  `,
+  init: (root) => quiz(root.querySelector("#quiz"), ["Responsible", "Accountable", "Consulted", "Informed", "No role"], [
+    ["Communications officer, who wrote the stories", "Informed", "They need to know when the issue lands, but they don't print or deliver it."],
+    ["Communications coordinator, who books the printer and the delivery run", "Responsible", "They're doing the work."],
+    ["Communications manager, who approves the print order", "Accountable", "They own the result and sign it off."],
+    ["Designer, who supplies the print-ready files and checks the proof", "Consulted", "Their input is needed before the order goes ahead."],
+    ["Customer service, who answer residents' calls", "Informed", "They need delivery dates to answer questions, but don't do or approve the work."],
+  ], (rows) => {
+    // the learner's answers fill the last row of the chart, marked right or wrong
+    const cells = root.querySelectorAll(".matrix tr.yours td");
+    const LETTER = { Responsible: "R", Accountable: "A", Consulted: "C", Informed: "I" };
+    cells.forEach((td, i) => {
+      if (!rows || !rows[i].value) { td.textContent = "your turn"; td.style.boxShadow = ""; return; }
+      const v = rows[i].value, ok = v === rows[i].answer, l = LETTER[v];
+      td.innerHTML = l ? `<span class="letter ${l}" aria-label="${v}">${l}</span>` : `<span aria-label="no role">—</span>`;
+      td.style.boxShadow = `inset 0 -4px ${ok ? "var(--field)" : "var(--boundary)"}`;
+    });
+  }),
+},
+{
+  id: "resources", no: "1.6", title: "Project resources", time: 20,
+  html: () => `
+    ${kq("What will the project need?")}
+    <p class="lede">Resources are the people, materials, money and time it takes to produce the deliverables.</p>
+    <h2 class="vh">Four kinds of resource</h2>
+    <div class="res">
+      <div>${S.people}<h3>People</h3><p>A writer, a designer, a proofreader and a coordinator</p></div>
+      <div>${S.materials}<h3>Materials</h3><p>Design software, a photo library, a printer and a mailing tool</p></div>
+      <div>${S.coin}<h3>Money</h3><p>Budget for design, printing and letterbox delivery</p></div>
+      <div>${S.clock}<h3>Time</h3><p>The team's available hours and the issue deadlines</p></div>
+    </div>
+
+    <h2 class="sec"><span class="n">1.6.1</span>When resources aren't planned</h2>
+    <div class="incident"><div class="when"><span class="label">Week</span><b>7</b></div><div class="what">
+      <p>The council's only designer goes on leave in the same fortnight the first issue needs laying out. Nobody covers. The layout is rushed and misses the print slot.</p>
+      <p>Mapping resources ahead of time would have let the team book a freelance backup, move the layout dates, or use a ready-made template to cut layout time.</p>
+    </div></div>
+
+    <h2 class="sec"><span class="n">1.6.2</span>Read your resources off the scope</h2>
+    <p>You've already done the hard part. Lay three parts of the scope side by side:</p>
+    <div class="overlays">
+      <div><span class="label">Tasks · what needs resourcing</span>${ul(SCOPE.tasks.slice(0, 4).concat("…"))}</div>
+      <div class="out"><span class="label">Exclusions · what doesn't</span>${ul(SCOPE.exclusions)}</div>
+      <div class="lim"><span class="label">Constraints · what to watch</span>${ul(["$12,000 budget", "1 March deadline", "6 hours a week"])}</div>
+    </div>
+    <details class="entry" open><summary>${S.materials}<span><b>Resources you need</b><small>From the tasks</small></span></summary><div class="body"><div><p>Take "Lay out and proofread each issue":</p></div><div class="tablewrap" style="margin:0"><table><tbody><tr><th scope="row">People</th><td>Designer, proofreader</td></tr><tr><th scope="row">Materials</th><td>Design software, the template, the photo library</td></tr><tr><th scope="row">Money</th><td>A freelance backup if the designer is away</td></tr><tr><th scope="row">Time</th><td>About 15 hours per issue</td></tr></tbody></table></div></div></details>
+    <details class="entry"><summary>${S.exclusions}<span><b>Resources you don't need</b><small>From the exclusions</small></span></summary><div class="body one"><p>Don't budget for translators, an advertising sales person or app developers. They're all out of scope.</p></div></details>
+    <details class="entry"><summary>${S.constraints}<span><b>Resources to watch</b><small>From the constraints</small></span></summary><div class="body one"><div>${ul(["<strong>Budget ($12,000):</strong> compare quotes for design, printing and delivery against the cap.", "<strong>Deadline (1 March):</strong> book the printer with room for a late proof.", "<strong>Team time (6 hours a week):</strong> be honest about what fits, and outsource what doesn't."])}</div></div></details>
+
+    ${margin("resources", "On a past project, were resources easy to identify? Did the scope help, or did you work them out as you went?")}
+
+    <section class="done" aria-labelledby="done"><h2 id="done">Module 1 complete</h2><p>Six sheets, one idea: draw the boundary first, then work inside it.</p><ol>
+      <li>Every project serves a goal, and every goal serves the mission.</li>
+      <li>Policies tell you who decides and how work is checked.</li>
+      <li>A scope is the boundary. Scope creep is what happens without one.</li>
+      <li>Five parts: goal, deliverables, tasks, exclusions, constraints.</li>
+      <li>RACI says who, Gantt says when.</li>
+      <li>Resources come straight off the scope.</li>
+    </ol></section>
+  `,
+},
+];
+
+// RACI data for the newsletter (sheet 1.5)
+const RACI_PEOPLE = ["Comms officer", "Comms coordinator", "Comms manager", "Designer", "Customer service"];
+const RACI_NAMES = { R: "Responsible", A: "Accountable", C: "Consulted", I: "Informed" };
+const RACI_ROWS = [
+  ["Choose a name and design the masthead", ["C", "C", "A", "R", "I"]],
+  ["Plan the story list", ["R", "C", "A", "—", "C"]],
+  ["Write and edit the stories", ["R", "C", "A", "—", "I"]],
+  ["Lay out and proofread each issue", ["C", "C", "A", "R", "—"]],
+  ["Send the email edition", ["R", "C", "A", "C", "I"]],
+];
+
+// ---------- a reusable "choose the answer" field task ----------
+let qid = 0;
+function quiz(el, options, items, onCheck) {
+  const base = qid; qid += items.length;
+  const opts = '<option value="">Choose…</option>' + options.map((o) => `<option>${o}</option>`).join("");
+  el.innerHTML = items.map(([q, a], i) => `<div class="q" data-a="${a}"><label for="q${base + i}">${q}</label><select id="q${base + i}">${opts}</select><p class="why"></p></div>`).join("") +
+    '<div class="btns"><button type="button" class="btn">Check answers</button><button type="button" class="btn ghost">Clear</button><span class="score" aria-live="polite"></span></div>';
+  const [check, clear] = el.querySelectorAll(".btns button"), score = el.querySelector(".score");
+  check.onclick = () => {
+    let right = 0;
+    el.querySelectorAll(".q").forEach((q, i) => {
+      const v = q.querySelector("select").value, ok = v === q.dataset.a;
+      right += ok;
+      q.classList.toggle("right", ok);
+      q.classList.toggle("wrong", !ok);
+      q.querySelector(".why").textContent = (ok ? "✓ Correct. " : v ? `✗ Not quite: it's ${q.dataset.a}. ` : `Answer: ${q.dataset.a}. `) + items[i][2];
+    });
+    score.textContent = `${right} of ${items.length} correct`;
+    if (onCheck) onCheck([...el.querySelectorAll(".q")].map((q) => ({ value: q.querySelector("select").value, answer: q.dataset.a })));
+  };
+  clear.onclick = () => {
+    el.querySelectorAll(".q").forEach((q) => { q.classList.remove("right", "wrong"); q.querySelector("select").value = ""; });
+    score.textContent = "";
+    if (onCheck) onCheck(null);
+  };
+}
+
+// ---------- field task 3: hold the line ----------
+function holdTheLine(el) {
+  const START = { spent: 11200, hours: 6 };
+  const BUDGET = 12000, HOURS = 6;
+  const REQS = [
+    { from: "Proofreader, communications team", re: "Masthead typo", text: "The masthead proof says \"Riverbned\". Can we fix it before the files go to print?", best: "add", cost: 0, hrs: 0,
+      fb: { add: "Yes. Fixing a deliverable so it meets the standard is part of the work you agreed to.", decline: "This one belongs in scope: a correct masthead is part of the deliverable. Declining sends a typo to every letterbox.", log: "No need to wait. Fixing the masthead is already part of delivering the issue." } },
+    { from: "Owner, Bean There café", re: "Ad space", text: "We'd pay $200 to have an ad in every issue.", best: "decline", cost: 0, hrs: 0.5,
+      fb: { add: "Paid advertising is listed under Out of scope. Selling ad space needs its own policy and approval, and someone's time.", decline: "Right. Paid advertising is listed under Out of scope, so you can say no straight away.", log: "No need to log it: the scope already rules out paid advertising." } },
+    { from: "Mayor's office", re: "Mayor's column", text: "Could the mayor have a column in every issue?", best: "log", cost: 0, hrs: 1.5,
+      fb: { add: "It sounds small, but a monthly column is new work: writing, approvals, layout. That's 1.5 hours a week your team doesn't have.", decline: "It isn't ruled out by the scope, and it may well serve the council's goals. That's the sponsor's call, so log it.", log: "Right. It's new work that isn't in the scope or ruled out by it. Log it as a change request and let the sponsor decide." } },
+    { from: "Multicultural liaison officer", re: "Translations", text: "Can issue one also come out in Vietnamese and Arabic?", best: "decline", cost: 2400, hrs: 2,
+      fb: { add: "Translated editions are listed under Out of scope, planned for a later phase. Adding them now costs about $2,400 and two hours a week.", decline: "Right. Translations are out of scope for now and already planned for a later phase. Point them to that plan.", log: "It's already decided: the scope says translations come in a later phase. Decline, and point them to that plan." } },
+    { from: "Printer", re: "Paper stock", text: "Your paper is out of stock. The closest match costs $40 more per issue.", best: "add", cost: 120, hrs: 0,
+      fb: { add: "Good call. You can't deliver without paper, and $120 fits inside what's left of the budget.", decline: "Declining doesn't make the paper appear. The issue still needs printing, and $120 fits within the budget.", log: "Waiting holds up printing. This change is needed to deliver, and it fits within the budget." } },
+    { from: "Communications manager", re: "Video version", text: "Can we film a short video version of each issue?", best: "log", cost: 1500, hrs: 4,
+      fb: { add: "A video series is a new deliverable. At about $1,500 and 4 hours a week, it breaks both the budget and the team's time.", decline: "It's not ruled out, and it comes from your sponsor. Log it as a change request so it gets a proper decision.", log: "Right. It's a new deliverable worth considering for the next phase. Log it so the sponsor can weigh it properly." } },
+  ];
+  const VERB = { add: "Add to scope", decline: "Decline", log: "Log for later" };
+  let at = 0, state, picks;
+  const money = (n) => "$" + n.toLocaleString("en-AU");
+  function reset() { at = 0; state = { ...START }; picks = []; render(); }
+  function gauges() {
+    const budgetOver = state.spent > BUDGET, hoursOver = state.hours > HOURS;
+    const weeksLate = Math.max(0, Math.ceil(state.hours - HOURS));
+    return `<div class="gauges" role="group" aria-label="Project gauges">
+      <div class="gauge${budgetOver ? " over" : ""}"><div class="top"><span>Budget committed</span><b>${money(state.spent)} of ${money(BUDGET)}</b></div><div class="track" aria-hidden="true"><div class="fill" style="width:${Math.min(100, state.spent / BUDGET * 100)}%"></div></div></div>
+      <div class="gauge${hoursOver ? " over" : ""}"><div class="top"><span>Team hours a week</span><b>${state.hours} of ${HOURS}</b></div><div class="track" aria-hidden="true"><div class="fill" style="width:${Math.min(100, state.hours / HOURS * 100)}%"></div></div></div>
+      <div class="gauge${weeksLate ? " over" : ""}"><div class="top"><span>First issue</span><b>${weeksLate ? `${weeksLate} week${weeksLate > 1 ? "s" : ""} late` : "1 March, on track"}</b></div></div>
+      <div class="boundary"><span class="label">In scope</span><div class="chips">${chips("add") || '<span class="chip">the agreed scope</span>'}</div></div>
+      <div><span class="label">Logged for the sponsor</span><div class="chips">${chips("log") || '<span class="chip" style="border-style:dashed">nothing yet</span>'}</div></div>
+      <div><span class="label">Declined</span><div class="chips">${chips("decline") || '<span class="chip" style="border-style:dashed">nothing yet</span>'}</div></div>
+    </div>`;
+  }
+  function chips(kind) { return picks.map((p, i) => p === kind ? `<span class="chip ${kind === "add" ? "in" : kind === "log" ? "log" : "out"}">${REQS[i].re}</span>` : "").join(""); }
+  function render(feedback) {
+    if (at >= REQS.length) return finish();
+    const r = REQS[at];
+    const answered = picks.length > at;
+    el.innerHTML = `<p class="progress-line">Request ${at + 1} of ${REQS.length}</p><div class="htl">
+      <div><article class="memo" aria-labelledby="memo-re"><div class="head"><span>From</span><div>${r.from}</div><span>Re</span><div id="memo-re"><strong>${r.re}</strong></div></div>
+        <p class="text" tabindex="-1">${r.text}</p>
+        <div class="choices" role="group" aria-label="Your decision">${["add", "decline", "log"].map((k) => `<button type="button" class="btn ${k}" data-k="${k}" aria-pressed="${picks[at] === k}" ${answered ? "disabled" : ""}>${VERB[k]}</button>`).join("")}</div></article>
+        <div id="verdict" aria-live="polite">${feedback || ""}</div>
+      </div>${gauges()}</div>`;
+    el.querySelectorAll(".choices button").forEach((b) => (b.onclick = () => decide(b.dataset.k)));
+    const next = el.querySelector("#nextReq");
+    if (next) { next.onclick = () => { at++; render(); const t = el.querySelector(".memo .text, .result"); if (t) t.focus(); }; next.focus(); }
+  }
+  function decide(k) {
+    const r = REQS[at];
+    picks[at] = k;
+    if (k === "add") { state.spent += r.cost; state.hours = +(state.hours + r.hrs).toFixed(1); }
+    const good = k === r.best;
+    render(`<div class="verdict ${good ? "good" : "bad"}"><b>${good ? "✓ " + VERB[k] + " was the call." : "✗ The scope points to: " + VERB[r.best] + "."}</b>${r.fb[k]}</div><div class="btns"><button type="button" class="btn" id="nextReq">${at + 1 < REQS.length ? "Next request →" : "See your result →"}</button></div>`);
+  }
+  function finish() {
+    const right = picks.filter((p, i) => p === REQS[i].best).length;
+    el.innerHTML = `<div class="htl"><div><p class="result" tabindex="-1" style="font:700 34px/1.05 var(--display);text-transform:uppercase;margin:0 0 10px">You held the line on ${right} of ${REQS.length}</p>
+      <p>Every request had an answer in the scope statement. Exclusions mean a quick no. Work that's needed to deliver what you agreed gets done. Anything new, however good, is logged for the sponsor to weigh against the budget and the date.</p>
+      <div class="btns"><button type="button" class="btn ghost" id="again">Try again</button></div></div>${gauges()}</div>`;
+    el.querySelector("#again").onclick = reset;
+  }
+  reset();
+}
+
+// ---------- margin notes: kept in this browser only ----------
+function notes(root) {
+  root.querySelectorAll("textarea[data-note]").forEach((t) => {
+    const key = "riverbend-note-" + t.dataset.note, saved = t.parentElement.querySelector(".saved");
+    try { t.value = localStorage.getItem(key) || ""; } catch (e) {}
+    let timer;
+    t.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        try { localStorage.setItem(key, t.value); saved.textContent = "Saved in this browser."; } catch (e) { saved.textContent = "This browser can't save notes, so copy anything you want to keep."; }
+      }, 400);
+    });
+  });
+}
+
+// ---------- the course frame: sheet index, progress, routing ----------
+const toc = document.getElementById("toc"), pageEl = document.getElementById("page"), main = document.getElementById("main");
+const scale = document.getElementById("scale"), scaleText = document.getElementById("scaleText");
+const sheets = document.getElementById("sheets"), menu = document.getElementById("menu");
+const seen = new Set();
+toc.innerHTML = PAGES.map((p) => `<li><a href="#${p.id}" data-id="${p.id}"><span class="no">${p.no}</span><span class="nm">${p.title}</span><span class="tm">${p.time} min</span></a></li>`).join("");
+scale.innerHTML = PAGES.map(() => "<li></li>").join("");
+let first = true;
+function show() {
+  const i = Math.max(0, PAGES.findIndex((p) => "#" + p.id === location.hash));
+  const p = PAGES[i], prev = PAGES[i - 1], next = PAGES[i + 1];
+  seen.add(p.id);
+  pageEl.innerHTML = `
+    <header class="tblock">
+      <div><span class="label">Sheet</span><b>${p.no}</b></div>
+      <div><span class="label">Module 1 · Scoping a project</span><h1 tabindex="-1">${p.title}</h1></div>
+      <div class="tb-meta"><span class="label">Time</span><b>${p.time} min</b></div>
+      <div class="tb-meta"><span class="label">Example</span><b>Riverbend newsletter</b></div>
+    </header>
+    ${p.html()}
+    <nav class="pager" aria-label="Sheets">${prev ? `<a href="#${prev.id}"><span>← Sheet ${prev.no}</span><b>${prev.title}</b></a>` : ""}${next ? `<a class="next" href="#${next.id}"><span>Sheet ${next.no} →</span><b>${next.title}</b></a>` : ""}</nav>`;
+  [...pageEl.children].forEach((c, n) => c.style.setProperty("--n", Math.min(n, 8)));
+  if (p.init) p.init(pageEl);
+  notes(pageEl);
+  toc.querySelectorAll("a").forEach((a) => {
+    if (a.dataset.id === p.id) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    a.classList.toggle("seen", seen.has(a.dataset.id));
+  });
+  [...scale.children].forEach((li, n) => { li.className = n === i ? "now" : seen.has(PAGES[n].id) ? "seen" : ""; });
+  scaleText.textContent = `Sheet ${i + 1} of ${PAGES.length}`;
+  document.title = `${p.title} · Module 1 · Scoping a project`;
+  sheets.classList.remove("open");
+  menu.setAttribute("aria-expanded", "false");
+  // a new sheet starts at its top, and screen readers hear its title
+  if (!first) {
+    window.scrollTo(0, 0);
+    pageEl.querySelector("h1").focus({ preventScroll: true });
+  }
+  first = false;
+  parent !== window && parent.postMessage({ module: "sheet", id: p.id }, "*");
+}
+// a table too wide for the screen scrolls sideways, so it can take keyboard focus to be scrolled
+function scrollers() {
+  pageEl.querySelectorAll(".tablewrap, .gantt").forEach((w) => {
+    if (w.scrollWidth > w.clientWidth + 1) {
+      w.tabIndex = 0;
+      w.setAttribute("role", "region");
+      w.setAttribute("aria-label", "Table, scrolls sideways");
+    } else {
+      w.removeAttribute("tabindex");
+      w.removeAttribute("role");
+      w.removeAttribute("aria-label");
+    }
+  });
+}
+window.addEventListener("hashchange", () => requestAnimationFrame(scrollers));
+window.addEventListener("resize", scrollers);
+requestAnimationFrame(scrollers);
+menu.addEventListener("click", () => { const open = sheets.classList.toggle("open"); menu.setAttribute("aria-expanded", open); });
+window.addEventListener("hashchange", show);
+show();
+</script>
+</body>
+</html>

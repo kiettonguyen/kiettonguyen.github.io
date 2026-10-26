@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Melbourne Hack 2021 — Kiet Nguyen</title>
+  <meta name="description" content="AnyExercise, a web app that makes home exercise easier and more rewarding for older people. 1st place at Melbourne Hack 2021.">
+  <link rel="canonical" href="https://kietn.com/work/melbourne-hack-2021/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kiet Nguyen">
+  <meta property="og:url" content="https://kietn.com/work/melbourne-hack-2021/">
+  <meta property="og:title" content="Melbourne Hack 2021 — Kiet Nguyen">
+  <meta property="og:description" content="AnyExercise, a web app that makes home exercise easier and more rewarding for older people. 1st place at Melbourne Hack 2021.">
+  <meta property="og:image" content="https://kietn.com/assets/og/melbourne-hack-2021.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../../shared/board.css?v=52">
+  <link rel="stylesheet" href="../../style.css?v=52">
+  <link rel="stylesheet" href="../../shared/products.css?v=52">
+  <style>
+    /* the AnyExercise dashboard, rebuilt in HTML from the team's design */
+    .app { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 0 28px; padding: 26px 30px 34px; font-family: Poppins, sans-serif; letter-spacing: .04em; color: #1A1A1A; background: linear-gradient(135deg, #E3DAE8, #F3E6DC); }
+    .app button { font-family: inherit; }
+    .app :focus-visible { outline-color: #4B1EF0; }
+    .app .brand { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 13px; font-weight: 700; }
+    .app .me { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+    .app .me i, .app .feed i { width: 28px; height: 28px; flex: none; border-radius: 50%; background: #FFB3B0; }
+    .app .menu { list-style: none; display: flex; flex-direction: column; gap: 6px; padding-top: 32px; font-size: 12px; font-weight: 600; letter-spacing: .06em; }
+    .app .menu li { padding: 8px 14px; border-radius: 8px; color: #4A4A4A; }
+    .app .menu li[aria-current] { color: #1A1A1A; background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, .08); }
+    .app .h { margin: 0 0 12px; font-size: 14px; font-weight: 700; }
+    .rings { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .ring { padding: 14px 10px 16px; text-align: center; background: #F4F2F3; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, .05); }
+    .ring svg { display: block; width: 92px; height: 92px; margin: 0 auto 6px; }
+    .ring circle { fill: none; stroke-width: 9; }
+    .ring .bg { stroke: #C8C8C8; }
+    .ring .fg { stroke: #FDB813; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset .9s cubic-bezier(.2, .7, .2, 1); }
+    .ring text { font: 700 15px Poppins, sans-serif; fill: #4B1EF0; text-anchor: middle; dominant-baseline: central; }
+    .ring p { margin: 0 0 8px; font-size: 11.5px; }
+    .ring button { min-height: 30px; padding: 6px 16px; font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #1A1A1A; background: #FDB813; border: 0; border-radius: 6px; box-shadow: 0 2px 4px rgba(0, 0, 0, .12); cursor: pointer; transition: transform .15s ease; }
+    .ring button:active { transform: scale(.95); }
+    .ring button[aria-disabled="true"] { cursor: default; color: #5B4A1A; background: #F6DA8E; box-shadow: none; }
+    .week { margin: 22px 0; padding: 16px 18px 8px; background: #fff; border-radius: 10px; }
+    .week svg { display: block; width: 100%; height: auto; }
+    .week .area { fill: url(#fade); }
+    .week .line { fill: none; stroke: #4B1EF0; stroke-width: 1.5; stroke-dasharray: 900; stroke-dashoffset: 900; transition: stroke-dashoffset 1.4s ease; }
+    .week.go .line { stroke-dashoffset: 0; }
+    .week text { font: 400 10px Poppins, sans-serif; fill: #333; }
+    .low { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 18px; }
+    .panel { list-style: none; padding: 14px 16px; font-size: 11px; background: #fff; border-radius: 10px; }
+    .panel li { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; }
+    .panel li:last-child { margin-bottom: 0; }
+    .ach li::before { content: ""; width: 14px; height: 14px; flex: none; border: 1.5px solid #C8C8C8; border-radius: 50%; }
+    .ach li.got::before { border-color: #FDB813; background: #FDB813 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%231A1A1A' stroke-width='2'/%3E%3C/svg%3E") center / 11px no-repeat; }
+    .toast { position: absolute; left: 50%; bottom: 18px; padding: 8px 16px; font: 600 12px Poppins, sans-serif; color: #fff; background: #1A1A1A; border-radius: 99px; opacity: 0; transform: translate(-50%, 20px); transition: transform .3s ease, opacity .3s ease; pointer-events: none; }
+    .toast.on { opacity: 1; transform: translate(-50%, 0); }
+    @media (max-width: 860px) {
+      .app { grid-template-columns: minmax(0, 1fr); padding: 18px; }
+      .app .menu { flex-direction: row; flex-wrap: wrap; gap: 4px; padding-top: 0; margin-bottom: 14px; }
+      .app .menu li { padding: 6px 10px; }
+      .rings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .low { grid-template-columns: minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body class="case-study product-page" style="--fig: '2.6'">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="toolbar">
+    <a href="../../" class="logo" aria-label="Kiet Nguyen, home"><svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><filter id="pen" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.2" numOctaves="2" seed="21"/><feDisplacementMap in="SourceGraphic" scale="1.1" xChannelSelector="R" yChannelSelector="G"/></filter><g class="steam"><path pathLength="1" d="M16.5 3 C 13.5 -1, 19.5 -4, 16.5 -8 S 18.5 -13, 16.5 -16"/><path pathLength="1" d="M23.5 3 C 20.5 -1, 26.5 -4, 23.5 -8 S 25.5 -13, 23.5 -16"/></g><text x="20" y="21" text-anchor="middle" dominant-baseline="central" filter="url(#pen)">阮</text></svg><span class="logo-text"><span class="logo-name">Kiet Nguyen</span><span class="logo-fig" aria-hidden="true">fig. 00 · <span lang="zh">阮</span>, the lute</span></span></a>
+    <a class="tea" href="../../#contact">let's get tea ↓</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="ph drift">
+      <div>
+        <a class="back" href="../../#work">← fig. 02 · all work</a>
+        <p class="cs-year">2021</p>
+        <h1>Melbourne Hack 2021 <em>1st place</em></h1>
+        <p class="ph-lead">AnyExercise, a web app that makes home exercise easier and more rewarding for older people, with pose detection to check their form.</p>
+      </div>
+      <dl class="ph-facts">
+        <dt>Event</dt><dd>Melbourne Hack 2021, our first hackathon</dd>
+        <dt>My part</dt><dd>Design lead: wireframes, prototype, brand, interactions</dd>
+        <dt>Project</dt><dd><a href="https://devpost.com/software/anyexercise" target="_blank" rel="noopener">AnyExercise on Devpost ↗<span class="vh"> (opens in a new tab)</span></a></dd>
+      </dl>
+    </section>
+
+    <figure class="pp">
+      <div class="product pp-frame">
+        <div class="app" aria-label="AnyExercise dashboard, rebuilt" role="group">
+          <p class="brand"><span>ANYEXERCISE</span><span class="me"><i aria-hidden="true"></i>Hi, Ben!</span></p>
+          <ul class="menu" aria-label="App menu. Only the dashboard is rebuilt."><li aria-current="page">Dashboard</li><li>Settings</li><li>Exercises</li><li>Today</li><li>History</li></ul>
+          <div>
+            <p class="h">Today's Progress</p>
+            <div class="rings" id="rings"></div>
+            <div class="week" id="week"><p class="h">Here's your progress this week</p>
+              <svg viewBox="0 0 460 170" role="img" aria-label="Progress this week: low on Monday, up and down through the week, highest on Saturday and Sunday">
+                <defs><linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF6E5"/><stop offset="1" stop-color="#E3DCFA"/></linearGradient></defs>
+                <line x1="40" y1="40" x2="440" y2="40" stroke="#E2E2E2"/><line x1="40" y1="80" x2="440" y2="80" stroke="#E2E2E2"/><line x1="40" y1="120" x2="440" y2="120" stroke="#E2E2E2"/>
+                <text x="6" y="44">100%</text><text x="12" y="84">75%</text><text x="12" y="124">50%</text><text x="12" y="160">25%</text>
+                <path class="area" d="M40 150 L104 110 L168 128 L232 20 L296 108 L360 8 L440 8 L440 150 Z"/>
+                <path class="line" d="M40 150 L104 110 L168 128 L232 20 L296 108 L360 8 L440 8"/>
+                <g id="days"></g>
+              </svg>
+            </div>
+            <div class="low">
+              <div><p class="h">Recent Activities</p><ul class="panel feed" id="feed"></ul></div>
+              <div><p class="h">Achievements</p><ul class="panel ach" id="ach"></ul></div>
+            </div>
+          </div>
+        </div>
+        <p class="toast" id="toast" role="status"></p>
+      </div>
+      <figcaption class="pp-cap"><span><span class="fig">fig. 2.6a</span> · the dashboard, rebuilt from our design. Press START to finish an exercise.</span></figcaption>
+    </figure>
+
+    <section class="story" aria-label="In short">
+      <div><h2>Problem</h2><p>Lockdowns closed gyms and parks, and many older people stopped moving, which raises their risk of falls.</p></div>
+      <div><h2>Idea</h2><p>Borrow what works in Ring Fit and Wii Fit. Trackers, progress and small wins make exercise feel like a game, and pose detection checks form.</p></div>
+      <div><h2>Result</h2><p>1st place, and the Arcitecta "Greatest Maker" prize.</p></div>
+    </section>
+
+    <article class="cs-body">
+      <p>As a spoiler, we did end up winning both 1st place and also the &#x27;Greatest Maker&#x27; Arcitecta Sponsor Prize.</p>
+      <figure class="cs-media small bare"><img src="/assets/melbourne-hack-2021/01.png" alt="AnyExercise mascot illustration" width="418" height="632" loading="lazy" data-zoom></figure>
+      <h2 class="cs-h">The Covid Slump</h2>
+      <p>With consecutive lockdowns in Melbourne, the closure of public spaces and gyms, it has become increasingly difficult for elderly people such as our grandparents to find the motivation to exercise, as it has simply become too inconvenient. We hence identified that this was a niche issue that had potential to be explored.</p>
+      <h2 class="cs-h">An opportunity to improve at-home exercise</h2>
+      <p>Falling has always been a concern for older people. The Australian and New Zealand Falls Prevention Society found that for those over 65 years old, falls account for 40% of injury-related deaths. According to Better Health Victoria, many older people stop physical exercise due to beliefs that exercise is no longer appropriate. Common misconceptions include:</p>
+      <ul class="cs-list"><li>Older people are frail and physically weak.</li><li>The human body doesn&#x27;t need as much physical activity as it ages.</li><li>Exercising is hazardous for older people because they may injure themselves.</li><li>Only vigorous and sustained exercise is of any use.</li></ul>
+      <p>However, if you don&#x27;t use it, you lose it. Better Health Victoria estimates that a lack of physical activity accounts for about half of the physical decline associated with ageing such as reduced muscle mass, strength and physical endurance, coordination and balance, joint flexibility and mobility, and bone strength.</p>
+      <h2 class="cs-h">My Role</h2>
+      <p>I played a pivotal role in leading and overseeing the overall design strategy and direction for the project. My responsibilities encompassed a broad spectrum, including creating wireframes, developing prototypes, defining branding elements, and enhancing user interactions to ensure a seamless and engaging user experience.</p>
+      <h2 class="cs-h">A gamified web app</h2>
+      <p>Much of the inspiration for the app was drawn from what was currently on the market. Looking at games such as Ring Fit or Wii Fit and how exactly users can enjoy exercise was important. We added things like trackers and progress bars so that users would feel accomplished and encouraged to continue. We sought research from psychologists that suggested positive reinforcement was beneficial in encouraging users to keep an exercise routine and habit.</p>
+      <figure class="cs-media wide"><img src="/assets/melbourne-hack-2021/02.jpg" alt="Wireframe flow" width="1637" height="548" loading="lazy" data-zoom></figure>
+      <h2 class="cs-h">The Product</h2>
+      <p>AnyExercise is a web platform that utilises AI pose detection to determine correct form during exercises.</p>
+      <p>Additionally, the targeted challenges and trackers encourage older people to create a healthy habit and consistent pattern of physical activity. Pose detection during exercises gives real-time feedback on your progression of the activity.</p>
+      <p>A clean and minimalistic UI aids older users in tracking their progress with each exercise and also a visual guide on correctly matching the pose.</p>
+      <figure class="cs-media wide"><img src="/assets/melbourne-hack-2021/03.jpg" alt="AnyExercise dashboard UI" width="1440" height="1862" loading="lazy" data-zoom></figure>
+      <h2 class="cs-h">Check out our Devpost!</h2>
+      <p>Surprisingly, we won our first hackathon ever!</p>
+      <p><a class="cs-link" href="https://devpost.com/software/anyexercise" target="_blank" rel="noopener">View AnyExercise on Devpost ↗</a></p>
+    </article>
+
+    <a class="next-project" href="../project-scope/">
+      <span>Next project</span>
+      <strong>Scoping a Project →</strong>
+    </a>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span class="year"></span> Kiet Nguyen <span class="end">· end of figures</span></p>
+    <a href="https://www.linkedin.com/in/kietngu" target="_blank" rel="noopener">LinkedIn ↗<span class="vh"> (opens in a new tab)</span></a>
+  </footer>
+
+  <div class="lightbox" hidden><img alt=""></div>
+  <script src="../../script.js?v=52"></script>
+  <script>
+    (function () {
+      // the four rings and their numbers come from the team's dashboard design
+      const EX = [["Exercise 1", 75], ["Exercise 2", 100], ["Exercise 3", 100], ["Exercise 4", 25]];
+      const C = 2 * Math.PI * 38;
+      const rings = document.getElementById("rings"), feed = document.getElementById("feed"), ach = document.getElementById("ach");
+      const toast = document.getElementById("toast"), week = document.getElementById("week");
+      const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      rings.innerHTML = EX.map(([name], i) => `<div class="ring"><svg viewBox="0 0 92 92" aria-hidden="true"><circle class="bg" cx="46" cy="46" r="38"/><circle class="fg" cx="46" cy="46" r="38" stroke-dasharray="${C}" stroke-dashoffset="${C}"/><text x="46" y="46">0%</text></svg><p>${name}<span class="vh"></span></p><button type="button" data-i="${i}">START<span class="vh"> ${name}</span></button></div>`).join("");
+      function set(i, pct) {
+        const ring = rings.children[i], b = ring.querySelector("button");
+        ring.querySelector(".fg").style.strokeDashoffset = C * (1 - pct / 100);
+        ring.querySelector("text").textContent = pct + "%";
+        ring.querySelector("p .vh").textContent = `, ${pct}% done`;
+        b.setAttribute("aria-disabled", String(pct >= 100));
+        b.firstChild.textContent = pct >= 100 ? "DONE" : "START";
+      }
+      const lines = ["Ally just completed her weekly goal! Send her a congratulations!"];
+      const renderFeed = () => { feed.innerHTML = lines.slice(0, 4).map((t) => `<li><i aria-hidden="true"></i>${t}</li>`).join(""); };
+      const GOALS = ["Complete your first exercise", "Complete 5 exercises", "Complete all daily exercises", "Complete all daily exercises for a week"];
+      let finished = 0;
+      const renderAch = () => {
+        const all = EX.every(([, p]) => p >= 100);
+        const got = [finished >= 1, false, all, false];
+        ach.innerHTML = GOALS.map((g, k) => `<li class="${got[k] ? "got" : ""}">${g}${got[k] ? '<span class="vh"> (done)</span>' : ""}</li>`).join("");
+      };
+      renderFeed();
+      renderAch();
+      document.getElementById("days").innerHTML = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => `<text x="${52 + i * 64}" y="166" text-anchor="middle">${d}</text>`).join("");
+      rings.addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b || b.getAttribute("aria-disabled") === "true") return;
+        const i = +b.dataset.i;
+        EX[i][1] = 100;
+        finished++;
+        set(i, 100);
+        lines.unshift(`You finished ${EX[i][0]}. Nice work, Ben!`);
+        renderFeed();
+        renderAch();
+        toast.textContent = EX.every(([, p]) => p >= 100) ? "All of today's exercises done!" : `${EX[i][0]} complete`;
+        toast.classList.add("on");
+        clearTimeout(toast.t);
+        toast.t = setTimeout(() => toast.classList.remove("on"), 2200);
+      });
+      // the rings fill and the week line draws once the dashboard is on screen
+      const fill = () => { EX.forEach(([, p], i) => setTimeout(() => set(i, p), calm ? 0 : 150 * i)); week.classList.add("go"); };
+      new IntersectionObserver((es, o) => { if (!es[0].isIntersecting) return; fill(); o.disconnect(); }, { threshold: .3 }).observe(rings);
+    })();
+  </script>
+</body>
+</html>

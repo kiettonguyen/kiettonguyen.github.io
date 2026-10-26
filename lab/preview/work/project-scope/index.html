@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Scoping a Project — Kiet Nguyen</title>
+  <meta name="description" content="A university course module that teaches people to scope a project before they start it. Rebuilt here so every sheet and activity can be tried.">
+  <link rel="canonical" href="https://kietn.com/work/project-scope/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kiet Nguyen">
+  <meta property="og:url" content="https://kietn.com/work/project-scope/">
+  <meta property="og:title" content="Scoping a Project — Kiet Nguyen">
+  <meta property="og:description" content="A university course module that teaches people to scope a project before they start it. Rebuilt here so every sheet and activity can be tried.">
+  <meta property="og:image" content="https://kietn.com/assets/og/project-scope.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&text=%E9%98%AE&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../../shared/board.css?v=52">
+  <link rel="stylesheet" href="../../style.css?v=52">
+  <link rel="stylesheet" href="../../shared/products.css?v=52">
+  <style>
+    /* the module runs live in a window. It only takes the mouse and touch once you choose to use
+       it, so scrolling the page never gets caught inside it. Keyboard users can tab straight in. */
+    .window iframe { display: block; width: 100%; height: min(820px, 80vh); height: min(820px, 80svh); border: 0; background: #F3F4EF; pointer-events: none; }
+    .window.live iframe { pointer-events: auto; }
+    .window .try {
+      position: absolute;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 10px 18px;
+      font: inherit;
+      font-size: 14px;
+      color: var(--paper);
+      background: var(--sumi);
+      border: 0;
+      border-radius: 4px;
+      box-shadow: 0 6px 18px rgba(43, 37, 32, .28);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color .2s ease;
+    }
+    .window .try:hover { background: var(--accent); }
+    .window .try svg { width: 12px; height: 12px; fill: currentColor; }
+    .window.live .try { display: none; }
+    .window:not(.live) { cursor: pointer; }
+
+    /* fig. 2.1b: the six sheets, as a contents table */
+    .contents { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.5; }
+    .contents th, .contents td { text-align: left; vertical-align: top; padding: 10px 12px; border-top: 1px solid rgba(59, 52, 45, .16); }
+    .contents thead th { font-size: 12px; font-weight: 400; color: var(--muted); border-top: 0; padding-top: 0; }
+    .contents tbody th { font-weight: 500; white-space: nowrap; }
+    .contents tbody th span { color: var(--accent); font-weight: 400; margin-right: 8px; }
+    .contents td.min { color: var(--muted); white-space: nowrap; }
+    @media (max-width: 640px) {
+      .contents thead { display: none; }
+      .contents tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; padding: 10px 0; border-top: 1px solid rgba(59, 52, 45, .16); }
+      .contents th, .contents td { border: 0; padding: 2px 0; }
+      .contents tbody th { white-space: normal; }
+      .contents td:not(.min) { grid-column: 1 / -1; }
+      .contents td.min { grid-column: 2; grid-row: 1; }
+    }
+  </style>
+</head>
+<body class="case-study product-page" style="--fig: '2.1'">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="toolbar">
+    <a href="../../" class="logo" aria-label="Kiet Nguyen, home"><svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><filter id="pen" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.2" numOctaves="2" seed="21"/><feDisplacementMap in="SourceGraphic" scale="1.1" xChannelSelector="R" yChannelSelector="G"/></filter><g class="steam"><path pathLength="1" d="M16.5 3 C 13.5 -1, 19.5 -4, 16.5 -8 S 18.5 -13, 16.5 -16"/><path pathLength="1" d="M23.5 3 C 20.5 -1, 26.5 -4, 23.5 -8 S 25.5 -13, 23.5 -16"/></g><text x="20" y="21" text-anchor="middle" dominant-baseline="central" filter="url(#pen)">阮</text></svg><span class="logo-text"><span class="logo-name">Kiet Nguyen</span><span class="logo-fig" aria-hidden="true">fig. 00 · <span lang="zh">阮</span>, the lute</span></span></a>
+    <a class="tea" href="../../#contact">let's get tea ↓</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="ph drift">
+      <div>
+        <a class="back" href="../../#work">← fig. 02 · all work</a>
+        <p class="cs-year">2025</p>
+        <h1>Scoping a Project</h1>
+        <p class="ph-lead">A university course module that teaches people to scope a project before they start it.</p>
+      </div>
+      <dl class="ph-facts">
+        <dt>Client</dt><dd>An Australian university</dd>
+        <dt>Course</dt><dd>Project work and financial compliance</dd>
+        <dt>My part</dt><dd>Learning design, writing, build</dd>
+        <dt>Built in</dt><dd>Canvas</dd>
+      </dl>
+    </section>
+
+    <figure class="pp">
+      <div class="product pp-frame window" id="window">
+        <iframe id="module" src="module/" title="Scoping a project, the course module, rebuilt. Six sheets with activities."></iframe>
+        <button class="try" type="button" id="try"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg>Try the module</button>
+      </div>
+      <figcaption class="pp-cap"><span><span class="fig">fig. 2.1a</span> · the module, rebuilt. Six sheets, and every activity works.</span><a id="full" href="module/" target="_blank" rel="noopener">open full screen ↗<span class="vh"> (opens in a new tab)</span></a></figcaption>
+    </figure>
+
+    <section class="story" aria-label="In short">
+      <div><h2>Brief</h2><p>Teach people to scope a project before they start it, as the first module of a course on project work and financial compliance.</p></div>
+      <div><h2>Approach</h2><p>One council project runs through every sheet. Each idea is shown on it first, then tried in a short task.</p></div>
+      <div class="todo"><h2>Result</h2><p>Preview only: your result line goes here.</p></div>
+    </section>
+
+    <article class="cs-body">
+      <h2 class="cs-h">The brief</h2>
+      <p>This is the first module of a course on project work and financial compliance, made in Canvas for an Australian university. It teaches people to define a project's scope before the work starts, and to keep using it once the work is under way.</p>
+      <figure class="cs-media wide plate">
+        <table class="contents">
+          <caption class="vh">The six sheets of the module</caption>
+          <thead><tr><th scope="col">Sheet</th><th scope="col">What it covers</th><th scope="col">What you do</th><th scope="col">Time</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><span>1.1</span>Organisational goals</th><td>Why every project should trace back to the mission</td><td>Climb a contour map from mission down to projects</td><td class="min">20 min</td></tr>
+            <tr><th scope="row"><span>1.2</span>Policies and procedures</th><td>The seven areas most project policies cover</td><td>Match four clauses to their areas</td><td class="min">20 min</td></tr>
+            <tr><th scope="row"><span>1.3</span>Project scope</th><td>Scope creep, through a trip to the shops for milk</td><td>Follow the milk run on a floor plan</td><td class="min">15 min</td></tr>
+            <tr><th scope="row"><span>1.4</span>Defining the scope</th><td>The five parts of a scope, written up and signed off</td><td>Sort a scope, then hold the line on six requests</td><td class="min">25 min</td></tr>
+            <tr><th scope="row"><span>1.5</span>Management tools</th><td>RACI charts for who, Gantt charts for when</td><td>Fill in the last row of a RACI chart</td><td class="min">15 min</td></tr>
+            <tr><th scope="row"><span>1.6</span>Project resources</th><td>Reading people, materials, money and time off the scope</td><td>Work back from a week-7 incident</td><td class="min">20 min</td></tr>
+          </tbody>
+        </table>
+      </figure>
+      <h2 class="cs-h">One project, start to finish</h2>
+      <p>Every sheet follows the same example, a council team launching a community newsletter. Learners see each idea used on that project before they try it themselves, so nothing stays abstract for long.</p>
+      <p>The newsletter's goal, deliverables, exclusions and limits come together on sheet 1.4 as a one-page scope statement, signed off by the sponsor. The later sheets build their charts and resource lists straight from it.</p>
+      <h2 class="cs-h">Practice with consequences</h2>
+      <p>Sheet 1.4 ends with Hold the line. It's week six, the scope is agreed, and six requests land on your desk. Each answer moves the budget, the team's hours and the delivery date, so a few friendly yeses quickly add up.</p>
+      <p>Every request has an answer in the scope statement. That's the lesson the whole module builds to.</p>
+      <h2 class="cs-h">About this version</h2>
+      <p>What you see here is a rebuild. It keeps the original's structure and approach, with a new example and new visuals so the university's content stays private. Notes typed into the module stay in your browser.</p>
+    </article>
+
+    <a class="next-project" href="../indigenous-inclusion/">
+      <span>Next project</span>
+      <strong>Indigenous Inclusion Storyline →</strong>
+    </a>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span class="year"></span> Kiet Nguyen <span class="end">· end of figures</span></p>
+    <a href="https://www.linkedin.com/in/kietngu" target="_blank" rel="noopener">LinkedIn ↗<span class="vh"> (opens in a new tab)</span></a>
+  </footer>
+
+  <div class="lightbox" hidden><img alt=""></div>
+  <script src="../../script.js?v=52"></script>
+  <script>
+    // The module window: a click (or tap) anywhere on it hands it the pointer. Tabbing into it does
+    // the same. "Open full screen" follows the sheet you're on.
+    (function () {
+      const win = document.getElementById("window"), frame = document.getElementById("module");
+      const full = document.getElementById("full");
+      const wake = () => win.classList.add("live");
+      win.addEventListener("click", () => {
+        if (win.classList.contains("live")) return;
+        wake();
+        frame.focus();
+      });
+      // focus moving into the module only shows up here as this page losing it
+      addEventListener("blur", () => setTimeout(() => { if (document.activeElement === frame) wake(); }));
+      addEventListener("message", (e) => {
+        if (e.source !== frame.contentWindow || !e.data || e.data.module !== "sheet") return;
+        full.href = "module/#" + e.data.id;
+      });
+    })();
+  </script>
+</body>
+</html>
